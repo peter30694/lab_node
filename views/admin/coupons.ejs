@@ -1,0 +1,276 @@
+<%- include('../includes/head.ejs') %>
+
+<body class="bg-gray-50 min-h-screen">
+    <%- include('../includes/navigation-admin.ejs') %>
+
+    <main class="ml-64 min-h-screen bg-gray-50 py-8 px-4 pb-24">
+        <div class="max-w-7xl mx-auto">
+            <!-- Header Section -->
+            <div class="flex items-center justify-between mb-8">
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-pink-100 rounded-xl flex items-center justify-center">
+                        <i class="ri-coupon-line text-2xl text-pink-600"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-800">Quản lý mã giảm giá</h1>
+                        <p class="text-gray-600">Tạo và quản lý mã khuyến mãi cho khách hàng</p>
+                    </div>
+                </div>
+                <a href="/admin/coupons/add" 
+                   class="bg-pink-600 hover:bg-pink-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 flex items-center space-x-2">
+                    <i class="ri-add-line"></i>
+                    <span>Thêm mã giảm giá</span>
+                </a>
+            </div>
+
+            <!-- Statistics Summary -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-pink-100 rounded-xl flex items-center justify-center">
+                            <i class="ri-coupon-line text-xl text-pink-600"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">Tổng mã giảm giá</p>
+                            <p class="text-2xl font-bold text-gray-800"><%= coupons ? coupons.length : 0 %></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                            <i class="ri-checkbox-circle-line text-xl text-green-600"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">Đang hoạt động</p>
+                            <p class="text-2xl font-bold text-gray-800">
+                                <%= coupons ? coupons.filter(c => c.isActive && new Date() <= new Date(c.endDate)).length : 0 %>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
+                            <i class="ri-time-line text-xl text-red-600"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">Hết hạn</p>
+                            <p class="text-2xl font-bold text-gray-800">
+                                <%= coupons ? coupons.filter(c => new Date() > new Date(c.endDate)).length : 0 %>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                            <i class="ri-percent-line text-xl text-blue-600"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">Giảm %</p>
+                            <p class="text-2xl font-bold text-gray-800">
+                                <%= coupons ? coupons.filter(c => c.discountType === 'percentage').length : 0 %>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coupons Table -->
+            <% if (coupons && coupons.length > 0) { %>
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Mã</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Loại giảm</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Giá trị</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Điều kiện</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Sử dụng</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Hiệu lực</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Trạng thái</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                <% coupons.forEach(coupon => { %>
+                                    <tr class="hover:bg-gray-50 transition-colors duration-200">
+                                        <td class="px-6 py-4">
+                                            <div class="font-semibold text-gray-800 font-mono"><%= coupon.code %></div>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold 
+                                                <%= coupon.discountType === 'percentage' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800' %>">
+                                                <i class="<%= coupon.discountType === 'percentage' ? 'ri-percent-line' : 'ri-money-dollar-circle-line' %> mr-1"></i>
+                                                <%= coupon.discountType === 'percentage' ? 'Phần trăm' : 'Số tiền' %>
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="text-sm text-gray-800">
+                                                <% if (coupon.discountType === 'percentage') { %>
+                                                    <%= coupon.discountValue %>%<% if (coupon.maxDiscount > 0) { %>
+                                                        <div class="text-xs text-gray-500">Tối đa <%= coupon.maxDiscount.toLocaleString('vi-VN') %>đ</div>
+                                                    <% } %>
+                                                <% } else { %>
+                                                    <%= coupon.discountValue.toLocaleString('vi-VN') %>đ
+                                                <% } %>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="text-sm text-gray-600">
+                                                <% if (coupon.minOrderValue > 0) { %>
+                                                    Tối thiểu <%= coupon.minOrderValue.toLocaleString('vi-VN') %>đ
+                                                <% } else { %>
+                                                    Không có
+                                                <% } %>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="text-sm text-gray-800">
+                                                <%= coupon.usedCount %>/<%= coupon.usageLimit %>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="text-sm text-gray-800">
+                                                <div><%= new Date(coupon.startDate).toLocaleDateString('vi-VN') %></div>
+                                                <div class="text-xs text-gray-500">đến</div>
+                                                <div><%= new Date(coupon.endDate).toLocaleDateString('vi-VN') %></div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <% 
+                                                const now = new Date();
+                                                const isExpired = now > new Date(coupon.endDate);
+                                                const isActive = coupon.isActive && !isExpired;
+                                            %>
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold 
+                                                <%= isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+                                                <i class="<%= isActive ? 'ri-checkbox-circle-line' : 'ri-close-circle-line' %> mr-1"></i>
+                                                <%= isActive ? 'Hoạt động' : (isExpired ? 'Hết hạn' : 'Vô hiệu') %>
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center space-x-2">
+                                                <a href="/admin/coupons/<%= coupon._id %>/edit" 
+                                                   class="bg-blue-100 hover:bg-blue-200 text-blue-600 p-2 rounded-lg transition-all duration-200 transform hover:scale-105"
+                                                   title="Sửa mã giảm giá">
+                                                    <i class="ri-edit-line"></i>
+                                                </a>
+                                                <button onclick="deleteCoupon('<%= coupon._id %>')" 
+                                                        class="bg-red-100 hover:bg-red-200 text-red-600 p-2 rounded-lg transition-all duration-200 transform hover:scale-105"
+                                                        title="Xóa mã giảm giá">
+                                                    <i class="ri-delete-bin-line"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- Pagination -->
+                <% if (typeof totalPages !== 'undefined' && totalPages > 1) { %>
+                  <div class="flex justify-center mt-8">
+                    <nav class="flex items-center space-x-2" aria-label="Pagination">
+                      <% if (hasPrevPage) { %>
+                        <a href="?page=<%= prevPage %>" class="px-3 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 transition-all duration-200">
+                          <i class="ri-arrow-left-line"></i>
+                        </a>
+                      <% } %>
+                      <% for (let i = 1; i <= totalPages; i++) { %>
+                        <% if (i === currentPage) { %>
+                          <span class="px-3 py-2 bg-pink-600 text-white rounded-lg"><%= i %></span>
+                        <% } else { %>
+                          <a href="?page=<%= i %>" class="px-3 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 transition-all duration-200"><%= i %></a>
+                        <% } %>
+                      <% } %>
+                      <% if (hasNextPage) { %>
+                        <a href="?page=<%= nextPage %>" class="px-3 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 transition-all duration-200">
+                          <i class="ri-arrow-right-line"></i>
+                        </a>
+                      <% } %>
+                    </nav>
+                  </div>
+                <% } %>
+            <% } else { %>
+                <div class="bg-white rounded-2xl shadow-lg p-12 text-center">
+                    <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="ri-coupon-line text-3xl text-gray-400"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Chưa có mã giảm giá nào</h3>
+                    <p class="text-gray-600 mb-8">Bắt đầu tạo mã giảm giá để khuyến mãi cho khách hàng</p>
+                    <a href="/admin/coupons/add" 
+                       class="bg-pink-600 hover:bg-pink-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 inline-flex items-center space-x-2">
+                        <i class="ri-add-line"></i>
+                        <span>Thêm mã giảm giá đầu tiên</span>
+                    </a>
+                </div>
+            <% } %>
+        </div>
+    </main>
+    </div>
+    <script>
+        // Delete coupon functionality
+        function deleteCoupon(couponId) {
+            if (!confirm('Bạn có chắc muốn xoá mã giảm giá này?')) return;
+            fetch('/admin/coupons/' + couponId, { method: 'DELETE' })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.message === 'Success!') {
+                        // Xoá dòng khỏi bảng
+                        const btn = document.querySelector(`button[onclick="deleteCoupon('${couponId}')"]`);
+                        if (btn) {
+                            const row = btn.closest('tr');
+                            if (row) row.remove();
+                        }
+                    } else {
+                        alert('Xoá thất bại: ' + (data.message || 'Có lỗi xảy ra!'));
+                    }
+                })
+                .catch(() => alert('Có lỗi xảy ra khi xoá!'));
+        }
+
+        // Add hover effects for interactive elements
+        document.addEventListener('DOMContentLoaded', function() {
+            const interactiveElements = document.querySelectorAll('.transform');
+            
+            interactiveElements.forEach(element => {
+                element.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.05)';
+                });
+                
+                element.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+        });
+
+        // Add smooth scrolling for better UX
+        document.addEventListener('DOMContentLoaded', function() {
+            const links = document.querySelectorAll('a[href^="#"]');
+            
+            links.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+
+<%- include('../includes/end.ejs') %> 
+
+
+

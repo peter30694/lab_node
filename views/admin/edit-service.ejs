@@ -1,0 +1,210 @@
+<%- include('../includes/head.ejs') %>
+
+<body class="bg-gray-50 min-h-screen">
+    <%- include('../includes/navigation-admin.ejs') %>
+
+    <main class="ml-64 min-h-screen bg-gray-50 py-8 px-4 pb-24">
+  <div class="max-w-4xl mx-auto">
+    <!-- Header -->
+    <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900">Chỉnh sửa dịch vụ</h1>
+          <p class="text-gray-600 mt-2">Cập nhật thông tin dịch vụ</p>
+        </div>
+        <a href="/admin/services" class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-semibold transition flex items-center gap-2">
+          <i class="ri-arrow-left-line"></i>
+          Quay lại
+        </a>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <div class="bg-white rounded-2xl shadow-lg p-8">
+      <form action="/admin/services/<%= service._id %>/edit" method="POST" enctype="multipart/form-data" class="space-y-6">
+        <input type="hidden" name="serviceId" value="<%= service._id %>">
+        <input type="hidden" name="currentImage" value="<%= service.imageUrl %>">
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Tên dịch vụ -->
+          <div class="md:col-span-2">
+            <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Tên dịch vụ *</label>
+            <input type="text" id="name" name="name" value="<%= service.name %>" required
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                   placeholder="Nhập tên dịch vụ">
+          </div>
+
+          <!-- Mô tả ngắn -->
+          <div class="md:col-span-2">
+            <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Mô tả ngắn *</label>
+            <textarea id="description" name="description" rows="3" required
+                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Mô tả ngắn gọn về dịch vụ"><%= service.description %></textarea>
+          </div>
+
+          <!-- Mô tả chi tiết -->
+          <div class="md:col-span-2">
+            <label for="fullDescription" class="block text-sm font-medium text-gray-700 mb-2">Mô tả chi tiết *</label>
+            <textarea id="fullDescription" name="fullDescription" rows="6" required
+                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Mô tả chi tiết về dịch vụ, quy trình, lợi ích..."><%= service.fullDescription %></textarea>
+          </div>
+
+          <!-- Giá -->
+          <div>
+            <label for="price" class="block text-sm font-medium text-gray-700 mb-2">Giá (VNĐ) *</label>
+            <input type="number" id="price" name="price" min="0" step="1000" value="<%= service.price %>" required
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                   placeholder="0">
+          </div>
+
+          <!-- Thời gian -->
+          <div>
+            <label for="duration" class="block text-sm font-medium text-gray-700 mb-2">Thời gian (phút) *</label>
+            <input type="number" id="duration" name="duration" min="1" value="<%= service.duration %>" required
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                   placeholder="30">
+          </div>
+
+          <!-- Danh mục -->
+          <div>
+            <label for="category" class="block text-sm font-medium text-gray-700 mb-2">Danh mục *</label>
+            <select id="category" name="category" required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              <option value="">Chọn danh mục</option>
+              <option value="grooming" <%= service.category === 'grooming' ? 'selected' : '' %>>Chăm sóc thú cưng</option>
+              <option value="health" <%= service.category === 'health' ? 'selected' : '' %>>Sức khỏe thú cưng</option>
+              <option value="training" <%= service.category === 'training' ? 'selected' : '' %>>Huấn luyện thú cưng</option>
+              <option value="boarding" <%= service.category === 'boarding' ? 'selected' : '' %>>Trông giữ thú cưng</option>
+              <option value="transport" <%= service.category === 'transport' ? 'selected' : '' %>>Vận chuyển thú cưng</option>
+              <option value="consultation" <%= service.category === 'consultation' ? 'selected' : '' %>>Tư vấn</option>
+              <option value="other" <%= service.category === 'other' ? 'selected' : '' %>>Khác</option>
+            </select>
+          </div>
+
+          <!-- Trạng thái -->
+          <div>
+            <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Trạng thái *</label>
+            <select id="status" name="status" required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              <option value="active" <%= service.status === 'active' ? 'selected' : '' %>>Hoạt động</option>
+              <option value="inactive" <%= service.status === 'inactive' ? 'selected' : '' %>>Không hoạt động</option>
+            </select>
+          </div>
+
+          <!-- Hình ảnh hiện tại -->
+          <div class="md:col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Hình ảnh hiện tại</label>
+            <div class="flex items-center space-x-4">
+              <img src="<%= service.imageUrl %>" alt="<%= service.name %>" class="w-32 h-32 object-cover rounded-lg">
+              <div>
+                <p class="text-sm text-gray-600">Hình ảnh hiện tại</p>
+                <p class="text-xs text-gray-500">Tải lên hình mới để thay thế</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hình ảnh mới -->
+          <div class="md:col-span-2">
+            <label for="image" class="block text-sm font-medium text-gray-700 mb-2">Hình ảnh mới (tùy chọn)</label>
+            <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 transition">
+              <div class="space-y-1 text-center">
+                <i class="ri-image-line text-4xl text-gray-400 mx-auto"></i>
+                <div class="flex text-sm text-gray-600">
+                  <label for="image" class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
+                    <span>Tải lên file</span>
+                    <input id="image" name="image" type="file" accept="image/*" class="sr-only">
+                  </label>
+                  <p class="pl-1">hoặc kéo thả</p>
+                </div>
+                <p class="text-xs text-gray-500">PNG, JPG, GIF tối đa 10MB</p>
+              </div>
+            </div>
+            <div id="imagePreview" class="mt-4 hidden">
+              <img id="preview" src="" alt="Preview" class="max-w-xs rounded-lg">
+            </div>
+          </div>
+
+          <!-- Thống kê -->
+          <div class="md:col-span-2">
+            <div class="bg-gray-50 rounded-lg p-4">
+              <h3 class="text-lg font-medium text-gray-900 mb-3">Thống kê dịch vụ</h3>
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="text-center">
+                  <div class="text-2xl font-bold text-blue-600"><%= service.bookings || 0 %></div>
+                  <div class="text-sm text-gray-600">Lượt đặt</div>
+                </div>
+                <div class="text-center">
+                  <div class="text-2xl font-bold text-yellow-600"><%= service.rating.toFixed(1) %></div>
+                  <div class="text-sm text-gray-600">Đánh giá</div>
+                </div>
+                <div class="text-center">
+                  <div class="text-2xl font-bold text-green-600"><%= service.reviews ? service.reviews.length : 0 %></div>
+                  <div class="text-sm text-gray-600">Đánh giá</div>
+                </div>
+                <div class="text-center">
+                  <div class="text-2xl font-bold text-purple-600"><%= service.createdAt ? new Date(service.createdAt).toLocaleDateString('vi-VN') : 'N/A' %></div>
+                  <div class="text-sm text-gray-600">Ngày tạo</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+          <a href="/admin/services" class="bg-gray-600 hover:bg-gray-700 text-white px-8 py-3 rounded-lg font-semibold transition">
+            Hủy
+          </a>
+          <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition flex items-center gap-2">
+            <i class="ri-save-line"></i>
+            Cập nhật dịch vụ
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>`n    </div>`n`n    <script>
+// Image preview
+document.getElementById('image').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      document.getElementById('preview').src = e.target.result;
+      document.getElementById('imagePreview').classList.remove('hidden');
+    }
+    reader.readAsDataURL(file);
+  }
+});
+
+// Drag and drop
+const dropZone = document.querySelector('.border-dashed');
+const fileInput = document.getElementById('image');
+
+dropZone.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  dropZone.classList.add('border-blue-400');
+});
+
+dropZone.addEventListener('dragleave', () => {
+  dropZone.classList.remove('border-blue-400');
+});
+
+dropZone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  dropZone.classList.remove('border-blue-400');
+  
+  const files = e.dataTransfer.files;
+  if (files.length > 0) {
+    fileInput.files = files;
+    const event = new Event('change');
+    fileInput.dispatchEvent(event);
+  }
+});
+</script>
+
+<%- include('../includes/end.ejs') %> 
+
+
+

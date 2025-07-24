@@ -1,0 +1,295 @@
+<%- include('./includes/head') %>
+
+<body class="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 font-roboto flex flex-col min-h-screen">
+    <%- include('./includes/navigation') %>
+    <main class="max-w-6xl mx-auto px-4 py-10">
+        <!-- Header Section -->
+        <section class="mb-12 text-center px-4">
+            <div class="flex flex-col items-center justify-center gap-6 max-w-4xl mx-auto">
+                <div class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full p-6 shadow-2xl mb-4 transform hover:scale-105 transition-all duration-300">
+                    <i class="ri-user-line text-4xl"></i>
+                </div>
+                <h1 class="text-4xl md:text-5xl font-bold text-indigo-600 mb-4">Thông tin cá nhân</h1>
+                <p class="max-w-2xl text-gray-600 text-lg leading-relaxed">Quản lý thông tin cá nhân và tài khoản của bạn một cách an toàn và thuận tiện.</p>
+            </div>
+        </section>
+
+        <!-- Breadcrumb -->
+        <div class="flex items-center text-sm text-gray-500 mb-8 px-4">
+            <a href="/" class="hover:text-indigo-600 transition-colors">Trang chủ</a>
+            <i class="ri-arrow-right-s-line mx-2"></i>
+            <span class="text-indigo-600 font-medium">Thông tin cá nhân</span>
+        </div>
+
+        <div class="grid lg:grid-cols-4 gap-8">
+            <!-- Sidebar -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden sticky top-6 border border-gray-100">
+                    <!-- User Info Summary -->
+                    <div class="p-6 bg-gradient-to-br from-indigo-500 to-purple-600 text-white">
+                        <div class="flex flex-col items-center">
+                            <div class="relative group mb-4">
+                                <img src="<%= user.avatarUrl ? user.avatarUrl + '?t=' + Date.now() : '/images/default-avatar.png' %>" alt="Avatar"
+                                    class="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg">
+                                <div class="absolute inset-0 bg-black bg-opacity-20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                                    <i class="ri-camera-line text-white text-xl"></i>
+                                </div>
+                            </div>
+                            <h3 class="text-xl font-bold text-center">
+                                <%= user.name %>
+                            </h3>
+                            <p class="text-indigo-100 text-center text-sm mt-1">
+                                <%= user.email %>
+                            </p>
+                            <div class="mt-4 flex items-center gap-2 bg-white bg-opacity-20 px-3 py-1 rounded-full">
+                                <i class="ri-verified-badge-line text-yellow-300"></i>
+                                <span class="text-sm font-medium">Tài khoản xác thực</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Menu -->
+                    <nav class="p-4">
+                        <ul class="space-y-2">
+                            <li>
+                                <a href="/auth/profile"
+                                    class="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-600 font-semibold border border-indigo-200">
+                                    <i class="ri-user-line text-xl"></i>
+                                    <span>Thông tin cá nhân</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/auth/profile/edit"
+                                    class="flex items-center gap-3 p-4 rounded-xl hover:bg-gray-50 text-gray-700 hover:text-indigo-600 transition-all duration-300">
+                                    <i class="ri-edit-line text-xl"></i>
+                                    <span>Chỉnh sửa thông tin</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/auth/profile/change-password"
+                                    class="flex items-center gap-3 p-4 rounded-xl hover:bg-gray-50 text-gray-700 hover:text-indigo-600 transition-all duration-300">
+                                    <i class="ri-lock-line text-xl"></i>
+                                    <span>Đổi mật khẩu</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="lg:col-span-3">
+                <!-- Profile Information -->
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-8 border border-gray-100">
+                    <div class="p-6 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-gray-100">
+                        <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-3">
+                            <i class="ri-user-line text-indigo-600 text-2xl"></i> 
+                            Thông tin cá nhân
+                        </h2>
+                    </div>
+
+                    <div class="p-8">
+                        <!-- Success Message -->
+                        <% if (typeof success !== 'undefined' && success === 'updated') { %>
+                            <div class="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 text-green-700 px-6 py-4 rounded-xl mb-8 flex items-center gap-3 shadow-lg">
+                                <i class="ri-check-circle-line text-2xl"></i>
+                                <span class="font-semibold">Cập nhật thông tin thành công!</span>
+                            </div>
+                        <% } %>
+                        
+                        <!-- Personal Information -->
+                        <div class="space-y-6 mb-8">
+                            <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                                <i class="ri-user-settings-line text-indigo-600"></i>
+                                Thông tin cá nhân
+                            </h3>
+                            
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <div class="bg-blue-100 p-2 rounded-lg">
+                                            <i class="ri-user-line text-blue-600 text-xl"></i>
+                                        </div>
+                                        <span class="font-semibold text-gray-700">Họ tên</span>
+                                    </div>
+                                    <p class="text-gray-900 font-bold text-lg"><%= user.name %></p>
+                                </div>
+
+                                <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl p-6 border border-purple-100">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <div class="bg-purple-100 p-2 rounded-lg">
+                                            <i class="ri-mail-line text-purple-600 text-xl"></i>
+                                        </div>
+                                        <span class="font-semibold text-gray-700">Email</span>
+                                    </div>
+                                    <p class="text-gray-900 font-bold text-lg"><%= user.email %></p>
+                                </div>
+                            </div>
+
+                            <!-- Additional Information -->
+                            <div class="grid md:grid-cols-2 gap-6 mt-6">
+                                <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-6 border border-green-100">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <div class="bg-green-100 p-2 rounded-lg">
+                                            <i class="ri-phone-line text-green-600 text-xl"></i>
+                                        </div>
+                                        <span class="font-semibold text-gray-700">Số điện thoại</span>
+                                    </div>
+                                    <p class="text-gray-900 font-bold text-lg">
+                                        <%= user.phone || 'Chưa cập nhật' %>
+                                    </p>
+                                </div>
+
+                                <div class="bg-gradient-to-r from-orange-50 to-yellow-50 rounded-2xl p-6 border border-orange-100">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <div class="bg-orange-100 p-2 rounded-lg">
+                                            <i class="ri-map-pin-line text-orange-600 text-xl"></i>
+                                        </div>
+                                        <span class="font-semibold text-gray-700">Địa chỉ</span>
+                                    </div>
+                                    <p class="text-gray-900 font-bold text-lg">
+                                        <%= user.address || 'Chưa cập nhật' %>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Account Information -->
+                        <div class="space-y-6 mb-8">
+                            <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                                <i class="ri-shield-user-line text-indigo-600"></i>
+                                Thông tin tài khoản
+                            </h3>
+                            
+                            <div class="bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl p-6 border border-gray-200">
+                                <div class="space-y-4">
+                                    <% if (user.role) { %>
+                                        <div class="flex items-center justify-between py-3 border-b border-gray-200">
+                                            <span class="text-gray-600 font-semibold flex items-center gap-3">
+                                                <i class="ri-user-star-line text-indigo-600"></i> 
+                                                Vai trò
+                                            </span>
+                                            <span class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-4 py-2 rounded-full font-semibold text-sm">
+                                                <%= user.role === 'admin' ? 'Quản trị viên' : 'Người dùng' %>
+                                            </span>
+                                        </div>
+                                    <% } %>
+
+                                    <% if (user.createdAt) { %>
+                                        <div class="flex items-center justify-between py-3">
+                                            <span class="text-gray-600 font-semibold flex items-center gap-3">
+                                                <i class="ri-calendar-line text-indigo-600"></i> 
+                                                Ngày tạo tài khoản
+                                            </span>
+                                            <span class="text-gray-900 font-bold">
+                                                <%= new Date(user.createdAt).toLocaleDateString('vi-VN') %>
+                                            </span>
+                                        </div>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- User Statistics -->
+                        <div class="space-y-6 mb-8">
+                            <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                                <i class="ri-bar-chart-line text-indigo-600"></i>
+                                Thống kê cá nhân
+                            </h3>
+                            
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div class="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl p-6 text-white shadow-lg transform hover:scale-105 transition-all duration-300">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <i class="ri-shopping-cart-line text-2xl"></i>
+                                        <span class="font-semibold">Đơn hàng</span>
+                                    </div>
+                                    <p class="text-3xl font-bold mb-1">
+                                        <%= user.orderCount || 0 %>
+                                    </p>
+                                    <p class="text-blue-100 text-sm">Tổng số đơn hàng</p>
+                                </div>
+
+                                <div class="bg-gradient-to-r from-pink-500 to-purple-600 rounded-2xl p-6 text-white shadow-lg transform hover:scale-105 transition-all duration-300">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <i class="ri-heart-line text-2xl"></i>
+                                        <span class="font-semibold">Yêu thích</span>
+                                    </div>
+                                    <p class="text-3xl font-bold mb-1">
+                                        <%= user.favoritesCount || 0 %>
+                                    </p>
+                                    <p class="text-pink-100 text-sm">Sản phẩm yêu thích</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Account Management -->
+                        <div class="space-y-6 mb-8">
+                            <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                                <i class="ri-settings-line text-indigo-600"></i>
+                                Quản lý tài khoản
+                            </h3>
+                            
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <a href="/auth/profile/edit" 
+                                   class="group bg-white border-2 border-indigo-200 rounded-2xl p-6 hover:border-indigo-400 hover:bg-indigo-50 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                                    <div class="flex items-center gap-4">
+                                        <div class="bg-gradient-to-r from-indigo-100 to-blue-100 p-4 rounded-xl group-hover:from-indigo-200 group-hover:to-blue-200 transition-all duration-300">
+                                            <i class="ri-edit-line text-indigo-600 text-2xl"></i>
+                                        </div>
+                                        <div>
+                                            <span class="font-bold text-gray-800 text-lg">Chỉnh sửa thông tin</span>
+                                            <p class="text-gray-500 mt-1">Cập nhật thông tin cá nhân</p>
+                                        </div>
+                                    </div>
+                                </a>
+
+                                <a href="/auth/profile/change-password" 
+                                   class="group bg-white border-2 border-orange-200 rounded-2xl p-6 hover:border-orange-400 hover:bg-orange-50 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                                    <div class="flex items-center gap-4">
+                                        <div class="bg-gradient-to-r from-orange-100 to-red-100 p-4 rounded-xl group-hover:from-orange-200 group-hover:to-red-200 transition-all duration-300">
+                                            <i class="ri-lock-line text-orange-600 text-2xl"></i>
+                                        </div>
+                                        <div>
+                                            <span class="font-bold text-gray-800 text-lg">Đổi mật khẩu</span>
+                                            <p class="text-gray-500 mt-1">Thay đổi mật khẩu tài khoản</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Quick Actions -->
+                        <div class="space-y-6">
+                            <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                                <i class="ri-flashlight-line text-indigo-600"></i>
+                                Thao tác nhanh
+                            </h3>
+                            
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <a href="/auth/orders" class="group bg-white border-2 border-green-200 rounded-2xl p-6 hover:border-green-400 hover:bg-green-50 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                                    <div class="flex items-center gap-4 mb-4">
+                                        <div class="bg-gradient-to-r from-green-100 to-emerald-100 p-4 rounded-xl group-hover:from-green-200 group-hover:to-emerald-200 transition-all duration-300">
+                                            <i class="ri-file-list-line text-green-600 text-2xl"></i>
+                                        </div>
+                                        <span class="font-bold text-gray-800 text-lg">Xem đơn hàng</span>
+                                    </div>
+                                    <p class="text-gray-600">Quản lý đơn hàng của bạn</p>
+                                </a>
+
+                                <a href="/favorites" class="group bg-white border-2 border-purple-200 rounded-2xl p-6 hover:border-purple-400 hover:bg-purple-50 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                                    <div class="flex items-center gap-4 mb-4">
+                                        <div class="bg-gradient-to-r from-purple-100 to-pink-100 p-4 rounded-xl group-hover:from-purple-200 group-hover:to-pink-200 transition-all duration-300">
+                                            <i class="ri-heart-line text-purple-600 text-2xl"></i>
+                                        </div>
+                                        <span class="font-bold text-gray-800 text-lg">Sản phẩm yêu thích</span>
+                                    </div>
+                                    <p class="text-gray-600">Xem danh sách yêu thích</p>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <%- include('./includes/end') %>

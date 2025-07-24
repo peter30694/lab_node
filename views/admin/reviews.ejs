@@ -1,0 +1,474 @@
+<%- include('../includes/head.ejs') %>
+
+<body class="bg-gray-50 min-h-screen">
+    <%- include('../includes/navigation-admin.ejs') %>
+
+    <main class="ml-64 min-h-screen bg-gray-50 py-8 px-4 pb-24">
+        <div class="max-w-7xl mx-auto">
+            <!-- Header Section -->
+            <div class="flex items-center justify-between mb-8">
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                        <i class="ri-star-line text-2xl text-purple-600"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-800">Quản lý đánh giá</h1>
+                        <p class="text-gray-600">Duyệt và quản lý đánh giá từ khách hàng</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                            <i class="ri-star-line text-xl text-purple-600"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">Tổng đánh giá</p>
+                            <p class="text-2xl font-bold text-gray-800"><%= stats.total %></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
+                            <i class="ri-time-line text-xl text-yellow-600"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">Chờ duyệt</p>
+                            <p class="text-2xl font-bold text-gray-800"><%= stats.pending %></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                            <i class="ri-checkbox-circle-line text-xl text-green-600"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">Đã duyệt</p>
+                            <p class="text-2xl font-bold text-gray-800"><%= stats.approved %></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
+                            <i class="ri-close-circle-line text-xl text-red-600"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">Từ chối</p>
+                            <p class="text-2xl font-bold text-gray-800"><%= stats.rejected %></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters Section -->
+            <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 mb-8">
+              <form action="/admin/reviews" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                <div class="md:col-span-2">
+                  <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Tìm kiếm</label>
+                  <input type="text" id="search" name="search" value="<%= search || '' %>"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+                    placeholder="Nhập nội dung đánh giá...">
+                </div>
+                <div class="md:col-span-1">
+                  <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Trạng thái</label>
+                  <select id="status" name="status"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="pending" <%= status === 'pending' ? 'selected' : '' %>>Chờ duyệt</option>
+                    <option value="approved" <%= status === 'approved' ? 'selected' : '' %>>Đã duyệt</option>
+                    <option value="rejected" <%= status === 'rejected' ? 'selected' : '' %>>Từ chối</option>
+                  </select>
+                </div>
+                <div class="md:col-span-1 flex items-end">
+                  <button type="submit"
+                    class="w-full bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center space-x-2">
+                    <i class="ri-search-line"></i>
+                    <span>Lọc</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Reviews Table -->
+            <div>
+                <table class="w-full min-w-max">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Người dùng</th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Sản phẩm/Dịch vụ</th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Đánh giá</th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Trạng thái</th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Ngày tạo</th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <% if (reviews.length > 0) { %>
+                                <% for (let review of reviews) { %>
+                                    <tr class="hover:bg-gray-50 transition-colors duration-200"
+                                        data-review-id="<%= review._id %>"
+                                        data-rating="<%= review.rating %>"
+                                        data-comment="<%= review.comment %>"
+                                        data-created-at="<%= review.createdAt %>">
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center space-x-3">
+                                                <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center overflow-hidden">
+                                                    <img class="w-10 h-10 rounded-full object-cover" 
+                                                         src="<%= review.user?.avatar || '/images/default-avatar.png' %>" 
+                                                         alt="<%= review.user?.name || review.user?.userName || 'User' %>"
+                                                         onerror="this.src='/images/default-avatar.png'">
+                                                </div>
+                                                <div class="flex-1 min-w-0">
+                                                    <div class="font-semibold text-gray-800 truncate">
+                                                        <%= review.user?.name || review.user?.userName || 'Người dùng ẩn danh' %>
+                                                    </div>
+                                                    <div class="text-sm text-gray-500 truncate">
+                                                        <%= review.user?.email || 'Không có email' %>
+                                                    </div>
+                                                    <% if (review.user?._id) { %>
+                                                    <div class="text-xs text-gray-400">
+                                                        ID: <%= review.user._id.toString().slice(-6) %>
+                                                    </div>
+                                                    <% } %>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center space-x-3">
+                                                <div class="w-10 h-10 rounded-xl overflow-hidden bg-gray-100">
+                                                    <img class="w-10 h-10 object-cover"
+                                                         src="<%= review.itemDetails?.imageUrl || '/images/default-product.png' %>"
+                                                         alt="<%= review.itemDetails?.title || review.itemDetails?.name || 'Không xác định' %>"
+                                                         onerror="this.src='/images/default-product.png'">
+                                                </div>
+                                                <div class="flex-1 min-w-0">
+                                                    <div class="font-semibold text-gray-800 truncate">
+                                                        <%= review.itemDetails?.title || review.itemDetails?.name || 'Không xác định' %>
+                                                    </div>
+                                                    <div class="text-sm text-gray-500">
+                                                        <%= review.itemDetails?.type === 'product' ? 'Sản phẩm' : (review.itemDetails?.type === 'service' ? 'Dịch vụ' : '') %>
+                                                        <% if (review.itemDetails?.price) { %>
+                                                            • <%= review.itemDetails.price.toLocaleString('vi-VN') %> đ
+                                                        <% } %>
+                                                    </div>
+                                                    <% if (review.itemDetails?.category) { %>
+                                                    <div class="text-xs text-gray-400">Danh mục:
+                                                        <%= review.itemDetails.category %>
+                                                    </div>
+                                                    <% } %>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center space-x-1 mb-2">
+                                                <% for (let i = 1; i <= 5; i++) { %>
+                                                    <i class="ri-star-<%= i <= review.rating ? 'fill' : 'line' %> text-yellow-400 text-sm"></i>
+                                                <% } %>
+                                                <span class="text-sm text-gray-500 ml-1">(<%= review.rating %>/5)</span>
+                                            </div>
+                                            <div class="max-w-xs">
+                                                <p class="text-sm text-gray-600 line-clamp-2"><%= review.comment %></p>
+                                                <% if (review.comment && review.comment.length > 100) { %>
+                                                <button onclick="showFullComment('<%= review._id %>')" 
+                                                        class="text-xs text-blue-600 hover:text-blue-800 mt-1">
+                                                    Xem thêm...
+                                                </button>
+                                                <% } %>
+                                            </div>
+                                            <% if (review.adminReply) { %>
+                                            <div class="mt-2 p-2 bg-blue-50 rounded-lg">
+                                                <div class="text-xs text-blue-600 font-medium mb-1">Phản hồi từ admin:</div>
+                                                <p class="text-xs text-blue-800"><%= review.adminReply %></p>
+                                            </div>
+                                            <% } %>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <% if (review.status === 'pending') { %>
+                                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800">
+                                                    <i class="ri-time-line mr-1"></i>
+                                                    Chờ duyệt
+                                                </span>
+                                            <% } else if (review.status === 'approved') { %>
+                                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                                                    <i class="ri-checkbox-circle-line mr-1"></i>
+                                                    Đã duyệt
+                                                </span>
+                                            <% } else if (review.status === 'rejected') { %>
+                                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800">
+                                                    <i class="ri-close-circle-line mr-1"></i>
+                                                    Từ chối
+                                                </span>
+                                            <% } %>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="text-sm text-gray-800">
+                                                <%= new Date(review.createdAt).toLocaleDateString('vi-VN') %>
+                                            </div>
+                                            <div class="text-xs text-gray-500">
+                                                <%= new Date(review.createdAt).toLocaleTimeString('vi-VN') %>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center space-x-2">
+                                                <a href="/admin/reviews/<%= review._id %>" 
+                                                   class="bg-blue-100 hover:bg-blue-200 text-blue-600 p-2 rounded-lg transition-all duration-200 transform hover:scale-105"
+                                                   title="Xem chi tiết">
+                                                    <i class="ri-eye-line"></i>
+                                                </a>
+                                                <% if (review.status === 'pending') { %>
+                                                    <button type="button" onclick="updateReviewStatus('<%= review._id %>', 'approved')" 
+                                                            class="bg-green-100 hover:bg-green-200 text-green-600 p-2 rounded-lg transition-all duration-200 transform hover:scale-105"
+                                                            title="Duyệt đánh giá">
+                                                        <i class="ri-checkbox-circle-line"></i>
+                                                    </button>
+                                                    <button type="button" onclick="updateReviewStatus('<%= review._id %>', 'rejected')" 
+                                                            class="bg-red-100 hover:bg-red-200 text-red-600 p-2 rounded-lg transition-all duration-200 transform hover:scale-105"
+                                                            title="Từ chối đánh giá">
+                                                        <i class="ri-close-circle-line"></i>
+                                                    </button>
+                                                <% } %>
+                                                <button type="button" onclick="deleteReview('<%= review._id %>')" 
+                                                        class="bg-gray-100 hover:bg-gray-200 text-gray-600 p-2 rounded-lg transition-all duration-200 transform hover:scale-105"
+                                                        title="Xóa đánh giá">
+                                                    <i class="ri-delete-bin-line"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <% } %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="6" class="px-6 py-12 text-center">
+                                        <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                                            <i class="ri-star-line text-3xl text-gray-400"></i>
+                                        </div>
+                                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Chưa có đánh giá nào</h3>
+                                        <p class="text-gray-600">Hiện tại chưa có đánh giá nào trong hệ thống.</p>
+                                    </td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                <!-- Pagination -->
+                <% if (pagination && pagination.totalPages > 1) { %>
+                <div class="px-6 py-4 border-t border-gray-100 flex flex-col md:flex-row md:items-center md:justify-between">
+                  <div class="text-sm text-gray-600 mb-2 md:mb-0">
+                    Hiển thị
+                    <span class="font-medium"><%= (pagination.currentPage - 1) * pagination.limit + 1 %></span>
+                    đến
+                    <span class="font-medium"><%= Math.min(pagination.currentPage * pagination.limit, pagination.totalReviews) %></span>
+                    trong tổng số
+                    <span class="font-medium"><%= pagination.totalReviews %></span>
+                    đánh giá
+                  </div>
+                  <div class="flex items-center space-x-2">
+                    <% if (pagination.hasPrevPage) { %>
+                      <a href="?page=<%= pagination.prevPage %><%= search ? '&search=' + encodeURIComponent(search) : '' %><%= status ? '&status=' + status : '' %>"
+                         class="px-3 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 transition-all duration-200">
+                        <i class="ri-arrow-left-line"></i>
+                      </a>
+                    <% } %>
+                    <% pagination.pageNumbers.forEach(pageNum => { %>
+                      <% if (pageNum === pagination.currentPage) { %>
+                        <span class="px-3 py-2 bg-purple-600 text-white rounded-lg"><%= pageNum %></span>
+                      <% } else { %>
+                        <a href="?page=<%= pageNum %><%= search ? '&search=' + encodeURIComponent(search) : '' %><%= status ? '&status=' + status : '' %>"
+                           class="px-3 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 transition-all duration-200">
+                          <%= pageNum %>
+                        </a>
+                      <% } %>
+                    <% }) %>
+                    <% if (pagination.hasNextPage) { %>
+                      <a href="?page=<%= pagination.nextPage %><%= search ? '&search=' + encodeURIComponent(search) : '' %><%= status ? '&status=' + status : '' %>"
+                         class="px-3 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 transition-all duration-200">
+                        <i class="ri-arrow-right-line"></i>
+                      </a>
+                    <% } %>
+                  </div>
+                </div>
+                <% } %>
+            </div>
+        </div>
+    </main>
+    </div>
+    <script>
+        // Auto-submit form when inputs change
+        const form = document.querySelector('form[action="/admin/reviews"]');
+        const inputs = form.querySelectorAll('input, select');
+        let searchTimeout;
+        
+        inputs.forEach(input => {
+            input.addEventListener('change', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    form.submit();
+                }, 500);
+            });
+        });
+
+        // Update review status
+        function updateReviewStatus(reviewId, status) {
+            const action = status === 'approved' ? 'Duyệt' : 'Từ chối';
+            if (confirm(`Bạn có chắc muốn ${action.toLowerCase()} đánh giá này?`)) {
+                fetch(`/admin/reviews/${reviewId}/update-status`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ status })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Cập nhật trạng thái trực tiếp trên dòng review
+                        const row = document.querySelector(`[data-review-id="${reviewId}"]`);
+                        if (row) {
+                            const statusCell = row.querySelector('td:nth-child(4)');
+                            const actionCell = row.querySelector('td:last-child');
+                            if (statusCell) {
+                                let html = '';
+                                if (status === 'pending') {
+                                    html = `<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800"><i class="ri-time-line mr-1"></i>Chờ duyệt</span>`;
+                                } else if (status === 'approved') {
+                                    html = `<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800"><i class="ri-checkbox-circle-line mr-1"></i>Đã duyệt</span>`;
+                                } else if (status === 'rejected') {
+                                    html = `<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800"><i class="ri-close-circle-line mr-1"></i>Từ chối</span>`;
+                                }
+                                statusCell.innerHTML = html;
+                            }
+                            // Ẩn/hiện nút thao tác phù hợp
+                            if (actionCell) {
+                                let html = `<a href="/admin/reviews/${reviewId}" class="bg-blue-100 hover:bg-blue-200 text-blue-600 p-2 rounded-lg transition-all duration-200 transform hover:scale-105" title="Xem chi tiết"><i class="ri-eye-line"></i></a>`;
+                                if (status === 'pending') {
+                                    html += `<button type="button" onclick="updateReviewStatus('${reviewId}', 'approved')" class="bg-green-100 hover:bg-green-200 text-green-600 p-2 rounded-lg transition-all duration-200 transform hover:scale-105" title="Duyệt đánh giá"><i class="ri-checkbox-circle-line"></i></button>`;
+                                    html += `<button type="button" onclick="updateReviewStatus('${reviewId}', 'rejected')" class="bg-red-100 hover:bg-red-200 text-red-600 p-2 rounded-lg transition-all duration-200 transform hover:scale-105" title="Từ chối đánh giá"><i class="ri-close-circle-line"></i></button>`;
+                                }
+                                html += `<button type="button" onclick="deleteReview('${reviewId}')" class="bg-gray-100 hover:bg-gray-200 text-gray-600 p-2 rounded-lg transition-all duration-200 transform hover:scale-105" title="Xóa đánh giá"><i class="ri-delete-bin-line"></i></button>`;
+                                actionCell.innerHTML = html;
+                            }
+                        }
+                        showToast('Cập nhật trạng thái thành công', 'success');
+                    } else {
+                        alert(data.message || 'Có lỗi xảy ra');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Có lỗi xảy ra khi cập nhật trạng thái');
+                });
+            }
+        }
+
+        // Delete review
+        function deleteReview(reviewId) {
+            if (confirm('Bạn có chắc muốn xóa đánh giá này?')) {
+                fetch(`/admin/reviews/${reviewId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Xóa dòng review khỏi bảng
+                        const row = document.querySelector(`[data-review-id="${reviewId}"]`);
+                        if (row) row.remove();
+                        showToast('Đã xóa đánh giá thành công', 'success');
+                    } else {
+                        alert(data.message || 'Có lỗi xảy ra');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Có lỗi xảy ra khi xóa đánh giá');
+                });
+            }
+        }
+
+        // Show full comment modal
+        function showFullComment(reviewId) {
+            // Lấy thông tin review từ data attribute
+            const reviewRow = document.querySelector(`[data-review-id="${reviewId}"]`);
+            if (reviewRow) {
+                const rating = reviewRow.getAttribute('data-rating');
+                const comment = reviewRow.getAttribute('data-comment');
+                const createdAt = reviewRow.getAttribute('data-created-at');
+                
+                const modal = document.createElement('div');
+                modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+                modal.innerHTML = `
+                    <div class="bg-white rounded-xl p-6 max-w-md w-full mx-4">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">Nội dung đánh giá đầy đủ</h3>
+                            <button onclick="this.closest('.fixed').remove()" class="text-gray-400 hover:text-gray-600">
+                                <i class="ri-close-line text-xl"></i>
+                            </button>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="flex items-center space-x-1">
+                                ${Array.from({length: 5}, (_, i) => 
+                                    `<i class="ri-star-${i < rating ? 'fill' : 'line'} text-yellow-400"></i>`
+                                ).join('')}
+                                <span class="text-sm text-gray-500 ml-1">(${rating}/5)</span>
+                            </div>
+                            <p class="text-gray-700 whitespace-pre-wrap">${comment}</p>
+                            <div class="text-xs text-gray-500">
+                                Đánh giá vào: ${new Date(createdAt).toLocaleString('vi-VN')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+                
+                // Close modal when clicking outside
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        modal.remove();
+                    }
+                });
+            }
+        }
+
+        // Add hover effects for action buttons
+        document.addEventListener('DOMContentLoaded', function() {
+            const actionButtons = document.querySelectorAll('.transform');
+            
+            actionButtons.forEach(button => {
+                button.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.05)';
+                });
+                
+                button.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+        });
+    </script>
+
+<%- include('../includes/end.ejs') %>
+
+<style>
+  .overflow-x-auto::-webkit-scrollbar {
+    height: 6px;
+  }
+  .overflow-x-auto::-webkit-scrollbar-thumb {
+    background: #e0e7ef;
+    border-radius: 4px;
+  }
+  .overflow-x-auto::-webkit-scrollbar-track {
+    background: transparent;
+  }
+</style>
+
+
+

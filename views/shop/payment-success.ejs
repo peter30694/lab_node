@@ -1,0 +1,194 @@
+<%- include('../includes/head') %>
+
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <%- include('../includes/navigation', { user, isAdmin, isAuthenticated, path, cartCount }) %>
+
+<div class="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl mx-auto">
+        <!-- Header với icon thành công -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-6">
+                <svg class="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+            </div>
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">🎉 Đặt hàng thành công!</h1>
+            <p class="text-lg text-gray-600">Cảm ơn bạn đã đặt hàng tại Pet Store</p>
+        </div>
+
+        <!-- Card chính -->
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+            <!-- Header card -->
+            <div class="bg-gradient-to-r from-green-500 to-blue-600 px-6 py-8">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-2xl font-bold text-white">Thông tin đơn hàng</h2>
+                        <p class="text-green-100 mt-1">Mã đơn hàng: <span class="font-mono font-bold"><%= orderId %></span></p>
+                    </div>
+                    <div class="text-right">
+                        <div class="bg-white bg-opacity-20 rounded-lg px-4 py-2">
+                            <p class="text-white text-sm">Phương thức</p>
+                            <p class="text-white font-bold">COD</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nội dung card -->
+            <div class="p-6">
+                <!-- Thông tin thanh toán -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-blue-50 rounded-xl p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-900">Thanh toán</h3>
+                                <p class="text-sm text-gray-600">Thanh toán khi nhận hàng</p>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Trạng thái:</span>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                    Chờ xác nhận
+                                </span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Thời gian:</span>
+                                <span class="text-gray-900"><%= new Date().toLocaleString('vi-VN') %></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-green-50 rounded-xl p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-900">Email xác nhận</h3>
+                                <p class="text-sm text-gray-600">Đã gửi đến email của bạn</p>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-600">Vui lòng kiểm tra hộp thư và thư mục spam</p>
+                    </div>
+                </div>
+
+                <!-- Thông tin giao hàng -->
+                <div class="bg-gray-50 rounded-xl p-6 mb-8">
+                    <h3 class="font-semibold text-gray-900 mb-4 flex items-center">
+                        <svg class="w-5 h-5 text-gray-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                        Thông tin giao hàng
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-sm text-gray-600">Họ tên</p>
+                            <p class="font-medium text-gray-900"><%= order.shippingInfo?.name || 'N/A' %></p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">Điện thoại</p>
+                            <p class="font-medium text-gray-900"><%= order.shippingInfo?.phone || 'N/A' %></p>
+                        </div>
+                        <div class="md:col-span-2">
+                            <p class="text-sm text-gray-600">Địa chỉ</p>
+                            <p class="font-medium text-gray-900"><%= order.shippingInfo?.address || 'N/A' %></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hướng dẫn tiếp theo -->
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-8">
+                    <h3 class="font-semibold text-gray-900 mb-4">📋 Hướng dẫn tiếp theo</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="text-center">
+                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <h4 class="font-medium text-gray-900 text-sm">Xác nhận đơn hàng</h4>
+                            <p class="text-xs text-gray-600 mt-1">Trong 24 giờ</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                                </svg>
+                            </div>
+                            <h4 class="font-medium text-gray-900 text-sm">Giao hàng</h4>
+                            <p class="text-xs text-gray-600 mt-1">2-3 ngày làm việc</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <h4 class="font-medium text-gray-900 text-sm">Thanh toán</h4>
+                            <p class="text-xs text-gray-600 mt-1">Khi nhận hàng</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nút hành động -->
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="/auth/orders" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl transition duration-200 flex items-center justify-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                        </svg>
+                        Xem đơn hàng
+                    </a>
+                    <a href="/" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 px-6 rounded-xl transition duration-200 flex items-center justify-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                        </svg>
+                        Về trang chủ
+                    </a>
+                </div>
+
+                <!-- Thông tin bổ sung -->
+                <div class="mt-8 pt-6 border-t border-gray-200">
+                    <h4 class="font-semibold text-gray-900 mb-3">📝 Lưu ý quan trọng</h4>
+                    <div class="bg-yellow-50 rounded-xl p-4">
+                        <ul class="space-y-2 text-sm text-gray-700">
+                            <li class="flex items-start">
+                                <span class="text-yellow-600 mr-2">•</span>
+                                Đơn hàng sẽ được xử lý trong vòng 24 giờ
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-yellow-600 mr-2">•</span>
+                                Nhân viên sẽ liên hệ để xác nhận đơn hàng
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-yellow-600 mr-2">•</span>
+                                Thanh toán khi nhận hàng (COD)
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-yellow-600 mr-2">•</span>
+                                Kiểm tra hàng trước khi thanh toán
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center mt-8">
+            <p class="text-gray-500 text-sm">Cần hỗ trợ? Liên hệ: <span class="text-blue-600 font-medium">1900-xxxx</span></p>
+        </div>
+    </div>
+</div>
+
+</body>
+<%- include('../includes/end') %>

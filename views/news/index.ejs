@@ -1,0 +1,214 @@
+<%- include('../includes/head') %>
+<body class="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 font-roboto flex flex-col min-h-screen">
+  <%- include('../includes/navigation') %>
+
+  <!-- Enhanced Hero Section -->
+  <section class="relative bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 text-white py-20 overflow-hidden">
+    <!-- Background Pattern -->
+    <div class="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20"></div>
+    <div class="absolute top-0 left-0 w-full h-full bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.1"%3E%3Ccircle cx="30" cy="30" r="2"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-30"></div>
+    
+    <div class="container mx-auto px-4 text-center relative z-10">
+      <div class="mb-8">
+        <div class="w-24 h-24 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500">
+          <i class="ri-newspaper-line text-4xl text-white group-hover:animate-pulse"></i>
+        </div>
+      </div>
+      
+      <h1 class="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent leading-tight">
+        Tin Tức Pet Store
+      </h1>
+      <p class="text-xl md:text-2xl mb-8 max-w-4xl mx-auto text-blue-100 leading-relaxed">
+        Cập nhật những tin tức mới nhất về thú cưng, sản phẩm và dịch vụ tại Pet Store
+      </p>
+      
+      <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-6">
+        <a href="#news" 
+           class="group bg-white/95 backdrop-blur-sm text-blue-600 px-8 py-4 rounded-2xl font-semibold hover:bg-white hover:shadow-2xl transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2">
+          <i class="ri-article-line text-xl group-hover:animate-bounce"></i>
+          <span>Xem tin tức</span>
+        </a>
+        <a href="/services" 
+           class="group border-2 border-white/80 text-white px-8 py-4 rounded-2xl font-semibold hover:bg-white hover:text-blue-600 transition-all duration-300 transform hover:scale-105 backdrop-blur-sm flex items-center justify-center space-x-2">
+          <i class="ri-service-line text-xl group-hover:animate-pulse"></i>
+          <span>Dịch vụ</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Enhanced News Grid -->
+  <section id="news" class="py-16 relative">
+    <div class="container mx-auto px-4">
+      <!-- Enhanced Results Info -->
+      <div class="mb-12 text-center">
+        <div class="inline-flex items-center space-x-3 bg-white/80 backdrop-blur-sm rounded-2xl px-8 py-4 shadow-lg border border-white/50 mb-6">
+          <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+            <i class="ri-newspaper-line text-2xl text-white"></i>
+          </div>
+          <div class="text-left">
+            <h2 class="text-3xl font-bold text-gray-800 leading-tight">Tin tức mới nhất</h2>
+            <p class="text-gray-600 font-medium">
+              <% if (news && news.length > 0) { %>
+                Tìm thấy <%= news.length %> bài viết
+              <% } else { %>
+                Chưa có tin tức nào
+              <% } %>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Enhanced News Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <% if (news && news.length > 0) { %>
+          <% news.forEach(article => { %>
+            <article class="group bg-white rounded-3xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-4 border border-gray-100 flex flex-col h-full">
+              <!-- Enhanced Article Image -->
+              <div class="relative h-72 overflow-hidden">
+                <% if (article.imageUrl) { %>
+                  <img src="<%= article.imageUrl %>" alt="<%= article.title %>" 
+                       class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                <% } else { %>
+                  <div class="w-full h-full bg-gradient-to-br from-blue-400 via-purple-500 to-indigo-600 flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
+                    <i class="ri-newspaper-line text-6xl text-white group-hover:animate-pulse"></i>
+                  </div>
+                <% } %>
+                
+                <!-- Enhanced Category Badge -->
+                <div class="absolute top-6 left-6">
+                  <span class="bg-white/95 backdrop-blur-sm text-gray-800 px-4 py-2 rounded-full text-sm font-semibold shadow-lg border border-white/50 group-hover:bg-blue-500 group-hover:text-white transition-all duration-300 flex items-center space-x-2">
+                    <i class="ri-price-tag-3-line"></i>
+                    <span><%= article.category || 'Tin tức' %></span>
+                  </span>
+                </div>
+                
+                <!-- Enhanced Views Badge -->
+                <div class="absolute top-6 right-6">
+                  <span class="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold flex items-center shadow-lg group-hover:scale-110 transition-all duration-300">
+                    <i class="ri-eye-line mr-2"></i>
+                    <span><%= article.views || 0 %></span>
+                  </span>
+                </div>
+                
+                <!-- Overlay Gradient -->
+                <div class="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
+              </div>
+              
+              <!-- Enhanced Article Content -->
+              <div class="p-8 flex flex-col flex-grow">
+                <div class="flex items-center text-sm text-gray-500 mb-4 bg-gray-50 rounded-xl px-4 py-2">
+                  <i class="ri-calendar-line mr-2 text-blue-500"></i>
+                  <span class="font-medium"><%= new Date(article.createdAt).toLocaleDateString('vi-VN') %></span>
+                </div>
+                
+                <h3 class="text-xl font-bold text-gray-800 mb-4 line-clamp-2 leading-tight group-hover:text-blue-600 transition-colors duration-300">
+                  <a href="/news/<%= article._id %>" class="hover:text-blue-600 transition-colors">
+                    <%= article.title %>
+                  </a>
+                </h3>
+                
+                <p class="text-gray-600 text-sm mb-6 line-clamp-3 leading-relaxed flex-grow">
+                  <%= article.summary || article.content.substring(0, 150) + '...' %>
+                </p>
+                
+                <div class="flex items-center justify-between mt-auto">
+                  <a href="/news/<%= article._id %>" 
+                     class="group/btn bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center space-x-2">
+                    <i class="ri-arrow-right-line group-hover/btn:translate-x-1 transition-transform"></i>
+                    <span>Đọc thêm</span>
+                  </a>
+                  <div class="text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full font-medium">
+                    <i class="ri-user-line mr-1 text-blue-500"></i>
+                    <%= article.author || 'Pet Store' %>
+                  </div>
+                </div>
+              </div>
+            </article>
+          <% }) %>
+        <% } else { %>
+          <!-- Enhanced Empty State -->
+          <div class="col-span-full text-center py-20">
+            <div class="max-w-lg mx-auto">
+              <div class="w-32 h-32 bg-gradient-to-br from-gray-200 to-gray-300 rounded-full flex items-center justify-center mx-auto mb-8 group-hover:scale-110 transition-transform">
+                <i class="ri-newspaper-line text-6xl text-gray-400 group-hover:animate-pulse"></i>
+              </div>
+              <h3 class="text-3xl font-bold text-gray-500 mb-4 leading-tight">Chưa có tin tức nào</h3>
+              <p class="text-gray-400 mb-8 text-lg leading-relaxed">
+                Hãy quay lại sau để xem những tin tức mới nhất về thú cưng!
+              </p>
+              <a href="/news" 
+                 class="group bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl inline-flex items-center space-x-2">
+                <i class="ri-refresh-line group-hover:animate-spin"></i>
+                <span>Làm mới trang</span>
+              </a>
+            </div>
+          </div>
+        <% } %>
+      </div>
+
+      <!-- Enhanced Pagination -->
+      <% if (totalPages > 1) { %>
+        <div class="flex justify-center mt-16">
+          <nav class="flex items-center space-x-3 bg-white/80 backdrop-blur-sm rounded-2xl p-4 shadow-lg border border-white/50">
+            <% if (currentPage > 1) { %>
+              <a href="/news?page=<%= currentPage - 1 %>" 
+                 class="group w-12 h-12 bg-white border border-gray-200 rounded-xl hover:bg-blue-50 hover:border-blue-300 transition-all duration-300 flex items-center justify-center shadow-sm hover:shadow-md">
+                <i class="ri-arrow-left-line text-gray-600 group-hover:text-blue-600 transition-colors"></i>
+              </a>
+            <% } %>
+            
+            <% for (let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) { %>
+              <% if (i === currentPage) { %>
+                <span class="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold flex items-center justify-center shadow-lg">
+                  <%= i %>
+                </span>
+              <% } else { %>
+                <a href="/news?page=<%= i %>" 
+                   class="group w-12 h-12 bg-white border border-gray-200 rounded-xl hover:bg-blue-50 hover:border-blue-300 transition-all duration-300 flex items-center justify-center shadow-sm hover:shadow-md">
+                  <span class="text-gray-600 group-hover:text-blue-600 font-medium transition-colors"><%= i %></span>
+                </a>
+              <% } %>
+            <% } %>
+            
+            <% if (currentPage < totalPages) { %>
+              <a href="/news?page=<%= currentPage + 1 %>" 
+                 class="group w-12 h-12 bg-white border border-gray-200 rounded-xl hover:bg-blue-50 hover:border-blue-300 transition-all duration-300 flex items-center justify-center shadow-sm hover:shadow-md">
+                <i class="ri-arrow-right-line text-gray-600 group-hover:text-blue-600 transition-colors"></i>
+              </a>
+            <% } %>
+          </nav>
+        </div>
+      <% } %>
+    </div>
+  </section>
+
+  <!-- Enhanced Call to Action -->
+  <section class="py-16 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+    <div class="container mx-auto px-4 text-center">
+      <div class="max-w-4xl mx-auto">
+        <h2 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+          Theo dõi tin tức mới nhất
+        </h2>
+        <p class="text-xl mb-8 text-blue-100 leading-relaxed">
+          Đăng ký nhận thông báo để không bỏ lỡ những tin tức mới nhất về thú cưng
+        </p>
+        <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-6">
+          <a href="/newsletter" 
+             class="group bg-white/95 backdrop-blur-sm text-blue-600 px-8 py-4 rounded-2xl font-semibold hover:bg-white hover:shadow-2xl transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2">
+            <i class="ri-mail-line text-xl group-hover:animate-bounce"></i>
+            <span>Đăng ký newsletter</span>
+          </a>
+          <a href="/contact" 
+             class="group border-2 border-white/80 text-white px-8 py-4 rounded-2xl font-semibold hover:bg-white hover:text-blue-600 transition-all duration-300 transform hover:scale-105 backdrop-blur-sm flex items-center justify-center space-x-2">
+            <i class="ri-customer-service-line text-xl group-hover:animate-pulse"></i>
+            <span>Liên hệ</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <%- include('../includes/end') %>
+</body>
+</html>

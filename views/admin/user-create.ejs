@@ -1,0 +1,644 @@
+<%- include('../includes/head') %>
+<body class="bg-gray-50 min-h-screen">
+    <%- include('../includes/navigation-admin') %>
+    
+    <main class="ml-64 min-h-screen bg-gray-50 py-8 px-4 pb-24">
+        <div class="max-w-6xl mx-auto">
+        <!-- Header Section -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-teal-600 rounded-xl flex items-center justify-center">
+                        <i class="ri-user-add-line text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Thêm người dùng mới</h1>
+                        <p class="text-gray-600 mt-1">Tạo tài khoản mới cho người dùng</p>
+                    </div>
+                </div>
+                <a href="/admin/accounts" class="inline-flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-3 rounded-xl font-medium hover:bg-gray-200 transition-all duration-200 hover:shadow-md">
+                    <i class="ri-arrow-left-line"></i>
+                    <span class="hidden sm:inline">Quay lại</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Main Form Section -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                    <!-- Form Header -->
+                    <div class="bg-gradient-to-r from-green-500 to-teal-600 px-6 py-4">
+                        <h2 class="text-white font-semibold text-lg">Thông tin cơ bản</h2>
+                        <p class="text-green-100 text-sm mt-1">Điền đầy đủ thông tin để tạo tài khoản mới</p>
+                    </div>
+
+                    <div class="p-6">
+                        <% if (error) { %>
+                            <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
+                                <div class="flex items-center gap-2">
+                                    <i class="ri-error-warning-line text-red-500"></i>
+                                    <span class="text-red-700 font-medium"><%= error %></span>
+                                </div>
+                            </div>
+                        <% } %>
+
+                        <% if (success) { %>
+                            <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl">
+                                <div class="flex items-center gap-2">
+                                    <i class="ri-check-line text-green-500"></i>
+                                    <span class="text-green-700 font-medium"><%= success %></span>
+                                </div>
+                            </div>
+                        <% } %>
+
+                        <form action="/admin/accounts/create" method="POST" class="space-y-6">
+                            <!-- Basic Information -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="space-y-2">
+                                    <label for="name" class="block text-sm font-semibold text-gray-700">
+                                        <i class="ri-user-line mr-2 text-blue-500"></i>
+                                        Họ và tên
+                                    </label>
+                                    <input 
+                                        type="text" 
+                                        name="name" 
+                                        value="<%= oldInput.name %>" 
+                                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white" 
+                                        placeholder="Nhập họ và tên..."
+                                        required
+                                    >
+                                </div>
+
+                                <div class="space-y-2">
+                                    <label for="email" class="block text-sm font-semibold text-gray-700">
+                                        <i class="ri-mail-line mr-2 text-green-500"></i>
+                                        Email
+                                    </label>
+                                    <input 
+                                        type="email" 
+                                        name="email" 
+                                        value="<%= oldInput.email %>" 
+                                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white" 
+                                        placeholder="example@email.com"
+                                        required
+                                    >
+                                </div>
+                            </div>
+
+                            <!-- Contact Information -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="space-y-2">
+                                    <label for="phone" class="block text-sm font-semibold text-gray-700">
+                                        <i class="ri-phone-line mr-2 text-blue-500"></i>
+                                        Số điện thoại
+                                    </label>
+                                    <input 
+                                        type="tel" 
+                                        name="phone" 
+                                        value="<%= oldInput.phone || '' %>" 
+                                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white" 
+                                        placeholder="0123456789"
+                                    >
+                                </div>
+
+                                <div class="space-y-2">
+                                    <label for="address" class="block text-sm font-semibold text-gray-700">
+                                        <i class="ri-map-pin-line mr-2 text-green-500"></i>
+                                        Địa chỉ
+                                    </label>
+                                    <input 
+                                        type="text" 
+                                        name="address" 
+                                        value="<%= oldInput.address || '' %>" 
+                                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white" 
+                                        placeholder="Nhập địa chỉ..."
+                                    >
+                                </div>
+                            </div>
+
+                            <!-- Password Section -->
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <label for="password" class="block text-sm font-semibold text-gray-700">
+                                        <i class="ri-lock-line mr-2 text-orange-500"></i>
+                                        Mật khẩu
+                                    </label>
+                                    <div class="flex items-center gap-2">
+                                        <button 
+                                            type="button" 
+                                            onclick="generatePassword()"
+                                            class="text-xs bg-orange-100 text-orange-700 px-3 py-1 rounded-lg hover:bg-orange-200 transition-colors duration-200"
+                                        >
+                                            <i class="ri-magic-line mr-1"></i>
+                                            Tạo mật khẩu
+                                        </button>
+                                        <button 
+                                            type="button" 
+                                            onclick="togglePasswordVisibility()"
+                                            class="text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded-lg hover:bg-gray-200 transition-colors duration-200"
+                                        >
+                                            <i class="ri-eye-line mr-1" id="passwordToggleIcon"></i>
+                                            Hiện/Ẩn
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="relative">
+                                    <input 
+                                        type="password" 
+                                        name="password" 
+                                        id="password"
+                                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white" 
+                                        placeholder="Nhập mật khẩu..."
+                                        minlength="6"
+                                        required
+                                    >
+                                    <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-gray-400">
+                                        <span id="passwordStrength">Yếu</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2 text-xs text-gray-500">
+                                    <span>Mật khẩu phải có ít nhất 6 ký tự</span>
+                                    <span id="passwordLength">0</span>
+                                </div>
+                            </div>
+
+                            <!-- Role and Status -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="space-y-2">
+                                    <label for="role" class="block text-sm font-semibold text-gray-700">
+                                        <i class="ri-shield-user-line mr-2 text-purple-500"></i>
+                                        Vai trò
+                                    </label>
+                                    <select 
+                                        name="role" 
+                                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white"
+                                    >
+                                        <option value="user" <%= oldInput.role === 'user' ? 'selected' : '' %>>👤 Người dùng</option>
+                                        <option value="admin" <%= oldInput.role === 'admin' ? 'selected' : '' %>>👑 Quản trị viên</option>
+                                    </select>
+                                </div>
+
+                                <div class="space-y-2">
+                                    <label class="block text-sm font-semibold text-gray-700">
+                                        <i class="ri-toggle-line mr-2 text-orange-500"></i>
+                                        Trạng thái tài khoản
+                                    </label>
+                                    <div class="flex items-center gap-3">
+                                        <label class="flex items-center gap-2 cursor-pointer">
+                                            <input 
+                                                type="radio" 
+                                                name="status" 
+                                                value="active" 
+                                                checked
+                                                class="text-blue-500 focus:ring-blue-500"
+                                            >
+                                            <span class="text-sm">Hoạt động</span>
+                                        </label>
+                                        <label class="flex items-center gap-2 cursor-pointer">
+                                            <input 
+                                                type="radio" 
+                                                name="status" 
+                                                value="suspended" 
+                                                class="text-red-500 focus:ring-red-500"
+                                            >
+                                            <span class="text-sm">Tạm khóa</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Additional Options -->
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <label class="block text-sm font-semibold text-gray-700">
+                                        <i class="ri-settings-line mr-2 text-indigo-500"></i>
+                                        Tùy chọn bổ sung
+                                    </label>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <label class="flex items-center gap-3 p-3 rounded-xl bg-blue-50 hover:bg-blue-100 transition-colors duration-200 cursor-pointer">
+                                        <input 
+                                            type="checkbox" 
+                                            name="sendWelcomeEmail" 
+                                            value="true"
+                                            class="text-blue-500 focus:ring-blue-500"
+                                        >
+                                        <div>
+                                            <span class="text-sm font-medium text-blue-700">Gửi email chào mừng</span>
+                                            <p class="text-xs text-blue-600">Gửi email chào mừng với thông tin đăng nhập</p>
+                                        </div>
+                                    </label>
+                                    <label class="flex items-center gap-3 p-3 rounded-xl bg-green-50 hover:bg-green-100 transition-colors duration-200 cursor-pointer">
+                                        <input 
+                                            type="checkbox" 
+                                            name="sendCredentials" 
+                                            value="true"
+                                            class="text-green-500 focus:ring-green-500"
+                                        >
+                                        <div>
+                                            <span class="text-sm font-medium text-green-700">Gửi thông tin đăng nhập</span>
+                                            <p class="text-xs text-green-600">Gửi email chứa thông tin đăng nhập</p>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-gray-200">
+                                <div class="flex items-center gap-2 text-sm text-gray-500">
+                                    <i class="ri-information-line"></i>
+                                    <span>Tài khoản sẽ được tạo ngay lập tức</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <a href="/admin/accounts" class="px-6 py-3 rounded-xl bg-gray-100 text-gray-700 font-medium hover:bg-gray-200 transition-all duration-200 hover:shadow-md">
+                                        <i class="ri-close-line mr-2"></i>
+                                        Huỷ
+                                    </a>
+                                    <button 
+                                        type="submit" 
+                                        class="px-6 py-3 rounded-xl bg-gradient-to-r from-green-500 to-teal-600 text-white font-semibold hover:from-green-600 hover:to-teal-700 transition-all duration-200 hover:shadow-lg transform hover:scale-105 flex items-center gap-2"
+                                    >
+                                        <i class="ri-user-add-line"></i>
+                                        Tạo người dùng
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar Section -->
+            <div class="space-y-6">
+                <!-- Quick Actions -->
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                    <div class="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-4">
+                        <h2 class="text-white font-semibold text-lg">Thao tác nhanh</h2>
+                    </div>
+                    <div class="p-6">
+                        <div class="space-y-3">
+                            <button onclick="openBulkImportModal()" class="w-full flex items-center gap-3 p-3 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors duration-200">
+                                <i class="ri-upload-line text-lg"></i>
+                                <span class="text-sm font-medium">Import hàng loạt</span>
+                            </button>
+                            <button onclick="downloadTemplate()" class="w-full flex items-center gap-3 p-3 rounded-xl bg-green-50 text-green-700 hover:bg-green-100 transition-colors duration-200">
+                                <i class="ri-download-line text-lg"></i>
+                                <span class="text-sm font-medium">Tải template Excel</span>
+                            </button>
+                            <button onclick="openQuickCreateModal()" class="w-full flex items-center gap-3 p-3 rounded-xl bg-purple-50 text-purple-700 hover:bg-purple-100 transition-colors duration-200">
+                                <i class="ri-add-line text-lg"></i>
+                                <span class="text-sm font-medium">Tạo nhanh</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Guidelines -->
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                    <div class="bg-gradient-to-r from-yellow-500 to-orange-600 px-6 py-4">
+                        <h2 class="text-white font-semibold text-lg">Hướng dẫn</h2>
+                    </div>
+                    <div class="p-6">
+                        <div class="space-y-4">
+                            <div class="flex items-start gap-3">
+                                <div class="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs font-bold">1</div>
+                                <div>
+                                    <h4 class="text-sm font-semibold text-gray-800">Thông tin bắt buộc</h4>
+                                    <p class="text-xs text-gray-600">Họ tên, email và mật khẩu là bắt buộc</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <div class="w-6 h-6 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-xs font-bold">2</div>
+                                <div>
+                                    <h4 class="text-sm font-semibold text-gray-800">Mật khẩu an toàn</h4>
+                                    <p class="text-xs text-gray-600">Sử dụng ít nhất 6 ký tự, bao gồm chữ hoa, số</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <div class="w-6 h-6 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center text-xs font-bold">3</div>
+                                <div>
+                                    <h4 class="text-sm font-semibold text-gray-800">Email chào mừng</h4>
+                                    <p class="text-xs text-gray-600">Gửi email chào mừng để tăng trải nghiệm người dùng</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics -->
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                    <div class="bg-gradient-to-r from-teal-500 to-cyan-600 px-6 py-4">
+                        <h2 class="text-white font-semibold text-lg">Thống kê</h2>
+                    </div>
+                    <div class="p-6">
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between py-2 border-b border-gray-100">
+                                <span class="text-sm text-gray-600">Tổng người dùng:</span>
+                                <span class="text-sm font-medium text-teal-600" id="totalUsers">-</span>
+                            </div>
+                            <div class="flex items-center justify-between py-2 border-b border-gray-100">
+                                <span class="text-sm text-gray-600">Người dùng mới (tháng):</span>
+                                <span class="text-sm font-medium text-green-600" id="newUsers">-</span>
+                            </div>
+                            <div class="flex items-center justify-between py-2">
+                                <span class="text-sm text-gray-600">Admin:</span>
+                                <span class="text-sm font-medium text-purple-600" id="adminCount">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </main>
+
+    <!-- Bulk Import Modal -->
+    <div id="bulkImportModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-2xl p-6 max-w-md w-full mx-4">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-800">Import người dùng hàng loạt</h3>
+                <button onclick="closeBulkImportModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="ri-close-line text-xl"></i>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-blue-400 transition-colors duration-200">
+                    <input type="file" id="bulkImportFile" accept=".xlsx,.xls,.csv" class="hidden">
+                    <label for="bulkImportFile" class="cursor-pointer">
+                        <i class="ri-upload-line text-3xl text-gray-400 mb-2"></i>
+                        <p class="text-sm text-gray-600">Chọn file Excel hoặc CSV</p>
+                        <p class="text-xs text-gray-500 mt-1">Hỗ trợ: .xlsx, .xls, .csv</p>
+                    </label>
+                </div>
+                <div class="flex justify-end gap-2">
+                    <button onclick="closeBulkImportModal()" class="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 transition">
+                        Huỷ
+                    </button>
+                    <button onclick="uploadBulkFile()" class="px-4 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition">
+                        Import
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Create Modal -->
+    <div id="quickCreateModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-2xl p-6 max-w-md w-full mx-4">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-800">Tạo người dùng nhanh</h3>
+                <button onclick="closeQuickCreateModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="ri-close-line text-xl"></i>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Email</label>
+                    <input type="email" id="quickEmail" class="w-full border border-gray-300 rounded-lg px-3 py-2" placeholder="email@example.com">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Vai trò</label>
+                    <select id="quickRole" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                        <option value="user">Người dùng</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <div class="flex justify-end gap-2">
+                    <button onclick="closeQuickCreateModal()" class="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 transition">
+                        Huỷ
+                    </button>
+                    <button onclick="quickCreateUser()" class="px-4 py-2 rounded-lg bg-green-500 text-white hover:bg-green-600 transition">
+                        Tạo nhanh
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Password generation
+        function generatePassword() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+            let password = '';
+            for (let i = 0; i < 12; i++) {
+                password += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            document.getElementById('password').value = password;
+            updatePasswordStrength(password);
+        }
+
+        // Password visibility toggle
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('password');
+            const icon = document.getElementById('passwordToggleIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('ri-eye-line');
+                icon.classList.add('ri-eye-off-line');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('ri-eye-off-line');
+                icon.classList.add('ri-eye-line');
+            }
+        }
+
+        // Password strength checker
+        function updatePasswordStrength(password) {
+            const strengthElement = document.getElementById('passwordStrength');
+            const lengthElement = document.getElementById('passwordLength');
+            
+            lengthElement.textContent = password.length;
+            
+            let strength = 0;
+            if (password.length >= 6) strength++;
+            if (password.match(/[a-z]/)) strength++;
+            if (password.match(/[A-Z]/)) strength++;
+            if (password.match(/[0-9]/)) strength++;
+            if (password.match(/[^a-zA-Z0-9]/)) strength++;
+            
+            let strengthText = '';
+            let strengthColor = '';
+            
+            switch (strength) {
+                case 0:
+                case 1:
+                    strengthText = 'Rất yếu';
+                    strengthColor = 'text-red-500';
+                    break;
+                case 2:
+                    strengthText = 'Yếu';
+                    strengthColor = 'text-orange-500';
+                    break;
+                case 3:
+                    strengthText = 'Trung bình';
+                    strengthColor = 'text-yellow-500';
+                    break;
+                case 4:
+                    strengthText = 'Mạnh';
+                    strengthColor = 'text-blue-500';
+                    break;
+                case 5:
+                    strengthText = 'Rất mạnh';
+                    strengthColor = 'text-green-500';
+                    break;
+            }
+            
+            strengthElement.textContent = strengthText;
+            strengthElement.className = `text-xs ${strengthColor}`;
+        }
+
+        // Password input event listener
+        document.getElementById('password').addEventListener('input', function() {
+            updatePasswordStrength(this.value);
+        });
+
+        // Form validation
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const name = document.querySelector('input[name="name"]').value.trim();
+            const email = document.querySelector('input[name="email"]').value.trim();
+            const password = document.getElementById('password').value;
+            
+            if (!name || !email || !password) {
+                e.preventDefault();
+                showToast('Vui lòng điền đầy đủ thông tin bắt buộc', 'error');
+                return;
+            }
+            
+            if (password.length < 6) {
+                e.preventDefault();
+                showToast('Mật khẩu phải có ít nhất 6 ký tự', 'error');
+                return;
+            }
+            
+            if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+                e.preventDefault();
+                showToast('Email không hợp lệ', 'error');
+                return;
+            }
+        });
+
+        // Modal functions
+        function openBulkImportModal() {
+            document.getElementById('bulkImportModal').classList.remove('hidden');
+            document.getElementById('bulkImportModal').classList.add('flex');
+        }
+
+        function closeBulkImportModal() {
+            document.getElementById('bulkImportModal').classList.add('hidden');
+            document.getElementById('bulkImportModal').classList.remove('flex');
+        }
+
+        function openQuickCreateModal() {
+            document.getElementById('quickCreateModal').classList.remove('hidden');
+            document.getElementById('quickCreateModal').classList.add('flex');
+        }
+
+        function closeQuickCreateModal() {
+            document.getElementById('quickCreateModal').classList.add('hidden');
+            document.getElementById('quickCreateModal').classList.remove('flex');
+        }
+
+        // Download template
+        function downloadTemplate() {
+            const csvContent = 'Name,Email,Phone,Address,Role,Status\nJohn Doe,john@example.com,0123456789,123 Main St,user,active\nJane Smith,jane@example.com,0987654321,456 Oak Ave,admin,active';
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'user_template.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+            showToast('Template đã được tải xuống', 'success');
+        }
+
+        // Upload bulk file
+        function uploadBulkFile() {
+            const fileInput = document.getElementById('bulkImportFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showToast('Vui lòng chọn file', 'error');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            fetch('/admin/accounts/bulk-import', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast(`Đã import thành công ${data.count} người dùng`, 'success');
+                    closeBulkImportModal();
+                } else {
+                    showToast(data.message || 'Có lỗi xảy ra', 'error');
+                }
+            })
+            .catch(error => {
+                showToast('Có lỗi xảy ra khi upload file', 'error');
+            });
+        }
+
+        // Quick create user
+        function quickCreateUser() {
+            const email = document.getElementById('quickEmail').value.trim();
+            const role = document.getElementById('quickRole').value;
+            
+            if (!email) {
+                showToast('Vui lòng nhập email', 'error');
+                return;
+            }
+            
+            if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+                showToast('Email không hợp lệ', 'error');
+                return;
+            }
+            
+            fetch('/admin/accounts/quick-create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ email, role })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('Tạo người dùng thành công', 'success');
+                    closeQuickCreateModal();
+                    // Reload page to show new user
+                    setTimeout(() => window.location.reload(), 1000);
+                } else {
+                    showToast(data.message || 'Có lỗi xảy ra', 'error');
+                }
+            })
+            .catch(error => {
+                showToast('Có lỗi xảy ra khi tạo người dùng', 'error');
+            });
+        }
+
+        // Load statistics on page load
+        window.addEventListener('load', function() {
+            fetch('/admin/accounts/statistics')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('totalUsers').textContent = data.totalUsers || 0;
+                document.getElementById('newUsers').textContent = data.newUsers || 0;
+                document.getElementById('adminCount').textContent = data.adminCount || 0;
+            })
+            .catch(error => {
+                console.error('Error loading statistics:', error);
+            });
+        });
+    </script>
+
+<%- include('../includes/end.ejs') %> 
+
+
+

@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= pageTitle %></title>
+    <style>
+        @media print {
+            body { margin: 0; padding: 20px; }
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+        }
+        
+        @media screen {
+            .print-only { display: none; }
+            body { 
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                margin: 20px;
+                background: #f5f5f5;
+            }
+            .print-container {
+                max-width: 800px;
+                margin: 0 auto;
+                background: white;
+                padding: 30px;
+                border-radius: 8px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            }
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Times New Roman', serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #333;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .company-name {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .company-info {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .order-title {
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+            text-transform: uppercase;
+        }
+        
+        .order-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .info-section {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        
+        .info-section h3 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .info-label {
+            font-weight: bold;
+            color: #555;
+        }
+        
+        .info-value {
+            text-align: right;
+        }
+        
+        .products-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        .products-table th,
+        .products-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        .products-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        
+        .products-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        .product-image {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        
+        .total-section {
+            margin-top: 30px;
+            border-top: 2px solid #333;
+            padding-top: 20px;
+        }
+        
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .total-row.final {
+            font-size: 18px;
+            font-weight: bold;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+        
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .status-pending { background-color: #fff3cd; color: #856404; }
+        .status-confirmed { background-color: #d1ecf1; color: #0c5460; }
+        .status-shipping { background-color: #d4edda; color: #155724; }
+        .status-delivered { background-color: #c3e6cb; color: #155724; }
+        .status-cancelled { background-color: #f5c6cb; color: #721c24; }
+        
+        .payment-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .payment-pending { background-color: #fff3cd; color: #856404; }
+        .payment-paid { background-color: #d4edda; color: #155724; }
+        .payment-failed { background-color: #f5c6cb; color: #721c24; }
+        .payment-refunded { background-color: #f8d7da; color: #721c24; }
+        
+        .print-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 20px 0;
+        }
+        
+        .print-button:hover {
+            background: #0056b3;
+        }
+        
+        .back-button {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 20px 10px 20px 0;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .back-button:hover {
+            background: #545b62;
+        }
+    </style>
+</head>
+<body>
+    <div class="print-container">
+        <!-- Print Controls -->
+        <div class="no-print" style="text-align: center; margin-bottom: 20px;">
+            <button class="print-button" onclick="window.print()">🖨️ In đơn hàng</button>
+            <a href="/admin/orders/<%= order._id %>" class="back-button">← Quay lại</a>
+        </div>
+        
+        <!-- Header -->
+        <div class="header">
+            <div class="company-name">PET SHOP</div>
+            <div class="company-info">
+                Địa chỉ: 123 Đường ABC, Quận 1, TP.HCM<br>
+                Điện thoại: 0123 456 789 | Email: info@petshop.com<br>
+                Website: www.petshop.com
+            </div>
+        </div>
+        
+        <!-- Order Title -->
+        <div class="order-title">
+            Hóa đơn đơn hàng #<%= order._id %>
+        </div>
+        
+        <!-- Order Information -->
+        <div class="order-info">
+            <div class="info-section">
+                <h3>Thông tin khách hàng</h3>
+                <div class="info-row">
+                    <span class="info-label">Tên:</span>
+                    <span class="info-value"><%= order.shippingInfo.name %></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Email:</span>
+                    <span class="info-value"><%= order.shippingInfo.email %></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Điện thoại:</span>
+                    <span class="info-value"><%= order.shippingInfo.phone %></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Địa chỉ:</span>
+                    <span class="info-value"><%= order.shippingInfo.address %></span>
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <h3>Thông tin đơn hàng</h3>
+                <div class="info-row">
+                    <span class="info-label">Mã đơn hàng:</span>
+                    <span class="info-value">#<%= order._id %></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Ngày đặt:</span>
+                    <span class="info-value"><%= new Date(order.createdAt).toLocaleDateString('vi-VN') %></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Trạng thái:</span>
+                    <span class="info-value">
+                        <span class="status-badge status-<%= order.status %>">
+                            <%= order.status === 'pending' ? 'Chờ xử lý' :
+                               order.status === 'confirmed' ? 'Đã xác nhận' :
+                               order.status === 'shipping' ? 'Đang giao' :
+                               order.status === 'delivered' ? 'Đã giao' :
+                               order.status === 'cancelled' ? 'Đã hủy' : order.status %>
+                        </span>
+                    </span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Thanh toán:</span>
+                    <span class="info-value">
+                        <span class="payment-status payment-<%= order.paymentStatus %>">
+                            <%= order.paymentStatus === 'pending' ? 'Chờ thanh toán' :
+                               order.paymentStatus === 'paid' ? 'Đã thanh toán' :
+                               order.paymentStatus === 'failed' ? 'Thanh toán thất bại' :
+                               order.paymentStatus === 'refunded' ? 'Đã hoàn tiền' : order.paymentStatus %>
+                        </span>
+                    </span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Phương thức:</span>
+                    <span class="info-value"><%= order.paymentMethod || 'N/A' %></span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Products Table -->
+        <table class="products-table">
+            <thead>
+                <tr>
+                    <th style="width: 60px;">Hình ảnh</th>
+                    <th>Sản phẩm</th>
+                    <th style="text-align: center;">Số lượng</th>
+                    <th style="text-align: right;">Đơn giá</th>
+                    <th style="text-align: right;">Thành tiền</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% order.items.forEach(item => { %>
+                <tr>
+                    <td style="text-align: center;">
+                        <img src="<%= item.image %>" alt="<%= item.title %>" class="product-image">
+                    </td>
+                    <td>
+                        <strong><%= item.title %></strong><br>
+                        <small style="color: #666;"><%= item.category %></small>
+                    </td>
+                    <td style="text-align: center;"><%= item.quantity %></td>
+                    <td style="text-align: right;"><%= item.price.toLocaleString('vi-VN') %> ₫</td>
+                    <td style="text-align: right;"><%= (item.price * item.quantity).toLocaleString('vi-VN') %> ₫</td>
+                </tr>
+                <% }); %>
+            </tbody>
+        </table>
+        
+        <!-- Totals -->
+        <div class="total-section">
+            <div class="total-row">
+                <span>Tạm tính:</span>
+                                        <span><%= (order.totalPrice || 0).toLocaleString('vi-VN') %> ₫</span>
+            </div>
+            <% if (order.shippingFee && order.shippingFee > 0) { %>
+            <div class="total-row">
+                <span>Phí vận chuyển:</span>
+                <span><%= order.shippingFee.toLocaleString('vi-VN') %> ₫</span>
+            </div>
+            <% } %>
+            <% if (order.discount && order.discount > 0) { %>
+            <div class="total-row">
+                <span>Giảm giá:</span>
+                <span>-<%= order.discount.toLocaleString('vi-VN') %> ₫</span>
+            </div>
+            <% } %>
+            <div class="total-row final">
+                <span>Tổng cộng:</span>
+                                        <span><%= ((order.totalPrice || 0) + (order.shippingFee || 0) - (order.discountAmount || 0)).toLocaleString('vi-VN') %> ₫</span>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <p>Cảm ơn quý khách đã mua hàng tại PET SHOP!</p>
+            <p>Mọi thắc mắc vui lòng liên hệ: 0123 456 789</p>
+            <p>In ngày: <%= new Date().toLocaleDateString('vi-VN') %> - <%= new Date().toLocaleTimeString('vi-VN') %></p>
+        </div>
+    </div>
+    
+    <script>
+        // Auto print when page loads (optional)
+        // window.onload = function() {
+        //     window.print();
+        // }
+    </script>
+</body>
+</html> 

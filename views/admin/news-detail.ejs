@@ -1,0 +1,156 @@
+<%- include('../includes/head') %>
+<body class="bg-gray-50 font-roboto">
+  <%- include('../includes/navigation-admin') %>
+
+  <div class="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div class="container mx-auto px-4 py-8">
+      
+      <!-- Header -->
+      <div class="mb-8">
+        <div class="flex items-center justify-between">
+          <div>
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Chi tiết tin tức</h1>
+            <nav class="flex items-center space-x-2 text-sm text-gray-600">
+              <a href="/admin/news" class="hover:text-blue-600 transition-colors">
+                <i class="ri-arrow-left-line mr-1"></i>
+                Quay lại danh sách
+              </a>
+            </nav>
+          </div>
+          <div class="flex items-center space-x-3">
+            <a href="/admin/news/edit/<%= news._id %>" 
+               class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center">
+              <i class="ri-edit-line mr-2"></i>
+              Chỉnh sửa
+            </a>
+            <a href="/news/<%= news._id %>" target="_blank"
+               class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center">
+              <i class="ri-external-link-line mr-2"></i>
+              Xem trang công khai
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Article Content -->
+      <div class="max-w-4xl mx-auto">
+        
+        <!-- Article Header -->
+        <div class="bg-white rounded-2xl shadow-lg p-8 mb-8 border border-gray-100">
+          <div class="flex items-start justify-between mb-6">
+            <div class="flex-1">
+              <h2 class="text-3xl font-bold text-gray-900 mb-4 leading-tight">
+                <%= news.title %>
+              </h2>
+              
+              <div class="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-6">
+                <div class="flex items-center">
+                  <i class="ri-user-line mr-2 text-blue-500"></i>
+                  <span><%= news.author || 'Pet Store' %></span>
+                </div>
+                <div class="flex items-center">
+                  <i class="ri-calendar-line mr-2 text-green-500"></i>
+                  <span><%= new Date(news.createdAt).toLocaleDateString('vi-VN') %></span>
+                </div>
+                <div class="flex items-center">
+                  <i class="ri-eye-line mr-2 text-purple-500"></i>
+                  <span><%= news.views || 0 %> lượt xem</span>
+                </div>
+                <div class="flex items-center">
+                  <i class="ri-price-tag-3-line mr-2 text-orange-500"></i>
+                  <span class="bg-orange-100 text-orange-800 px-2 py-1 rounded-full text-xs font-medium">
+                    <%= news.category || 'Tin tức' %>
+                  </span>
+                </div>
+                <div class="flex items-center">
+                  <i class="ri-<%= news.status === 'published' ? 'check-circle' : news.status === 'draft' ? 'draft' : 'archive' %>-line mr-2 text-<%= news.status === 'published' ? 'green' : news.status === 'draft' ? 'yellow' : 'gray' %>-500"></i>
+                  <span class="bg-<%= news.status === 'published' ? 'green' : news.status === 'draft' ? 'yellow' : 'gray' %>-100 text-<%= news.status === 'published' ? 'green' : news.status === 'draft' ? 'yellow' : 'gray' %>-800 px-2 py-1 rounded-full text-xs font-medium">
+                    <%= news.status === 'published' ? 'Đã xuất bản' : news.status === 'draft' ? 'Bản nháp' : 'Đã lưu trữ' %>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Article Image -->
+          <% if (news.imageUrl) { %>
+            <div class="mb-8">
+              <img src="<%= news.imageUrl %>" 
+                   alt="<%= news.title %>" 
+                   class="w-full h-64 md:h-96 object-cover rounded-xl shadow-lg">
+            </div>
+          <% } %>
+
+          <!-- Article Content -->
+          <div class="prose prose-lg max-w-none">
+            <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
+              <%- news.content.replace(/\n/g, '<br>') %>
+            </div>
+          </div>
+        </div>
+
+        <!-- Article Summary -->
+        <% if (news.summary) { %>
+          <div class="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-gray-100">
+            <h3 class="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+              <i class="ri-file-text-line mr-2 text-blue-500"></i>
+              Tóm tắt
+            </h3>
+            <p class="text-gray-700 leading-relaxed">
+              <%= news.summary %>
+            </p>
+          </div>
+        <% } %>
+
+        <!-- Article Metadata -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+            <i class="ri-information-line mr-2 text-blue-500"></i>
+            Thông tin chi tiết
+          </h3>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+              <div>
+                <span class="text-sm font-medium text-gray-500">ID tin tức:</span>
+                <p class="text-gray-900 font-mono text-sm"><%= news._id %></p>
+              </div>
+              <div>
+                <span class="text-sm font-medium text-gray-500">Slug:</span>
+                <p class="text-gray-900 font-mono text-sm"><%= news.slug || 'Chưa có slug' %></p>
+              </div>
+              <div>
+                <span class="text-sm font-medium text-gray-500">Ngày tạo:</span>
+                <p class="text-gray-900"><%= new Date(news.createdAt).toLocaleString('vi-VN') %></p>
+              </div>
+            </div>
+            
+            <div class="space-y-4">
+              <div>
+                <span class="text-sm font-medium text-gray-500">Cập nhật lần cuối:</span>
+                <p class="text-gray-900"><%= new Date(news.updatedAt).toLocaleString('vi-VN') %></p>
+              </div>
+              <div>
+                <span class="text-sm font-medium text-gray-500">Trạng thái:</span>
+                <p class="text-gray-900">
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-<%= news.status === 'published' ? 'green' : news.status === 'draft' ? 'yellow' : 'gray' %>-100 text-<%= news.status === 'published' ? 'green' : news.status === 'draft' ? 'yellow' : 'gray' %>-800">
+                    <i class="ri-<%= news.status === 'published' ? 'check-circle' : news.status === 'draft' ? 'draft' : 'archive' %>-line mr-1"></i>
+                    <%= news.status === 'published' ? 'Đã xuất bản' : news.status === 'draft' ? 'Bản nháp' : 'Đã lưu trữ' %>
+                  </span>
+                </p>
+              </div>
+              <div>
+                <span class="text-sm font-medium text-gray-500">Lượt xem:</span>
+                <p class="text-gray-900"><%= news.views || 0 %></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <%- include('../includes/end') %>
+</body>
+</html> 

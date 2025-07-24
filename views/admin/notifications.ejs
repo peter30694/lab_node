@@ -1,0 +1,32 @@
+<%- include('../includes/head.ejs') %>
+
+<body class="bg-gray-50 min-h-screen">
+    <%- include('../includes/navigation-admin.ejs') %>
+    <main class="ml-64 min-h-screen bg-gray-50 py-8 px-4 pb-24">
+  <div class="max-w-6xl mx-auto">
+    <h1 class="text-2xl font-bold mb-6">Thông báo hệ thống</h1>
+    <% if (notifications && notifications.length > 0) { %>
+      <ul class="space-y-4">
+        <% notifications.forEach(n => { %>
+          <li class="p-4 rounded shadow bg-white border-l-4
+            <%= n.type === 'warning' ? 'border-yellow-500' : '' %>
+            <%= n.type === 'info' ? 'border-blue-500' : '' %>
+            <%= n.type === 'success' ? 'border-green-500' : '' %>
+            <%= n.type === 'primary' ? 'border-indigo-500' : '' %>">
+            <div class="font-semibold"><%= n.title %></div>
+            <div class="text-gray-700"><%= n.message %></div>
+            <% if (n.link) { %>
+              <a href="<%= n.link %>" class="text-blue-600 underline text-sm">Xem chi tiết</a>
+            <% } %>
+          </li>
+        <% }) %>
+      </ul>
+    <% } else { %>
+      <div class="text-gray-500">Không có thông báo nào.</div>
+    <% } %>
+  </div>
+</main>
+<%- include('../includes/end.ejs') %> 
+
+
+

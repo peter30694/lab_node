@@ -1,0 +1,257 @@
+<%- include('../includes/head.ejs') %>
+<body class="bg-gray-50 font-roboto min-h-screen">
+  <%- include('../includes/navigation', { 
+    user, 
+    isAdmin, 
+    isAuthenticated, 
+    cartCount,
+    favorites: typeof favorites !== 'undefined' ? favorites : []
+  }) %>
+  
+  <main class="container mx-auto px-4 py-8">
+    <!-- Hero Section -->
+    <section class="text-center mb-12">
+      <div class="max-w-4xl mx-auto">
+        <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-6">Giới thiệu về Pet Store</h1>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+          Hành trình xây dựng cộng đồng yêu thú cưng hiện đại, tận tâm và truyền cảm hứng tại Việt Nam.
+        </p>
+      </div>
+    </section>
+
+    <!-- Mission Section -->
+    <section class="mb-16">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <div>
+          <img src="/images/about-1.jpg" alt="Pet Shop" class="rounded-lg shadow-lg w-full">
+        </div>
+        <div>
+          <h2 class="text-3xl font-bold text-gray-800 mb-6">Sứ mệnh của chúng tôi</h2>
+          <p class="text-lg text-gray-700 mb-6">
+            Pet Store ra đời với khát vọng lan tỏa tình yêu thương, sự chăm sóc và hiểu biết đúng đắn về thú cưng đến mọi gia đình Việt. Chúng tôi không chỉ là nơi bán sản phẩm, mà còn là người bạn đồng hành, tư vấn và hỗ trợ khách hàng trên hành trình nuôi dưỡng thú cưng khỏe mạnh, hạnh phúc.
+          </p>
+          <ul class="space-y-3 text-gray-700">
+            <li class="flex items-start">
+              <i class="ri-check-line text-green-500 text-xl mr-3 mt-1"></i>
+              <span>Đem đến sản phẩm, dịch vụ chất lượng quốc tế</span>
+            </li>
+            <li class="flex items-start">
+              <i class="ri-check-line text-green-500 text-xl mr-3 mt-1"></i>
+              <span>Chia sẻ kiến thức, kinh nghiệm nuôi thú cưng hiện đại</span>
+            </li>
+            <li class="flex items-start">
+              <i class="ri-check-line text-green-500 text-xl mr-3 mt-1"></i>
+              <span>Kết nối cộng đồng yêu thú cưng trên toàn quốc</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Core Values Section -->
+    <section class="mb-16">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold text-gray-800 mb-4">Giá trị cốt lõi</h2>
+        <p class="text-gray-600 max-w-2xl mx-auto">
+          Những nguyên tắc định hướng cho mọi hoạt động của chúng tôi
+        </p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+          <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="ri-shield-check-line text-2xl text-blue-600"></i>
+          </div>
+          <h3 class="text-xl font-bold text-gray-800 mb-3">Chất lượng</h3>
+          <p class="text-gray-600">
+            Sản phẩm, dịch vụ được chọn lọc kỹ lưỡng, an toàn cho thú cưng
+          </p>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+          <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="ri-heart-line text-2xl text-green-600"></i>
+          </div>
+          <h3 class="text-xl font-bold text-gray-800 mb-3">Tận tâm</h3>
+          <p class="text-gray-600">
+            Đội ngũ tư vấn, chăm sóc khách hàng chuyên nghiệp, thân thiện
+          </p>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+          <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="ri-lightbulb-line text-2xl text-yellow-600"></i>
+          </div>
+          <h3 class="text-xl font-bold text-gray-800 mb-3">Đổi mới</h3>
+          <p class="text-gray-600">
+            Luôn cập nhật xu hướng, công nghệ mới trong lĩnh vực thú cưng
+          </p>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+          <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="ri-team-line text-2xl text-purple-600"></i>
+          </div>
+          <h3 class="text-xl font-bold text-gray-800 mb-3">Cộng đồng</h3>
+          <p class="text-gray-600">
+            Tạo dựng môi trường kết nối, sẻ chia giữa những người yêu thú cưng
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Development Timeline -->
+    <section class="mb-16">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold text-gray-800 mb-4">Hành trình phát triển</h2>
+        <p class="text-gray-600 max-w-2xl mx-auto">
+          Những cột mốc quan trọng trong quá trình phát triển của Pet Store
+        </p>
+      </div>
+      
+      <div class="max-w-4xl mx-auto">
+        <div class="space-y-8">
+          <div class="flex items-start">
+            <div class="flex-shrink-0 w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold mr-6">
+              2018
+            </div>
+            <div class="flex-1">
+              <h3 class="text-xl font-bold text-gray-800 mb-2">Thành lập</h3>
+              <p class="text-gray-700">
+                Pet Store thành lập cửa hàng đầu tiên tại TP.HCM, mang đến trải nghiệm mua sắm thú cưng hiện đại.
+              </p>
+            </div>
+          </div>
+          
+          <div class="flex items-start">
+            <div class="flex-shrink-0 w-12 h-12 bg-green-600 rounded-full flex items-center justify-center text-white font-bold mr-6">
+              2020
+            </div>
+            <div class="flex-1">
+              <h3 class="text-xl font-bold text-gray-800 mb-2">Mở rộng dịch vụ</h3>
+              <p class="text-gray-700">
+                Mở rộng hệ thống, phát triển dịch vụ grooming, spa, khách sạn thú cưng, tổ chức các sự kiện cộng đồng.
+              </p>
+            </div>
+          </div>
+          
+          <div class="flex items-start">
+            <div class="flex-shrink-0 w-12 h-12 bg-yellow-600 rounded-full flex items-center justify-center text-white font-bold mr-6">
+              2022
+            </div>
+            <div class="flex-1">
+              <h3 class="text-xl font-bold text-gray-800 mb-2">Ra mắt website</h3>
+              <p class="text-gray-700">
+                Ra mắt website thương mại điện tử, phục vụ khách hàng toàn quốc, phát triển hệ sinh thái sản phẩm - dịch vụ đa dạng.
+              </p>
+            </div>
+          </div>
+          
+          <div class="flex items-start">
+            <div class="flex-shrink-0 w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold mr-6">
+              2024
+            </div>
+            <div class="flex-1">
+              <h3 class="text-xl font-bold text-gray-800 mb-2">Thành công</h3>
+              <p class="text-gray-700">
+                Đạt mốc 100.000 khách hàng, trở thành thương hiệu uy tín hàng đầu trong lĩnh vực thú cưng tại Việt Nam.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Team & Commitment -->
+    <section class="mb-16">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <div>
+          <h2 class="text-3xl font-bold text-gray-800 mb-6">Đội ngũ & Cam kết</h2>
+          <div class="space-y-4">
+            <div class="flex items-start">
+              <i class="ri-user-star-line text-blue-600 text-xl mr-3 mt-1"></i>
+              <span class="text-gray-700">Đội ngũ nhân viên thân thiện, giàu kinh nghiệm, yêu động vật</span>
+            </div>
+            <div class="flex items-start">
+              <i class="ri-customer-service-line text-green-600 text-xl mr-3 mt-1"></i>
+              <span class="text-gray-700">Cam kết tư vấn trung thực, hỗ trợ khách hàng tận tâm 24/7</span>
+            </div>
+            <div class="flex items-start">
+              <i class="ri-shield-check-line text-yellow-600 text-xl mr-3 mt-1"></i>
+              <span class="text-gray-700">Chính sách bảo hành, đổi trả minh bạch, rõ ràng</span>
+            </div>
+            <div class="flex items-start">
+              <i class="ri-feedback-line text-purple-600 text-xl mr-3 mt-1"></i>
+              <span class="text-gray-700">Luôn lắng nghe, tiếp thu ý kiến khách hàng để hoàn thiện dịch vụ</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <img src="/images/staff-1.jpg" alt="Đội ngũ Pet Store" class="rounded-lg shadow-lg w-full">
+        </div>
+      </div>
+    </section>
+
+    <!-- Why Choose Us -->
+    <section class="mb-16">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold text-gray-800 mb-4">Vì sao chọn Pet Store?</h2>
+        <p class="text-gray-600 max-w-2xl mx-auto">
+          Những lý do khiến khách hàng tin tưởng và lựa chọn chúng tôi
+        </p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+          <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="ri-customer-service-2-line text-2xl text-blue-600"></i>
+          </div>
+          <h3 class="text-xl font-bold text-gray-800 mb-3">Hỗ trợ tận tâm</h3>
+          <p class="text-gray-600">
+            Tư vấn miễn phí, hỗ trợ chọn sản phẩm, giải đáp mọi thắc mắc về thú cưng
+          </p>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+          <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="ri-truck-line text-2xl text-green-600"></i>
+          </div>
+          <h3 class="text-xl font-bold text-gray-800 mb-3">Giao hàng nhanh</h3>
+          <p class="text-gray-600">
+            Giao hàng toàn quốc, đảm bảo an toàn, đúng hẹn, nhiều ưu đãi vận chuyển
+          </p>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+          <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="ri-shield-user-line text-2xl text-purple-600"></i>
+          </div>
+          <h3 class="text-xl font-bold text-gray-800 mb-3">An tâm mua sắm</h3>
+          <p class="text-gray-600">
+            Chính sách bảo mật, bảo hành, đổi trả rõ ràng, đặt khách hàng làm trung tâm
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact CTA -->
+    <section class="bg-blue-600 text-white rounded-lg p-8 text-center">
+      <h2 class="text-3xl font-bold mb-4">Sẵn sàng trải nghiệm?</h2>
+      <p class="text-xl mb-6 opacity-90">
+        Hãy để chúng tôi đồng hành cùng bạn và thú cưng trên hành trình yêu thương
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="/products" class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
+          <i class="ri-shopping-bag-line mr-2"></i>
+          Khám phá sản phẩm
+        </a>
+        <a href="/services" class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition">
+          <i class="ri-service-line mr-2"></i>
+          Xem dịch vụ
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <%- include('../includes/end.ejs') %>
+</body> 

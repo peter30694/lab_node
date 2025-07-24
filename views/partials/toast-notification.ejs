@@ -1,0 +1,18 @@
+<!-- Toast Notification Component -->
+<div class="fixed top-4 right-4 z-50" id="<%= id || 'toastNotification' %>">
+  <div class="bg-<%= type %>-500 text-white px-6 py-4 rounded-xl shadow-xl flex items-center gap-3 transform transition-all duration-300 hover:scale-105">
+    <i class="<%= icon %> text-xl"></i>
+    <span class="font-medium"><%= message %></span>
+  </div>
+</div>
+
+<script>
+  setTimeout(() => {
+    const notification = document.getElementById('<%= id || 'toastNotification' %>');
+    if (notification) {
+      notification.style.transition = 'opacity 0.5s ease';
+      notification.style.opacity = '0';
+      setTimeout(() => notification.remove(), 500);
+    }
+  }, <%- duration || 5000 %>);
+</script> 

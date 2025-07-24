@@ -1,0 +1,390 @@
+<%- include('../includes/head.ejs') %>
+
+<body class="bg-gray-50 min-h-screen">
+    <%- include('../includes/navigation-admin.ejs') %>
+    <main class="ml-64 min-h-screen bg-gray-50 py-8 px-4 pb-24">
+  <div class="max-w-4xl mx-auto">
+    <div class="flex items-center mb-6 gap-2">
+      <a href="/admin/reviews" class="text-blue-600 hover:text-blue-800">
+        <i class="ri-arrow-left-line"></i> Quay lại
+      </a>
+      <h1 class="text-2xl font-bold text-gray-800">Chi tiết đánh giá</h1>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+      <div class="p-6">
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xl">
+              <%= review.user ? review.user.name.charAt(0).toUpperCase() : '?' %>
+            </div>
+            <div>
+              <h3 class="font-semibold text-gray-800"><%= review.user ? review.user.name : 'Người dùng không xác định' %></h3>
+              <p class="text-sm text-gray-500"><%= review.user ? review.user.email : '' %></p>
+            </div>
+          </div>
+          <div>
+            <span class="inline-block px-3 py-1 rounded-full text-sm font-semibold <%= 
+              review.status === 'approved' ? 'bg-green-100 text-green-700' : 
+              review.status === 'rejected' ? 'bg-red-100 text-red-700' : 
+              'bg-yellow-100 text-yellow-700' 
+            %>">
+              <%= 
+                review.status === 'approved' ? 'Đã duyệt' : 
+                review.status === 'rejected' ? 'Từ chối' : 
+                'Chờ duyệt' 
+              %>
+            </span>
+          </div>
+        </div>
+        
+        <div class="mb-6">
+          <h4 class="text-sm font-medium text-gray-500 mb-1">Đánh giá cho</h4>
+          <div class="p-4 bg-gray-50 rounded-lg">
+            <% if (review.product) { %>
+              <div class="flex items-center gap-4">
+                <div class="w-16 h-16 bg-gray-200 rounded-md overflow-hidden">
+                  <img src="<%= review.product.imageUrl %>" alt="<%= review.product.title %>" class="w-full h-full object-cover">
+                </div>
+                <div>
+                  <h3 class="font-medium text-gray-800">Sản phẩm: <%= review.product.title %></h3>
+                  <p class="text-sm text-gray-500">Giá: <%= review.product.price.toLocaleString('vi-VN') %> đ</p>
+                </div>
+              </div>
+            <% } else if (review.service) { %>
+              <div class="flex items-center gap-4">
+                <div class="w-16 h-16 bg-gray-200 rounded-md overflow-hidden">
+                  <img src="<%= review.service.imageUrl %>" alt="<%= review.service.name %>" class="w-full h-full object-cover">
+                </div>
+                <div>
+                  <h3 class="font-medium text-gray-800">Dịch vụ: <%= review.service.name %></h3>
+                  <p class="text-sm text-gray-500">Giá: <%= review.service.price.toLocaleString('vi-VN') %> đ</p>
+                </div>
+              </div>
+            <% } else { %>
+              <p class="text-gray-500">Không xác định</p>
+            <% } %>
+          </div>
+        </div>
+        
+        <div class="mb-6">
+          <h4 class="text-sm font-medium text-gray-500 mb-1">Đánh giá</h4>
+          <div class="flex items-center">
+            <% for (let star = 1; star <= 5; star++) { %>
+              <i class="ri-star-<%= star <= review.rating ? 'fill' : 'line' %> text-yellow-400 text-2xl"></i>
+            <% } %>
+            <span class="ml-2 text-lg font-medium text-gray-700"><%= review.rating %>/5</span>
+          </div>
+        </div>
+        
+        <div class="mb-6">
+          <h4 class="text-sm font-medium text-gray-500 mb-1">Nội dung đánh giá</h4>
+          <div class="p-4 bg-gray-50 rounded-lg">
+            <p class="text-gray-700"><%= review.comment %></p>
+          </div>
+        </div>
+
+        <!-- Thêm phần phản hồi đánh giá -->
+        <div class="mb-6">
+          <h4 class="text-sm font-medium text-gray-500 mb-1">Phản hồi của admin</h4>
+          <div id="admin-reply-container">
+          <% if (review.adminReply) { %>
+            <div class="p-4 bg-blue-50 rounded-lg">
+              <p class="text-gray-700"><%= review.adminReply %></p>
+              <p class="text-xs text-gray-500 mt-2">Phản hồi lúc: <%= new Date(review.adminReplyDate).toLocaleString('vi-VN') %></p>
+            </div>
+            <button type="button" class="mt-2 text-blue-600 hover:text-blue-800 text-sm font-medium btn-edit-reply">
+              <i class="ri-edit-line"></i> Chỉnh sửa phản hồi
+            </button>
+          <% } else { %>
+            <div class="p-4 bg-gray-50 rounded-lg">
+              <textarea id="admin-reply" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" rows="3" placeholder="Nhập phản hồi của bạn..."></textarea>
+              <button type="button" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition btn-submit-reply">
+                <i class="ri-send-plane-line"></i> Gửi phản hồi
+              </button>
+            </div>
+          <% } %>
+          </div>
+        </div>
+        
+        <div class="mb-6">
+          <h4 class="text-sm font-medium text-gray-500 mb-1">Thông tin thêm</h4>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="p-3 bg-gray-50 rounded-lg">
+              <span class="text-xs text-gray-500">Ngày tạo</span>
+              <p class="text-gray-700"><%= new Date(review.createdAt).toLocaleString('vi-VN') %></p>
+            </div>
+            <div class="p-3 bg-gray-50 rounded-lg">
+              <span class="text-xs text-gray-500">Cập nhật lần cuối</span>
+              <p class="text-gray-700"><%= new Date(review.updatedAt).toLocaleString('vi-VN') %></p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="border-t border-gray-200 pt-6">
+          <h4 class="text-sm font-medium text-gray-500 mb-3">Cập nhật trạng thái</h4>
+          <div class="flex gap-3">
+            <button type="button" class="px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition btn-update-status" data-status="approved">
+              <i class="ri-check-line"></i> Duyệt đánh giá
+            </button>
+            <button type="button" class="px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition btn-update-status" data-status="rejected">
+              <i class="ri-close-line"></i> Từ chối
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="mt-6 flex justify-between">
+      <a href="/admin/reviews" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition">
+        <i class="ri-arrow-left-line"></i> Quay lại danh sách
+      </a>
+      <button type="button" class="px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition btn-delete-review">
+        <i class="ri-delete-bin-line"></i> Xóa đánh giá
+      </button>
+    </div>
+  </div>
+</main>
+    </div>
+    <script>
+  function updateStatus(reviewId, status) {
+      fetch(`/admin/reviews/${reviewId}/update-status`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ status })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // Cập nhật UI để hiển thị trạng thái mới
+            document.getElementById('currentStatus').textContent = data.newStatus;
+            document.getElementById('currentStatus').className = `status-badge ${data.newStatus}`;
+            showToast('Cập nhật trạng thái thành công', 'success');
+          } else {
+            showToast(data.message || 'Có lỗi xảy ra', 'error');
+          }
+        })
+        .catch(error => {
+          showToast('Có lỗi xảy ra khi cập nhật trạng thái', 'error');
+        });
+      }
+  
+  // Xóa đánh giá
+  document.querySelector('.btn-delete-review').addEventListener('click', function() {
+    if (confirm('Bạn có chắc muốn xóa đánh giá này?')) {
+      fetch('/admin/reviews/<%= review._id %>', { method: 'DELETE' })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            window.location.href = '/admin/reviews';
+          } else {
+            alert(data.message || 'Có lỗi xảy ra');
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          alert('Có lỗi xảy ra khi xóa đánh giá');
+        });
+    }
+  });
+  
+  // Gửi phản hồi
+  document.querySelector('.btn-submit-reply')?.addEventListener('click', function() {
+    const reply = document.getElementById('admin-reply').value.trim();
+    
+    if (!reply) {
+      alert('Vui lòng nhập nội dung phản hồi');
+      return;
+    }
+    
+    fetch('/admin/reviews/<%= review._id %>/reply', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({ adminReply: reply })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        // Hiển thị phản hồi ngay lập tức, không reload trang
+        const replyBox = document.querySelector('.btn-submit-reply').closest('.p-4.bg-gray-50');
+        replyBox.innerHTML = `
+          <div class="p-4 bg-blue-50 rounded-lg">
+            <p class="text-gray-700">${reply}</p>
+            <p class="text-xs text-gray-500 mt-2">Phản hồi lúc: ${new Date().toLocaleString('vi-VN')}</p>
+          </div>
+          <button type="button" class="mt-2 text-blue-600 hover:text-blue-800 text-sm font-medium btn-edit-reply">
+            <i class="ri-edit-line"></i> Chỉnh sửa phản hồi
+          </button>
+        `;
+        showToast('Gửi phản hồi thành công', 'success');
+        // Gắn lại event cho nút chỉnh sửa nếu cần
+      } else {
+        alert(data.message || 'Có lỗi xảy ra');
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      alert('Có lỗi xảy ra khi gửi phản hồi');
+    });
+  });
+  
+  // Chỉnh sửa phản hồi
+  document.querySelector('.btn-edit-reply')?.addEventListener('click', function() {
+    const currentReply = `<%= review.adminReply %>`;
+    const replyContainer = this.previousElementSibling;
+    
+    replyContainer.innerHTML = `
+      <div class="p-4 bg-gray-50 rounded-lg">
+        <textarea id="admin-reply-edit" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" rows="3">${currentReply}</textarea>
+        <button type="button" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition btn-update-reply">
+          <i class="ri-save-line"></i> Cập nhật phản hồi
+        </button>
+        <button type="button" class="mt-2 ml-2 px-4 py-2 bg-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-400 transition btn-cancel-edit">
+          <i class="ri-close-line"></i> Hủy
+        </button>
+      </div>
+    `;
+    
+    this.style.display = 'none';
+    
+    // Cập nhật phản hồi
+    document.querySelector('.btn-update-reply').addEventListener('click', function() {
+      const reply = document.getElementById('admin-reply-edit').value.trim();
+      if (!reply) {
+        alert('Vui lòng nhập nội dung phản hồi');
+        return;
+      }
+      fetch('/admin/reviews/<%= review._id %>/reply', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({ adminReply: reply })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Cập nhật lại UI không reload
+          const replyBox = document.getElementById('admin-reply-container');
+          replyBox.innerHTML = `
+            <div class="p-4 bg-blue-50 rounded-lg">
+              <p class="text-gray-700">${reply}</p>
+              <p class="text-xs text-gray-500 mt-2">Phản hồi lúc: ${new Date().toLocaleString('vi-VN')}</p>
+            </div>
+            <button type="button" class="mt-2 text-blue-600 hover:text-blue-800 text-sm font-medium btn-edit-reply">
+              <i class="ri-edit-line"></i> Chỉnh sửa phản hồi
+            </button>
+          `;
+          showToast('Cập nhật phản hồi thành công', 'success');
+          // Gắn lại event cho nút chỉnh sửa
+          document.querySelector('.btn-edit-reply').addEventListener('click', editReplyHandler);
+        } else {
+          alert(data.message || 'Có lỗi xảy ra');
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        alert('Có lỗi xảy ra khi cập nhật phản hồi');
+      });
+    });
+
+    // Hủy chỉnh sửa
+    document.querySelector('.btn-cancel-edit').addEventListener('click', function() {
+      window.location.reload();
+    });
+  });
+
+  // Định nghĩa lại hàm editReplyHandler để tái sử dụng
+  function editReplyHandler() {
+    const currentReply = document.querySelector('.p-4.bg-blue-50 p.text-gray-700')?.textContent || '';
+    const replyContainer = document.getElementById('admin-reply-container');
+    replyContainer.innerHTML = `
+      <div class="p-4 bg-gray-50 rounded-lg">
+        <textarea id="admin-reply-edit" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" rows="3">${currentReply}</textarea>
+        <button type="button" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition btn-update-reply">
+          <i class="ri-save-line"></i> Cập nhật phản hồi
+        </button>
+        <button type="button" class="mt-2 ml-2 px-4 py-2 bg-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-400 transition btn-cancel-edit">
+          <i class="ri-close-line"></i> Hủy
+        </button>
+      </div>
+    `;
+    // Gắn lại event cho nút cập nhật và hủy
+    document.querySelector('.btn-update-reply').addEventListener('click', function() {
+      const reply = document.getElementById('admin-reply-edit').value.trim();
+      if (!reply) {
+        alert('Vui lòng nhập nội dung phản hồi');
+        return;
+      }
+      fetch('/admin/reviews/<%= review._id %>/reply', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({ adminReply: reply })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          const replyBox = document.getElementById('admin-reply-container');
+          replyBox.innerHTML = `
+            <div class="p-4 bg-blue-50 rounded-lg">
+              <p class="text-gray-700">${reply}</p>
+              <p class="text-xs text-gray-500 mt-2">Phản hồi lúc: ${new Date().toLocaleString('vi-VN')}</p>
+            </div>
+            <button type="button" class="mt-2 text-blue-600 hover:text-blue-800 text-sm font-medium btn-edit-reply">
+              <i class="ri-edit-line"></i> Chỉnh sửa phản hồi
+            </button>
+          `;
+          showToast('Cập nhật phản hồi thành công', 'success');
+          document.querySelector('.btn-edit-reply').addEventListener('click', editReplyHandler);
+        } else {
+          alert(data.message || 'Có lỗi xảy ra');
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        alert('Có lỗi xảy ra khi cập nhật phản hồi');
+      });
+    });
+    document.querySelector('.btn-cancel-edit').addEventListener('click', function() {
+      window.location.reload();
+    });
+  }
+  // Gắn lại event cho nút chỉnh sửa phản hồi nếu có
+  document.querySelector('.btn-edit-reply')?.addEventListener('click', editReplyHandler);
+
+  // Thêm event cho nút cập nhật trạng thái
+  document.querySelectorAll('.btn-update-status').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      const status = this.getAttribute('data-status');
+      fetch('/admin/reviews/<%= review._id %>/update-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          showToast('Cập nhật trạng thái thành công', 'success');
+          setTimeout(() => window.location.reload(), 800);
+        } else {
+          showToast(data.message || 'Có lỗi xảy ra', 'error');
+        }
+      })
+      .catch(() => showToast('Có lỗi xảy ra khi cập nhật trạng thái', 'error'));
+    });
+  });
+</script>
+
+<%- include('../includes/end.ejs') %>
+
+
+

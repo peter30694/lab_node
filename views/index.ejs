@@ -1,0 +1,316 @@
+<%- include('includes/head') %>
+
+<body class="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 font-roboto flex flex-col min-h-screen">
+  <!-- Sticky Header -->
+  <%- include('includes/navigation', { cartCount: typeof cartCount !== 'undefined' ? cartCount : 0, favorites: typeof favorites !== 'undefined' ? favorites : [] }) %>
+  
+  <!-- Main Content -->
+  <main class="flex-1">
+
+  <!-- Thông báo đăng xuất thành công -->
+  <% if (typeof logoutSuccess !== 'undefined' && logoutSuccess) { %>
+    <div class="fixed top-4 right-4 z-50" id="logoutNotification">
+      <div class="bg-green-500 text-white px-6 py-4 rounded-xl shadow-xl flex items-center gap-3">
+        <i class="ri-check-circle-line text-xl"></i>
+        <span class="font-medium">Đăng xuất thành công!</span>
+      </div>
+    </div>
+    <script>
+      setTimeout(() => {
+        const notification = document.getElementById('logoutNotification');
+        if (notification) {
+          notification.style.transition = 'opacity 0.5s ease';
+          notification.style.opacity = '0';
+          setTimeout(() => notification.remove(), 500);
+        }
+      }, 5000);
+    </script>
+  <% } %>
+
+  <!-- Thông báo lỗi đăng xuất -->
+  <% if (typeof logoutError !== 'undefined' && logoutError) { %>
+    <div class="fixed top-4 right-4 z-50" id="logoutErrorNotification">
+      <div class="bg-red-500 text-white px-6 py-4 rounded-xl shadow-xl flex items-center gap-3">
+        <i class="ri-error-warning-line text-xl"></i>
+        <span class="font-medium">Có lỗi khi đăng xuất. Vui lòng thử lại!</span>
+      </div>
+    </div>
+    <script>
+      setTimeout(() => {
+        const notification = document.getElementById('logoutErrorNotification');
+        if (notification) {
+          notification.style.transition = 'opacity 0.5s ease';
+          notification.style.opacity = '0';
+          setTimeout(() => notification.remove(), 500);
+        }
+      }, 5000);
+    </script>
+  <% } %>
+
+  <!-- Hero Section -->
+  <section class="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 text-white py-24">
+    <!-- Background Pattern -->
+    <div class="absolute inset-0 opacity-10 pointer-events-none">
+      <div class="absolute inset-0 pointer-events-none" style="background-image: url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.1"%3E%3Ccircle cx="30" cy="30" r="2"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
+    </div>
+    
+    <div class="container mx-auto px-4 relative z-10">
+      <div class="max-w-6xl mx-auto text-center">
+        <div class="mb-8">
+          <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-full p-6 inline-block mb-6">
+            <i class="ri-heart-pulse-line text-6xl text-white"></i>
+          </div>
+        </div>
+        <h1 class="text-5xl md:text-7xl font-bold mb-8 leading-tight">
+          Chào mừng đến với<br>
+          <span class="bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">Pet Store</span>
+        </h1>
+        <p class="text-xl md:text-2xl mb-12 max-w-4xl mx-auto text-indigo-100 leading-relaxed">
+          Nơi cung cấp những sản phẩm và dịch vụ tốt nhất cho thú cưng của bạn. 
+          Chúng tôi cam kết mang lại hạnh phúc cho người bạn thân yêu của bạn.
+        </p>
+        <div class="flex flex-col sm:flex-row justify-center gap-6">
+          <a href="/products" 
+             class="bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 px-10 py-5 rounded-2xl font-bold text-lg hover:from-yellow-300 hover:to-orange-400 transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl flex items-center justify-center gap-3">
+            <i class="ri-shopping-bag-line text-2xl"></i>
+            Mua sắm ngay
+          </a>
+          <a href="/services" 
+             class="border-2 border-white text-white px-10 py-5 rounded-2xl font-bold text-lg hover:bg-white hover:text-indigo-600 transition-all duration-300 transform hover:scale-105 backdrop-blur-sm flex items-center justify-center gap-3">
+            <i class="ri-service-line text-2xl"></i>
+            Dịch vụ
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="py-20 bg-white">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl md:text-5xl font-bold text-gray-800 mb-6">Tại sao chọn chúng tôi?</h2>
+        <p class="text-gray-600 text-lg max-w-3xl mx-auto leading-relaxed">
+          Pet Store cam kết mang đến những trải nghiệm tốt nhất cho bạn và thú cưng với dịch vụ chuyên nghiệp
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-3xl p-8 text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-blue-100">
+          <div class="bg-gradient-to-r from-blue-500 to-indigo-600 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+            <i class="ri-truck-line text-3xl text-white"></i>
+          </div>
+          <h3 class="text-2xl font-bold text-gray-800 mb-4">Giao hàng nhanh chóng</h3>
+          <p class="text-gray-600 leading-relaxed">Cam kết giao hàng trong 24h cho khu vực nội thành, đảm bảo thú cưng của bạn luôn được chăm sóc kịp thời.</p>
+        </div>
+
+        <div class="bg-gradient-to-br from-green-50 to-emerald-100 rounded-3xl p-8 text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-green-100">
+          <div class="bg-gradient-to-r from-green-500 to-emerald-600 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+            <i class="ri-shield-check-line text-3xl text-white"></i>
+          </div>
+          <h3 class="text-2xl font-bold text-gray-800 mb-4">Chất lượng đảm bảo</h3>
+          <p class="text-gray-600 leading-relaxed">Tất cả sản phẩm đều được kiểm định chất lượng nghiêm ngặt, bảo hành 12 tháng cho mọi sản phẩm.</p>
+        </div>
+
+        <div class="bg-gradient-to-br from-purple-50 to-pink-100 rounded-3xl p-8 text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-purple-100">
+          <div class="bg-gradient-to-r from-purple-500 to-pink-600 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+            <i class="ri-customer-service-line text-3xl text-white"></i>
+          </div>
+          <h3 class="text-2xl font-bold text-gray-800 mb-4">Hỗ trợ 24/7</h3>
+          <p class="text-gray-600 leading-relaxed">Đội ngũ chuyên gia luôn sẵn sàng tư vấn và hỗ trợ bạn mọi lúc, mọi nơi với tâm huyết cao nhất.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Products Section -->
+  <section class="py-20 bg-gradient-to-br from-gray-50 to-gray-100">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl md:text-5xl font-bold text-gray-800 mb-6">Sản phẩm nổi bật</h2>
+        <p class="text-gray-600 text-lg max-w-3xl mx-auto leading-relaxed">
+          Khám phá những sản phẩm chất lượng cao được yêu thích nhất từ khách hàng
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <% products.forEach(product => { %>
+          <div class="bg-white rounded-3xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100">
+            <!-- Product Image -->
+            <div class="relative h-64 overflow-hidden">
+              <img src="<%= product.imageUrl %>" alt="<%= product.title %>" 
+                   class="w-full h-full object-cover transition-transform duration-300 hover:scale-110">
+              
+              <!-- Category Badge -->
+              <div class="absolute top-4 left-4">
+                <span class="bg-white/90 backdrop-blur-sm text-gray-800 px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
+                  <%= product.category %>
+                </span>
+              </div>
+              
+              <!-- Rating Badge -->
+              <% if (product.rating && product.rating > 0) { %>
+                <div class="absolute top-4 right-4">
+                  <span class="bg-gradient-to-r from-yellow-400 to-orange-400 text-yellow-900 px-4 py-2 rounded-full text-sm font-semibold flex items-center shadow-lg">
+                    <i class="ri-star-fill mr-1"></i>
+                    <%= product.rating.toFixed(1) %>
+                  </span>
+                </div>
+              <% } %>
+            </div>
+            
+            <!-- Product Content -->
+            <div class="p-6">
+              <h3 class="text-lg font-bold text-gray-800 mb-3 line-clamp-2 leading-tight">
+                <%= product.title %>
+              </h3>
+              
+              <div class="flex items-center justify-between mb-4">
+                <div class="text-2xl font-bold text-green-600">
+                  <%= product.price.toLocaleString('vi-VN') %> ₫
+                </div>
+                <div class="text-sm text-gray-500 flex items-center">
+                  <i class="ri-shopping-cart-line mr-1"></i>
+                  <%= product.stockQuantity || 0 %> có sẵn
+                </div>
+              </div>
+              
+              <div class="flex gap-3">
+                <a href="/products/<%= product._id %>" 
+                   class="flex-1 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white px-4 py-3 rounded-xl font-semibold transition-all duration-300 text-center flex items-center justify-center gap-2">
+                  <i class="ri-eye-line"></i>
+                  Chi tiết
+                </a>
+                <button onclick="addToCart('<%= product._id %>')" 
+                        class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-4 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center">
+                  <i class="ri-add-line text-xl"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+
+      <!-- View All Products Button -->
+      <div class="text-center mt-16">
+        <a href="/products" 
+           class="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white px-10 py-4 rounded-2xl font-bold transition-all duration-300 inline-flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105">
+          <i class="ri-arrow-right-line text-xl"></i>
+          Xem tất cả sản phẩm
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Preview Section -->
+  <section class="py-20 bg-white">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl md:text-5xl font-bold text-gray-800 mb-6">Dịch vụ của chúng tôi</h2>
+        <p class="text-gray-600 text-lg max-w-3xl mx-auto leading-relaxed">
+          Khám phá các dịch vụ chăm sóc thú cưng chuyên nghiệp với đội ngũ tận tâm
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl p-8 text-white text-center hover:transform hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl">
+          <i class="ri-scissors-2-line text-5xl mb-6"></i>
+          <h3 class="text-2xl font-bold mb-4">Chăm sóc</h3>
+          <p class="text-blue-100 leading-relaxed">Tắm rửa, cắt tỉa lông chuyên nghiệp với kỹ thuật hiện đại</p>
+        </div>
+
+        <div class="bg-gradient-to-br from-green-500 to-emerald-600 rounded-3xl p-8 text-white text-center hover:transform hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl">
+          <i class="ri-heart-pulse-line text-5xl mb-6"></i>
+          <h3 class="text-2xl font-bold mb-4">Sức khỏe</h3>
+          <p class="text-green-100 leading-relaxed">Khám bệnh, tiêm phòng, tư vấn dinh dưỡng toàn diện</p>
+        </div>
+
+        <div class="bg-gradient-to-br from-purple-500 to-pink-600 rounded-3xl p-8 text-white text-center hover:transform hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl">
+          <i class="ri-graduation-cap-line text-5xl mb-6"></i>
+          <h3 class="text-2xl font-bold mb-4">Huấn luyện</h3>
+          <p class="text-purple-100 leading-relaxed">Đào tạo các kỹ năng cơ bản và nâng cao cho thú cưng</p>
+        </div>
+
+        <div class="bg-gradient-to-br from-orange-500 to-red-600 rounded-3xl p-8 text-white text-center hover:transform hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl">
+          <i class="ri-hotel-line text-5xl mb-6"></i>
+          <h3 class="text-2xl font-bold mb-4">Trông giữ</h3>
+          <p class="text-orange-100 leading-relaxed">Dịch vụ trông giữ thú cưng an toàn và chu đáo</p>
+        </div>
+      </div>
+
+      <!-- View All Services Button -->
+      <div class="text-center mt-16">
+        <a href="/services" 
+           class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-10 py-4 rounded-2xl font-bold transition-all duration-300 inline-flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105">
+          <i class="ri-service-line text-xl"></i>
+          Xem tất cả dịch vụ
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="bg-gradient-to-br from-gray-900 via-purple-900 to-indigo-900 text-white py-20 relative overflow-hidden">
+    <!-- Background Pattern -->
+    <div class="absolute inset-0 opacity-10">
+      <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.1"%3E%3Ccircle cx="30" cy="30" r="2"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
+    </div>
+    
+    <div class="container mx-auto px-4 text-center relative z-10">
+      <h2 class="text-4xl md:text-5xl font-bold mb-6">Sẵn sàng chăm sóc thú cưng?</h2>
+      <p class="text-xl mb-12 max-w-3xl mx-auto leading-relaxed text-gray-300">
+        Hãy để chúng tôi giúp bạn mang lại những điều tốt nhất cho người bạn thân yêu của bạn
+      </p>
+      <div class="flex flex-col sm:flex-row justify-center gap-6">
+        <a href="/products" 
+           class="bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 px-10 py-5 rounded-2xl font-bold text-lg hover:from-yellow-300 hover:to-orange-400 transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl flex items-center justify-center gap-3">
+          <i class="ri-shopping-bag-line text-2xl"></i>
+          Mua sắm ngay
+        </a>
+        <a href="/contact" 
+           class="border-2 border-white text-white px-10 py-5 rounded-2xl font-bold text-lg hover:bg-white hover:text-gray-900 transition-all duration-300 transform hover:scale-105 backdrop-blur-sm flex items-center justify-center gap-3">
+          <i class="ri-customer-service-line text-2xl"></i>
+          Liên hệ tư vấn
+        </a>
+      </div>
+    </div>
+  </section>
+    </main>
+
+  <script>
+    function addToCart(productId) {
+      fetch('/cart', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          productId: productId,
+          quantity: 1
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Show success notification
+          const notification = document.createElement('div');
+          notification.className = 'fixed top-4 right-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-8 py-4 rounded-xl shadow-2xl z-50 flex items-center gap-3';
+          notification.innerHTML = '<i class="ri-check-circle-line text-xl"></i><span class="font-semibold">Đã thêm vào giỏ hàng!</span>';
+          document.body.appendChild(notification);
+          
+          setTimeout(() => {
+            notification.style.transition = 'opacity 0.5s ease';
+            notification.style.opacity = '0';
+            setTimeout(() => notification.remove(), 500);
+          }, 3000);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    }
+  </script>
+
+  <%- include('includes/end') %>
+</body>
+</html>

@@ -1,0 +1,13 @@
+require('./controllers/admin/product');
+require('./controllers/admin/order');
+require('./controllers/admin/user');
+require('./controllers/admin/service');
+require('./controllers/admin/coupon');
+require('./controllers/admin/review');
+require('./controllers/admin/newsletter');
+require('./controllers/admin/contact');
+require('./controllers/admin/booking');
+require('./controllers/admin/dashboard');
+require('./controllers/admin/inventory');
+require('./controllers/admin/main');
+console.log('All controllers loaded!'); 

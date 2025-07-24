@@ -1,0 +1,193 @@
+<%- include('../includes/head') %>
+<body class="bg-gray-50 min-h-screen">
+  <%- include('../includes/navigation', { 
+    user: typeof user !== 'undefined' ? user : null, 
+    isAdmin: typeof isAdmin !== 'undefined' ? isAdmin : false, 
+    isAuthenticated: typeof isAuthenticated !== 'undefined' ? isAuthenticated : false, 
+    cartCount: typeof cartCount !== 'undefined' ? cartCount : 0,
+    favorites: typeof favorites !== 'undefined' ? favorites : []
+  }) %>
+
+  <!-- Hero Section -->
+  <section class="bg-gradient-to-r from-orange-500 to-red-500 text-white py-16">
+    <div class="container mx-auto px-4 text-center">
+      <h1 class="text-6xl font-bold mb-6">
+        <i class="ri-error-warning-line text-8xl mb-4"></i><br>
+        Lỗi Dữ Liệu
+      </h1>
+      <p class="text-2xl mb-8 max-w-2xl mx-auto">
+        <%= message || 'Dữ liệu không hợp lệ' %>
+      </p>
+      <div class="flex justify-center space-x-4">
+        <a href="/cart" class="bg-white text-orange-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
+          <i class="ri-shopping-cart-line mr-2"></i>
+          Về giỏ hàng
+        </a>
+        <a href="/products" class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-orange-600 transition">
+          <i class="ri-store-line mr-2"></i>
+          Xem sản phẩm
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Error Details -->
+  <section class="py-12">
+    <div class="container mx-auto px-4">
+      <div class="max-w-4xl mx-auto">
+        
+        <!-- Error Message -->
+        <div class="bg-white rounded-2xl shadow-lg p-8 mb-8 text-center">
+          <div class="bg-orange-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
+            <i class="ri-error-warning-line text-4xl text-orange-600"></i>
+          </div>
+          <h2 class="text-2xl font-bold text-gray-800 mb-4">Thông Báo Lỗi</h2>
+          <p class="text-gray-600 mb-6">
+            <%= message || 'Dữ liệu không hợp lệ. Vui lòng kiểm tra lại thông tin.' %>
+          </p>
+          
+          <% if (typeof error !== 'undefined' && error) { %>
+            <div class="bg-gray-100 rounded-lg p-4 mb-6">
+              <p class="text-sm text-gray-500 mb-2">Chi tiết lỗi:</p>
+              <code class="text-red-600 font-mono text-sm"><%= error %></code>
+            </div>
+          <% } %>
+        </div>
+
+        <!-- Common Solutions -->
+        <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+          <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Cách Khắc Phục</h3>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-blue-50 rounded-xl p-6">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="bg-blue-600 text-white rounded-full p-2">
+                  <i class="ri-shopping-cart-line text-lg"></i>
+                </div>
+                <h4 class="font-semibold text-gray-800">Kiểm tra giỏ hàng</h4>
+              </div>
+              <p class="text-sm text-gray-600">Vào giỏ hàng và kiểm tra lại số lượng sản phẩm</p>
+            </div>
+            
+            <div class="bg-green-50 rounded-xl p-6">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="bg-green-600 text-white rounded-full p-2">
+                  <i class="ri-store-line text-lg"></i>
+                </div>
+                <h4 class="font-semibold text-gray-800">Xem sản phẩm</h4>
+              </div>
+              <p class="text-sm text-gray-600">Kiểm tra tồn kho và chọn sản phẩm khác</p>
+            </div>
+            
+            <div class="bg-purple-50 rounded-xl p-6">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="bg-purple-600 text-white rounded-full p-2">
+                  <i class="ri-customer-service-line text-lg"></i>
+                </div>
+                <h4 class="font-semibold text-gray-800">Liên hệ hỗ trợ</h4>
+              </div>
+              <p class="text-sm text-gray-600">Nếu vấn đề vẫn tiếp tục, hãy liên hệ chúng tôi</p>
+            </div>
+            
+            <div class="bg-yellow-50 rounded-xl p-6">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="bg-yellow-600 text-white rounded-full p-2">
+                  <i class="ri-refresh-line text-lg"></i>
+                </div>
+                <h4 class="font-semibold text-gray-800">Tải lại trang</h4>
+              </div>
+              <p class="text-sm text-gray-600">Đôi khi tải lại trang có thể giải quyết vấn đề</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+          <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Hành Động Tiếp Theo</h3>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <a href="/cart" class="bg-blue-50 rounded-xl p-6 hover:bg-blue-100 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 text-center">
+              <div class="bg-blue-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="ri-shopping-cart-line text-2xl text-blue-600"></i>
+              </div>
+              <h4 class="font-semibold text-gray-800 mb-2">Giỏ hàng</h4>
+              <p class="text-sm text-gray-600">Kiểm tra giỏ hàng</p>
+            </a>
+            
+            <a href="/products" class="bg-green-50 rounded-xl p-6 hover:bg-green-100 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 text-center">
+              <div class="bg-green-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="ri-store-line text-2xl text-green-600"></i>
+              </div>
+              <h4 class="font-semibold text-gray-800 mb-2">Sản phẩm</h4>
+              <p class="text-sm text-gray-600">Xem sản phẩm</p>
+            </a>
+            
+            <a href="/contact" class="bg-purple-50 rounded-xl p-6 hover:bg-purple-100 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 text-center">
+              <div class="bg-purple-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="ri-customer-service-line text-2xl text-purple-600"></i>
+              </div>
+              <h4 class="font-semibold text-gray-800 mb-2">Hỗ trợ</h4>
+              <p class="text-sm text-gray-600">Liên hệ hỗ trợ</p>
+            </a>
+            
+            <a href="/" class="bg-yellow-50 rounded-xl p-6 hover:bg-yellow-100 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 text-center">
+              <div class="bg-yellow-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="ri-home-line text-2xl text-yellow-600"></i>
+              </div>
+              <h4 class="font-semibold text-gray-800 mb-2">Trang chủ</h4>
+              <p class="text-sm text-gray-600">Về trang chủ</p>
+            </a>
+            
+            <a href="/services" class="bg-red-50 rounded-xl p-6 hover:bg-red-100 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 text-center">
+              <div class="bg-red-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="ri-customer-service-line text-2xl text-red-600"></i>
+              </div>
+              <h4 class="font-semibold text-gray-800 mb-2">Dịch vụ</h4>
+              <p class="text-sm text-gray-600">Xem dịch vụ</p>
+            </a>
+            
+            <button onclick="history.back()" class="bg-indigo-50 rounded-xl p-6 hover:bg-indigo-100 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 text-center">
+              <div class="bg-indigo-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="ri-arrow-left-line text-2xl text-indigo-600"></i>
+              </div>
+              <h4 class="font-semibold text-gray-800 mb-2">Quay lại</h4>
+              <p class="text-sm text-gray-600">Trang trước</p>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="bg-gray-900 text-white py-16">
+    <div class="container mx-auto px-4 text-center">
+      <h2 class="text-3xl font-bold mb-4">Cần hỗ trợ thêm?</h2>
+      <p class="text-xl mb-8 max-w-2xl mx-auto">
+        Liên hệ với chúng tôi để được hỗ trợ nhanh chóng
+      </p>
+      <div class="flex justify-center space-x-4">
+        <a href="/contact" class="bg-orange-600 hover:bg-orange-700 text-white px-8 py-3 rounded-lg font-semibold transition">
+          <i class="ri-customer-service-line mr-2"></i>
+          Liên hệ ngay
+        </a>
+        <button onclick="history.back()" class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-gray-900 transition">
+          <i class="ri-arrow-left-line mr-2"></i>
+          Quay lại
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <%- include('../includes/end') %>
+  
+  <script>
+    // Auto redirect sau 10 giây
+    setTimeout(() => {
+      if (confirm('Bạn có muốn quay lại trang trước không?')) {
+        history.back();
+      }
+    }, 10000);
+  </script>
+</body>
+</html> 

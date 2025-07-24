@@ -1,0 +1,23 @@
+<%- include('../includes/head.ejs') %>
+<body class="bg-gray-50 min-h-screen">
+  <%- include('../includes/navigation', { 
+    user, 
+    isAdmin, 
+    isAuthenticated, 
+    cartCount,
+    favorites: typeof favorites !== 'undefined' ? favorites : []
+  }) %>
+  <main class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-6 text-center">Danh mục sản phẩm</h1>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+      <% categories.forEach(cat => { %>
+        <a href="/products?category=<%= cat.slug %>" class="bg-white rounded-xl shadow p-6 flex flex-col items-center hover:shadow-lg transition group">
+          <span class="text-5xl mb-2 group-hover:scale-110 transition-transform"><%= cat.icon %></span>
+          <h2 class="text-xl font-semibold mb-1 text-gray-800 group-hover:text-blue-600"><%= cat.name %></h2>
+          <p class="text-gray-500 text-sm text-center"><%= cat.description %></p>
+        </a>
+      <% }) %>
+    </div>
+  </main>
+  <%- include('../includes/end.ejs') %>
+</body> 

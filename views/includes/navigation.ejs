@@ -1,0 +1,358 @@
+<% var _isAdmin=typeof isAdmin !=='undefined' ? isAdmin : false; %>
+<% var _isAuthenticated=typeof isAuthenticated !=='undefined' ? isAuthenticated : false; %>
+<% var _cartCount=typeof cartCount !=='undefined' ? cartCount : 0; %>
+<% var _categories=typeof categories !=='undefined' ? categories : []; %>
+<% var _user=typeof user !=='undefined' ? user : null; %>
+
+<% if (_isAdmin) { %>
+    <%- include('navigation-admin.ejs') %>
+<% } else { %>
+    <nav class="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 shadow-lg sticky top-0 z-50 backdrop-blur-sm bg-opacity-95">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <a href="/" class="flex items-center space-x-3 group">
+                        <div class="bg-white bg-opacity-20 rounded-full p-3 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                            <i class="ri-heart-pulse-line text-2xl text-white"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-2xl font-bold text-white">Pet Store</h1>
+                            <p class="text-xs text-white text-opacity-80">Chăm sóc thú cưng</p>
+                        </div>
+                    </a>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <div class="hidden lg:flex items-center space-x-6 xl:space-x-8">
+                    <a href="/" class="relative text-white hover:text-yellow-300 transition-colors duration-300 group">
+                        <span class="relative z-10">Trang chủ</span>
+                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-yellow-300 group-hover:w-full transition-all duration-300"></span>
+                    </a>
+                    <div class="relative group">
+                        <a href="/products" class="relative text-white hover:text-yellow-300 transition-colors duration-300">
+                            <span class="relative z-10">Sản phẩm</span>
+                            <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-yellow-300 hover:w-full transition-all duration-300"></span>
+                        </a>
+                        <div class="absolute left-0 mt-3 w-64 bg-white rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform scale-95 group-hover:scale-100 z-50">
+                            <!-- Header -->
+                            <div class="p-4 border-b border-gray-100">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 bg-gradient-to-r from-green-500 to-blue-500 rounded-full flex items-center justify-center">
+                                        <i class="ri-store-line text-white"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-gray-900">Danh mục sản phẩm</p>
+                                        <p class="text-sm text-gray-500">Chọn loại thú cưng</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Menu Items -->
+                            <div class="p-2">
+                                <a href="/products" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-200 font-semibold">
+                                    <i class="ri-store-line text-lg"></i>
+                                    <span>Tất cả sản phẩm</span>
+                                </a>
+                                <% if (_categories && _categories.length > 0) { %>
+                                    <% _categories.forEach(function(cat) { %>
+                                        <a href="/products?category=<%= cat.slug %>" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-200">
+                                            <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                                                <span class="text-white text-sm"><%= cat.icon %></span>
+                                            </div>
+                                            <span><%= cat.name %></span>
+                                        </a>
+                                    <% }); %>
+                                <% } else { %>
+                                    <a href="/products?category=dog" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-200">
+                                        <div class="w-8 h-8 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full flex items-center justify-center">
+                                            <span class="text-white text-sm">🐶</span>
+                                        </div>
+                                        <span>Chó cưng</span>
+                                    </a>
+                                    <a href="/products?category=cat" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-200">
+                                        <div class="w-8 h-8 bg-gradient-to-r from-pink-500 to-purple-500 rounded-full flex items-center justify-center">
+                                            <span class="text-white text-sm">🐱</span>
+                                        </div>
+                                        <span>Mèo cưng</span>
+                                    </a>
+                                    <a href="/products?category=fish" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-200">
+                                        <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center">
+                                            <span class="text-white text-sm">🐟</span>
+                                        </div>
+                                        <span>Cá cảnh</span>
+                                    </a>
+                                    <a href="/products?category=small-pets" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-200">
+                                        <div class="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center">
+                                            <span class="text-white text-sm">🐹</span>
+                                        </div>
+                                        <span>Thú nhỏ</span>
+                                    </a>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="/services" class="relative text-white hover:text-yellow-300 transition-colors duration-300 services-link">
+                        <span class="relative z-10">Dịch vụ</span>
+                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-yellow-300 hover:w-full transition-all duration-300"></span>
+                    </a>
+                    <a href="/news" class="relative text-white hover:text-yellow-300 transition-colors duration-300 news-link">
+                        <span class="relative z-10">Tin tức</span>
+                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-yellow-300 hover:w-full transition-all duration-300"></span>
+                    </a>
+                    <a href="/about" class="relative text-white hover:text-yellow-300 transition-colors duration-300 about-link">
+                        <span class="relative z-10">Giới thiệu</span>
+                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-yellow-300 hover:w-full transition-all duration-300"></span>
+                    </a>
+                    <a href="/contact" class="relative text-white hover:text-yellow-300 transition-colors duration-300 contact-link">
+                        <span class="relative z-10">Liên hệ</span>
+                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-yellow-300 hover:w-full transition-all duration-300"></span>
+                    </a>
+                </div>
+                
+                <!-- User Actions -->
+                <div class="flex items-center space-x-4">
+                    <!-- Search -->
+                    <form action="/search" method="GET" class="hidden md:flex relative group">
+                        <input type="text" name="search" placeholder="Tìm kiếm sản phẩm..." 
+                               class="pl-12 pr-10 py-2.5 bg-white bg-opacity-20 text-white placeholder-white placeholder-opacity-70 border border-white border-opacity-30 rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-300 focus:border-transparent backdrop-blur-sm transition-all duration-300 w-64">
+                        <div class="absolute left-4 top-1/2 transform -translate-y-1/2">
+                            <i class="ri-search-line text-white text-opacity-70"></i>
+                        </div>
+                        <button type="button" onclick="clearNavSearch()" 
+                                class="absolute right-4 top-1/2 transform -translate-y-1/2 text-white/70 hover:text-white transition-colors">
+                            <i class="ri-close-line text-sm"></i>
+                        </button>
+                    </form>
+                    
+                    <!-- Favorites -->
+                    <a href="/favorites" class="relative p-3 text-white hover:text-yellow-300 transition-colors duration-300 group">
+                        <div class="relative">
+                            <i class="ri-heart-line text-xl group-hover:scale-110 transition-transform duration-300"></i>
+                            <% if (typeof favorites !== 'undefined' && favorites && favorites.length > 0) { %>
+                                <span class="absolute -top-2 -right-2 bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-semibold rounded-full min-w-[20px] h-5 px-1.5 flex items-center justify-center shadow-lg border-2 border-white transform scale-100 group-hover:scale-110 transition-all duration-300">
+                                    <%= favorites.length > 99 ? '99+' : favorites.length %>
+                                </span>
+                            <% } %>
+                        </div>
+                    </a>
+                    
+                    <!-- Cart -->
+                    <a href="/cart" class="relative p-3 text-white hover:text-yellow-300 transition-colors duration-300 group">
+                        <div class="relative">
+                            <i class="ri-shopping-cart-line text-xl group-hover:scale-110 transition-transform duration-300"></i>
+                            <% if (_cartCount > 0) { %>
+                                <span class="absolute -top-2 -right-2 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-semibold rounded-full min-w-[20px] h-5 px-1.5 flex items-center justify-center shadow-lg border-2 border-white transform scale-100 group-hover:scale-110 transition-all duration-300">
+                                    <%= _cartCount > 99 ? '99+' : _cartCount %>
+                                </span>
+                            <% } %>
+                        </div>
+                    </a>
+                    
+                    <!-- User Menu -->
+                    <% if (_isAuthenticated) { %>
+                        <div class="relative group">
+                            <button class="flex items-center space-x-3 p-3 text-white hover:text-yellow-300 transition-colors duration-300 group">
+                                <div class="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                                    <i class="ri-user-line text-lg"></i>
+                                </div>
+                                <span class="hidden md:block font-medium"><%= _user ? _user.name : 'Người dùng' %></span>
+                                <i class="ri-arrow-down-s-line transition-transform duration-300 group-hover:rotate-180"></i>
+                            </button>
+                            <div class="absolute right-0 mt-3 w-64 bg-white rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform scale-95 group-hover:scale-100 z-50">
+                                <div class="p-4 border-b border-gray-100">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                                            <i class="ri-user-line text-white"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium text-gray-900"><%= _user ? _user.name : 'Người dùng' %></p>
+                                            <p class="text-sm text-gray-500"><%= _user ? _user.email : 'Không có email' %></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="p-2 space-y-1">
+                                    <a href="/auth/profile" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-all duration-200 hover:text-gray-900">
+                                        <i class="ri-user-settings-line text-lg"></i>
+                                        <span>Thông tin cá nhân</span>
+                                    </a>
+                                    <a href="/auth/orders" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-all duration-200 hover:text-gray-900">
+                                        <i class="ri-shopping-bag-line text-lg"></i>
+                                        <span>Đơn hàng của tôi</span>
+                                    </a>
+                                    <% if (_isAdmin) { %>
+                                        <a href="/admin" class="flex items-center space-x-3 px-4 py-3 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200">
+                                            <i class="ri-admin-line text-lg"></i>
+                                            <span>Quản trị hệ thống</span>
+                                        </a>
+                                    <% } %>
+                                    <hr class="my-2 border-gray-200">
+                                    <form action="/auth/logout" method="POST" class="block">
+                                        <button type="submit" class="w-full flex items-center justify-start space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-lg transition-all duration-200 cursor-pointer font-medium">
+                                            <i class="ri-logout-box-line text-lg"></i>
+                                            <span>Đăng xuất</span>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    <% } else { %>
+                        <div class="flex items-center space-x-3">
+                            <a href="/auth/login" class="px-6 py-2.5 bg-white bg-opacity-20 text-white border border-white border-opacity-30 rounded-full hover:bg-white hover:text-gray-900 transition-all duration-300 backdrop-blur-sm">
+                                Đăng nhập
+                            </a>
+                        </div>
+                    <% } %>
+                    
+                    <!-- Mobile Menu Button -->
+                    <button class="lg:hidden p-3 text-white hover:text-yellow-300 transition-colors duration-300" id="mobile-menu-btn">
+                        <i class="ri-menu-line text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile Navigation -->
+            <div class="lg:hidden hidden bg-white bg-opacity-95 backdrop-blur-sm rounded-b-2xl shadow-xl transform transition-all duration-300 ease-in-out z-[9998]" id="mobile-menu">
+                <div class="py-6 px-4 space-y-6">
+                    <!-- Mobile Menu Header -->
+                    <div class="flex items-center justify-between pb-4 border-b border-gray-200">
+                        <h3 class="text-lg font-bold text-gray-800">Menu</h3>
+                        <button class="p-2 text-gray-500 hover:text-gray-700 transition-colors" onclick="closeMobileMenu()">
+                            <i class="ri-close-line text-xl"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Main Navigation Links -->
+                    <div class="grid grid-cols-1 gap-3">
+                        <a href="/" class="flex items-center space-x-4 p-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl hover:scale-105 transition-all duration-300 shadow-lg">
+                            <i class="ri-home-line text-xl"></i>
+                            <span class="font-semibold">Trang chủ</span>
+                        </a>
+                        <a href="/products" class="flex items-center space-x-4 p-4 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-xl hover:scale-105 transition-all duration-300 shadow-lg">
+                            <i class="ri-store-line text-xl"></i>
+                            <span class="font-semibold">Sản phẩm</span>
+                        </a>
+                        <a href="/services" class="flex items-center space-x-4 p-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl hover:scale-105 transition-all duration-300 shadow-lg">
+                            <i class="ri-service-line text-xl"></i>
+                            <span class="font-semibold">Dịch vụ</span>
+                        </a>
+                        <a href="/news" class="flex items-center space-x-4 p-4 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-xl hover:scale-105 transition-all duration-300 shadow-lg">
+                            <i class="ri-article-line text-xl"></i>
+                            <span class="font-semibold">Tin tức</span>
+                        </a>
+                    </div>
+                    
+                    <!-- Mobile Search with Enhanced UX -->
+                    <div class="relative">
+                        <form action="/products" method="GET" class="relative">
+                            <input type="text" name="search" placeholder="Tìm kiếm sản phẩm..." 
+                                   class="w-full pl-12 pr-4 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-gray-700 placeholder-gray-500">
+                            <div class="absolute left-4 top-1/2 transform -translate-y-1/2">
+                                <i class="ri-search-line text-gray-400 text-lg"></i>
+                            </div>
+                            <button type="submit" class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition-colors">
+                                <i class="ri-arrow-right-line"></i>
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <!-- Secondary Links -->
+                    <div class="space-y-3">
+                        <a href="/about" class="flex items-center space-x-4 p-4 text-gray-700 hover:bg-gray-50 rounded-xl transition-all duration-200 border border-gray-100">
+                            <i class="ri-information-line text-lg text-blue-500"></i>
+                            <span class="font-medium">Giới thiệu</span>
+                        </a>
+                        <a href="/contact" class="flex items-center space-x-4 p-4 text-gray-700 hover:bg-gray-50 rounded-xl transition-all duration-200 border border-gray-100">
+                            <i class="ri-customer-service-line text-lg text-green-500"></i>
+                            <span class="font-medium">Liên hệ</span>
+                        </a>
+                    </div>
+                    
+                    <!-- Mobile User Actions -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <!-- Mobile Favorites -->
+                        <a href="/favorites" class="relative flex items-center justify-center space-x-3 p-4 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-xl hover:scale-105 transition-all duration-300 shadow-lg">
+                            <div class="relative">
+                                <i class="ri-heart-line text-xl"></i>
+                                <% if (typeof favorites !== 'undefined' && favorites && favorites.length > 0) { %>
+                                    <span class="absolute -top-2 -right-2 bg-white text-pink-600 text-xs font-bold rounded-full min-w-[18px] h-4.5 px-1 flex items-center justify-center shadow-md">
+                                        <%= favorites.length > 99 ? '99+' : favorites.length %>
+                                    </span>
+                                <% } %>
+                            </div>
+                            <span class="font-semibold">Yêu thích</span>
+                        </a>
+                        
+                        <!-- Mobile Cart -->
+                        <a href="/cart" class="relative flex items-center justify-center space-x-3 p-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl hover:scale-105 transition-all duration-300 shadow-lg">
+                            <div class="relative">
+                                <i class="ri-shopping-cart-line text-xl"></i>
+                                <% if (_cartCount > 0) { %>
+                                    <span class="absolute -top-2 -right-2 bg-white text-blue-600 text-xs font-bold rounded-full min-w-[18px] h-4.5 px-1 flex items-center justify-center shadow-md">
+                                        <%= _cartCount > 99 ? '99+' : _cartCount %>
+                                    </span>
+                                <% } %>
+                            </div>
+                            <span class="font-semibold">Giỏ hàng</span>
+                        </a>
+                    </div>
+                    
+                    <!-- User Actions for Mobile -->
+                    <% if (_isAuthenticated) { %>
+                        <div class="pt-4 border-t border-gray-200">
+                            <div class="flex items-center space-x-4 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl">
+                                <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                                    <i class="ri-user-line text-white"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="font-semibold text-gray-800"><%= _user ? _user.name : 'Người dùng' %></p>
+                                    <p class="text-sm text-gray-500"><%= _user ? _user.email : 'Không có email' %></p>
+                                </div>
+                            </div>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <script>
+        // Mobile menu functionality
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            
+            if (mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.remove('hidden');
+                mobileMenuBtn.innerHTML = '<i class="ri-close-line text-xl"></i>';
+            } else {
+                mobileMenu.classList.add('hidden');
+                mobileMenuBtn.innerHTML = '<i class="ri-menu-line text-xl"></i>';
+            }
+        }
+        
+        function closeMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            
+            mobileMenu.classList.add('hidden');
+            mobileMenuBtn.innerHTML = '<i class="ri-menu-line text-xl"></i>';
+        }
+
+        // Clear navigation search
+        function clearNavSearch() {
+            const searchInput = document.querySelector('form[action="/search"] input[name="search"]');
+            if (searchInput) {
+                searchInput.value = '';
+                searchInput.focus();
+            }
+        }
+
+        // Toggle mobile menu on button click
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+            }
+        });
+    </script>
+<% } %>

@@ -1,0 +1,573 @@
+<%- include('../includes/head.ejs') %>
+
+<body class="bg-gray-50 min-h-screen">
+    <%- include('../includes/navigation-admin.ejs') %>
+
+    <main class="ml-64 min-h-screen bg-gray-50 py-8 px-4 pb-24">
+        <div class="max-w-7xl mx-auto">
+            <!-- Tabs Section -->
+            <div class="mb-8">
+                <div class="flex gap-2 border-b border-gray-200">
+                    <a href="?tab=services" class="px-6 py-3 -mb-px border-b-2 font-semibold text-sm transition-all duration-200 <%= (typeof tab === 'undefined' || tab === 'services') ? 'border-orange-600 text-orange-600 bg-orange-50' : 'border-transparent text-gray-600 hover:text-orange-600' %>">Dịch vụ</a>
+                    <a href="?tab=bookings" class="px-6 py-3 -mb-px border-b-2 font-semibold text-sm transition-all duration-200 <%= tab === 'bookings' ? 'border-cyan-600 text-cyan-600 bg-cyan-50' : 'border-transparent text-gray-600 hover:text-cyan-600' %>">Đặt lịch</a>
+                </div>
+            </div>
+            <% if (typeof tab === 'undefined' || tab === 'services') { %>
+                <!-- Header Section -->
+                <div class="flex items-center justify-between mb-8">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
+                            <i class="ri-service-line text-2xl text-orange-600"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-800">Quản lý dịch vụ</h1>
+                            <p class="text-gray-600">Thêm, sửa, xóa và quản lý các dịch vụ</p>
+                        </div>
+                    </div>
+                    <a href="/admin/services/add" 
+                       class="bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 flex items-center space-x-2">
+                        <i class="ri-add-line"></i>
+                        <span>Thêm dịch vụ</span>
+                    </a>
+                </div>
+
+                <!-- Filters Section -->
+                <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 mb-8">
+                    <form method="GET" action="/admin/services" class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tìm kiếm</label>
+                            <input type="text" name="search" value="<%= search %>" placeholder="Tên dịch vụ..." 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Danh mục</label>
+                            <select name="category" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200">
+                                <option value="">Tất cả danh mục</option>
+                                <% categories.forEach(cat => { %>
+                                    <option value="<%= cat %>" <%= category === cat ? 'selected' : '' %>><%= cat %></option>
+                                <% }) %>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Trạng thái</label>
+                            <select name="status" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200">
+                                <option value="">Tất cả trạng thái</option>
+                                <option value="active" <%= status === 'active' ? 'selected' : '' %>>Hoạt động</option>
+                                <option value="inactive" <%= status === 'inactive' ? 'selected' : '' %>>Không hoạt động</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Sắp xếp</label>
+                            <select name="sort" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200">
+                                <option value="">Mới nhất</option>
+                                <option value="name_asc" <%= sort === 'name_asc' ? 'selected' : '' %>>Tên A-Z</option>
+                                <option value="name_desc" <%= sort === 'name_desc' ? 'selected' : '' %>>Tên Z-A</option>
+                                <option value="price_asc" <%= sort === 'price_asc' ? 'selected' : '' %>>Giá thấp-cao</option>
+                                <option value="price_desc" <%= sort === 'price_desc' ? 'selected' : '' %>>Giá cao-thấp</option>
+                                <option value="bookings_desc" <%= sort === 'bookings_desc' ? 'selected' : '' %>>Đặt nhiều nhất</option>
+                                <option value="rating_desc" <%= sort === 'rating_desc' ? 'selected' : '' %>>Đánh giá cao nhất</option>
+                            </select>
+                        </div>
+                        <div class="flex items-end">
+                            <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2">
+                                <i class="ri-search-line"></i>
+                                <span>Lọc</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Services List -->
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
+                    <% if (services && services.length > 0) { %>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Dịch vụ</th>
+                                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Danh mục</th>
+                                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Giá</th>
+                                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Thời gian</th>
+                                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Trạng thái</th>
+                                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-100">
+                                    <% services.forEach(service => { %>
+                                        <tr class="hover:bg-gray-50 transition-colors duration-200">
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center space-x-3">
+                                                    <div class="w-12 h-12 rounded-xl overflow-hidden">
+                                                        <img class="h-12 w-12 object-cover" src="<%= service.imageUrl %>" alt="<%= service.name %>">
+                                                    </div>
+                                                    <div>
+                                                        <div class="font-semibold text-gray-800"><%= service.name %></div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                                                    <i class="ri-price-tag-line mr-1"></i>
+                                                    <%= service.category %>
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <span class="text-green-600 font-bold">
+                                                    <%= service.price.toLocaleString('vi-VN') %>₫
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center space-x-1">
+                                                    <i class="ri-time-line text-gray-400"></i>
+                                                    <span class="text-sm text-gray-700"><%= service.duration %> phút</span>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold
+                                                    <%= service.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+                                                    <i class="<%= service.status === 'active' ? 'ri-check-circle-line' : 'ri-close-circle-line' %> mr-1"></i>
+                                                    <%= service.status === 'active' ? 'Hoạt động' : 'Không hoạt động' %>
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center space-x-2">
+                                                    <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-lg transition-all duration-200 transform hover:scale-105 btn-view-service" data-service='<%- JSON.stringify(service) %>' title="Xem chi tiết">
+                                                        <i class="ri-eye-line"></i>
+                                                    </button>
+                                                    <a href="/admin/services/<%= service._id %>/edit" 
+                                                       class="bg-blue-100 hover:bg-blue-200 text-blue-600 p-2 rounded-lg transition-all duration-200 transform hover:scale-105"
+                                                       title="Sửa dịch vụ">
+                                                        <i class="ri-edit-line"></i>
+                                                    </a>
+                                                    <button onclick="deleteService('<%= service._id %>')" 
+                                                            class="bg-red-100 hover:bg-red-200 text-red-600 p-2 rounded-lg transition-all duration-200 transform hover:scale-105"
+                                                            title="Xóa dịch vụ">
+                                                        <i class="ri-delete-bin-line"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        <% if (totalPages > 1) { %>
+                        <div class="px-6 py-4 border-t border-gray-100 flex flex-col md:flex-row md:items-center md:justify-between">
+                          <div class="text-sm text-gray-600 mb-2 md:mb-0">
+                            Hiển thị <span class="font-medium"><%= (currentPage - 1) * limit + 1 %></span> đến 
+                            <span class="font-medium"><%= Math.min(currentPage * limit, totalServices) %></span> trong tổng số 
+                            <span class="font-medium"><%= totalServices %></span> dịch vụ
+                          </div>
+                          <div class="flex items-center space-x-2">
+                            <% if (hasPrevPage) { %>
+                              <a href="?page=<%= prevPage %>&search=<%= search %>&category=<%= category %>&status=<%= status %>&sort=<%= sort %>" 
+                                 class="px-3 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 transition-all duration-200">
+                                <i class="ri-arrow-left-line"></i>
+                              </a>
+                            <% } %>
+                            <% pageNumbers.forEach(pageNum => { %>
+                              <% if (pageNum === currentPage) { %>
+                                <span class="px-3 py-2 bg-orange-600 text-white rounded-lg"><%= pageNum %></span>
+                              <% } else { %>
+                                <a href="?page=<%= pageNum %>&search=<%= search %>&category=<%= category %>&status=<%= status %>&sort=<%= sort %>" 
+                                   class="px-3 py-2 border text-sm font-medium border-gray-300 text-gray-600 hover:bg-gray-50 rounded-lg transition-all duration-200">
+                                  <%= pageNum %>
+                                </a>
+                              <% } %>
+                            <% }) %>
+                            <% if (hasNextPage) { %>
+                              <a href="?page=<%= nextPage %>&search=<%= search %>&category=<%= category %>&status=<%= status %>&sort=<%= sort %>" 
+                                 class="px-3 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 transition-all duration-200">
+                                <i class="ri-arrow-right-line"></i>
+                              </a>
+                            <% } %>
+                          </div>
+                        </div>
+                        <% } %>
+                    <% } else { %>
+                        <!-- Empty State -->
+                        <div class="text-center py-12">
+                            <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <i class="ri-service-line text-3xl text-gray-400"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2">Chưa có dịch vụ nào</h3>
+                            <p class="text-gray-600 mb-6">Bắt đầu bằng cách thêm dịch vụ đầu tiên vào hệ thống.</p>
+                            <a href="/admin/services/add" 
+                               class="bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 inline-flex items-center space-x-2">
+                                <i class="ri-add-line"></i>
+                                <span>Thêm dịch vụ đầu tiên</span>
+                            </a>
+                        </div>
+                    <% } %>
+                </div>
+            <% } else if (tab === 'bookings') { %>
+            <!-- Booking Management Tab Content -->
+            <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+                <h2 class="text-2xl font-bold text-cyan-700 mb-6 flex items-center gap-2">
+                    <i class="ri-calendar-check-line"></i> Quản lý đặt lịch dịch vụ
+                </h2>
+                <% if (bookings && bookings.length > 0) { %>
+                <div class="overflow-x-auto rounded-xl border border-gray-100">
+                    <table class="min-w-full bg-white text-sm">
+                        <thead>
+                            <tr class="bg-cyan-50 text-cyan-700 uppercase text-xs tracking-wider">
+                                <th class="px-6 py-4 text-left font-semibold">Khách hàng</th>
+                                <th class="px-6 py-4 text-left font-semibold">Dịch vụ</th>
+                                <th class="px-6 py-4 text-left font-semibold">Ngày</th>
+                                <th class="px-6 py-4 text-left font-semibold">Thời gian đặt</th>
+                                <th class="px-6 py-4 text-left font-semibold">Trạng thái</th>
+                                <th class="px-6 py-4 text-left font-semibold">Xem</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <% bookings.forEach(booking => { %>
+                            <tr class="hover:bg-cyan-50 transition">
+                                <td class="px-6 py-4 align-top">
+                                    <div class="font-semibold text-gray-800"><%= booking.customerInfo?.name || 'Không rõ' %></div>
+                                </td>
+                                <td class="px-6 py-4 align-top"><%= booking.service?.name || '—' %></td>
+                                <td class="px-6 py-4 align-top"><%= booking.bookingDate ? new Date(booking.bookingDate).toLocaleDateString('vi-VN') : '—' %></td>
+                                <td class="px-6 py-4 align-top"><%= booking.createdAt ? new Date(booking.createdAt).toLocaleString('vi-VN') : '—' %></td>
+                                <td class="px-6 py-4 align-top">
+                                    <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold
+                                        <%= booking.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                                            booking.status === 'confirmed' ? 'bg-green-100 text-green-700' :
+                                            booking.status === 'completed' ? 'bg-blue-100 text-blue-700' :
+                                            'bg-red-100 text-red-700' %>">
+                                        <%= booking.status %>
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 align-top">
+                                    <button class="btn-view-booking px-3 py-1 bg-cyan-600 text-white rounded-full text-xs font-semibold hover:bg-cyan-700 transition flex items-center gap-1" data-booking='<%- JSON.stringify(booking) %>'>
+                                        <i class="ri-eye-line"></i> Xem
+                                    </button>
+                                </td>
+                            </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Modal chi tiết booking -->
+                <div id="booking-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-40">
+                  <div class="bg-white rounded-xl shadow-xl w-full max-w-lg mx-auto p-6 relative">
+                    <button id="close-booking-modal" class="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
+                    <h3 class="text-xl font-bold text-cyan-700 mb-4 flex items-center gap-2"><i class="ri-eye-line"></i> Chi tiết đặt lịch</h3>
+                    <div id="booking-modal-content" class="space-y-2 text-sm">
+                      <!-- Nội dung chi tiết booking sẽ được render ở đây bằng JS -->
+                    </div>
+                    <div id="booking-modal-actions" class="mt-6 flex gap-3"></div>
+                  </div>
+                </div>
+                <script>
+                document.querySelectorAll('.btn-view-booking').forEach(btn => {
+                  btn.addEventListener('click', function() {
+                    const booking = JSON.parse(this.dataset.booking);
+                    const modal = document.getElementById('booking-modal');
+                    const content = document.getElementById('booking-modal-content');
+                    const actions = document.getElementById('booking-modal-actions');
+                    // Render chi tiết
+                    content.innerHTML = `
+                      <div><span class='font-semibold'>Khách hàng:</span> 
+                        
+                        
+                        ${booking.customerInfo?.name || 'Không rõ'}
+                        <span class='block text-xs text-gray-500'>${booking.customerInfo?.email || '—'}</span>
+                        <span class='block text-xs text-gray-500'>${booking.customerInfo?.phone || '—'}</span>
+                      </div>
+                      <div><span class='font-semibold'>Dịch vụ:</span> ${booking.service?.name || '—'}</div>
+                      <div><span class='font-semibold'>Ngày:</span> ${booking.bookingDate ? new Date(booking.bookingDate).toLocaleDateString('vi-VN') : '—'}</div>
+                      <div><span class='font-semibold'>Giờ:</span> ${booking.timeSlot?.start && booking.timeSlot?.end ? booking.timeSlot.start + ' - ' + booking.timeSlot.end : '—'}</div>
+                      <div><span class='font-semibold'>Thú cưng:</span> ${booking.customerInfo?.petInfo?.name ? booking.customerInfo.petInfo.name + (booking.customerInfo.petInfo.type ? ' (' + booking.customerInfo.petInfo.type + ')' : '') : '—'}</div>
+                      <div><span class='font-semibold'>Trạng thái:</span> <span class='inline-block px-3 py-1 rounded-full text-xs font-semibold ${booking.status === 'pending' ? 'bg-yellow-100 text-yellow-700' : booking.status === 'confirmed' ? 'bg-green-100 text-green-700' : booking.status === 'completed' ? 'bg-blue-100 text-blue-700' : 'bg-red-100 text-red-700'}'>${booking.status}</span></div>
+                      <div><span class='font-semibold'>Ghi chú:</span> ${booking.notes || '—'}</div>
+                    `;
+                    // Render nút thao tác
+                    actions.innerHTML = '';
+                    if (booking.status === 'pending') {
+                      actions.innerHTML += `<button class='btn-approve-booking px-4 py-2 bg-green-600 text-white rounded-full text-sm font-semibold hover:bg-green-700 transition' data-id='${booking._id}'><i class='ri-check-line'></i> Duyệt</button>`;
+                      actions.innerHTML += `<button class='btn-reject-booking px-4 py-2 bg-red-600 text-white rounded-full text-sm font-semibold hover:bg-red-700 transition' data-id='${booking._id}'><i class='ri-close-line'></i> Từ chối</button>`;
+                    }
+                    actions.innerHTML += `<button class='btn-delete-booking px-4 py-2 bg-gray-200 text-gray-700 rounded-full text-sm font-semibold hover:bg-gray-300 transition' data-id='${booking._id}'><i class='ri-delete-bin-line'></i> Xóa</button>`;
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                  });
+                });
+                document.getElementById('close-booking-modal').onclick = function() {
+                  const modal = document.getElementById('booking-modal');
+                  modal.classList.add('hidden');
+                  modal.classList.remove('flex');
+                };
+                // Đảm bảo modal đóng khi click nền đen
+                document.getElementById('booking-modal').addEventListener('click', function(e) {
+                  if (e.target === this) {
+                    this.classList.add('hidden');
+                    this.classList.remove('flex');
+                  }
+                });
+                // TODO: Gắn lại event cho approve/reject trong modal nếu cần
+                document.getElementById('booking-modal-actions').onclick = function(e) {
+                  const btn = e.target.closest('button');
+                  if (!btn) return;
+                  const bookingId = btn.dataset.id;
+                  if (btn.classList.contains('btn-approve-booking')) {
+                    if (confirm('Duyệt đặt lịch này?')) {
+                      fetch(`/admin/bookings/${bookingId}/approve`, { method: 'POST', headers: { 'Accept': 'application/json' } })
+                        .then(res => res.json())
+                        .then(data => {
+                          if (data.success) {
+                            document.getElementById('booking-modal').classList.add('hidden');
+                            window.location.reload();
+                          }
+                          else alert(data.message || 'Có lỗi xảy ra khi duyệt!');
+                        })
+                        .catch(() => alert('Có lỗi xảy ra khi duyệt!'));
+                    }
+                  } else if (btn.classList.contains('btn-reject-booking')) {
+                    if (confirm('Từ chối đặt lịch này?')) {
+                      fetch(`/admin/bookings/${bookingId}/reject`, { method: 'POST', headers: { 'Accept': 'application/json' } })
+                        .then(res => res.json())
+                        .then(data => {
+                          if (data.success) {
+                            document.getElementById('booking-modal').classList.add('hidden');
+                            window.location.reload();
+                          }
+                          else alert(data.message || 'Có lỗi xảy ra khi từ chối!');
+                        })
+                        .catch(() => alert('Có lỗi xảy ra khi từ chối!'));
+                    }
+                  } else if (btn.classList.contains('btn-delete-booking')) {
+                    if (confirm('Bạn có chắc muốn xóa đặt lịch này?')) {
+                      fetch(`/admin/bookings/${bookingId}`, { method: 'DELETE', headers: { 'Accept': 'application/json' } })
+                        .then(res => res.json())
+                        .then(data => {
+                          if (data.success) {
+                            document.getElementById('booking-modal').classList.add('hidden');
+                            window.location.reload();
+                          }
+                          else alert(data.message || 'Có lỗi xảy ra khi xóa!');
+                        })
+                        .catch(() => alert('Có lỗi xảy ra khi xóa!'));
+                    }
+                  }
+                };
+                </script>
+                <% } else { %>
+                <div class="text-center py-12 text-gray-500">
+                    <i class="ri-calendar-check-line text-5xl mb-4"></i>
+                    <div>Chưa có đặt lịch nào</div>
+                </div>
+                <% } %>
+            </div>
+            <% } %>
+        </div>
+    </main>
+
+    <script>
+        // Auto-submit form when inputs change
+        const form = document.querySelector('form[action="/admin/services"]');
+        if (form) {
+            const inputs = form.querySelectorAll('input, select');
+            let searchTimeout;
+            
+            inputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(() => {
+                        form.submit();
+                    }, 500);
+                });
+            });
+        }
+
+        // Delete service function
+        function deleteService(serviceId) {
+            if (confirm('Bạn có chắc chắn muốn xóa dịch vụ này?')) {
+                fetch(`/admin/services/${serviceId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success || data.message === 'Success!') {
+                        // Xoá dòng khỏi bảng
+                        const btn = document.querySelector(`button[onclick="deleteService('${serviceId}')"]`);
+                        if (btn) {
+                            const row = btn.closest('tr');
+                            if (row) row.remove();
+                        }
+                        showToast('Đã xóa dịch vụ thành công', 'success');
+                    } else {
+                        alert(data.message || 'Có lỗi xảy ra');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Có lỗi xảy ra khi xóa dịch vụ');
+                });
+            }
+        }
+
+        // Add hover effects for action buttons
+        document.addEventListener('DOMContentLoaded', function() {
+            const actionButtons = document.querySelectorAll('.transform');
+            
+            actionButtons.forEach(button => {
+                button.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.05)';
+                });
+                
+                button.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+
+            // Duyệt booking (chỉ gắn nếu có nút)
+            var approveBtns = document.querySelectorAll('.btn-approve-booking');
+            if (approveBtns && approveBtns.length > 0) {
+                approveBtns.forEach(function(btn) {
+                    btn.addEventListener('click', function() {
+                        const bookingId = this.dataset.id;
+                        if (confirm('Bạn có chắc muốn duyệt đặt lịch này?')) {
+                            fetch('/admin/bookings/' + bookingId + '/approve', {
+                                method: 'POST',
+                                headers: { 'Accept': 'application/json' }
+                            })
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.success) {
+                                    // Cập nhật trạng thái ngay trên dòng booking
+                                    const row = this.closest('tr');
+                                    if (row) {
+                                        const statusSpan = row.querySelector('span.inline-block');
+                                        statusSpan.className = 'inline-block px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700';
+                                        statusSpan.textContent = 'confirmed';
+                                        // Ẩn nút duyệt/từ chối
+                                        row.querySelectorAll('.btn-approve-booking, .btn-reject-booking').forEach(b => b.style.display = 'none');
+                                    }
+                                } else {
+                                    alert(data.message || 'Có lỗi xảy ra khi duyệt đặt lịch');
+                                }
+                            })
+                            .catch(err => {
+                                alert('Có lỗi xảy ra khi duyệt đặt lịch');
+                            });
+                        }
+                    });
+                });
+            }
+            // Từ chối booking (chỉ gắn nếu có nút)
+            var rejectBtns = document.querySelectorAll('.btn-reject-booking');
+            if (rejectBtns && rejectBtns.length > 0) {
+                rejectBtns.forEach(function(btn) {
+                    btn.addEventListener('click', function() {
+                        const bookingId = this.dataset.id;
+                        if (confirm('Bạn có chắc muốn từ chối đặt lịch này?')) {
+                            fetch('/admin/bookings/' + bookingId + '/reject', {
+                                method: 'POST',
+                                headers: { 'Accept': 'application/json' }
+                            })
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.success) {
+                                    // Cập nhật trạng thái ngay trên dòng booking
+                                    const row = this.closest('tr');
+                                    if (row) {
+                                        const statusSpan = row.querySelector('span.inline-block');
+                                        statusSpan.className = 'inline-block px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700';
+                                        statusSpan.textContent = 'cancelled';
+                                        // Ẩn nút duyệt/từ chối
+                                        row.querySelectorAll('.btn-approve-booking, .btn-reject-booking').forEach(b => b.style.display = 'none');
+                                    }
+                                } else {
+                                    alert(data.message || 'Có lỗi xảy ra khi từ chối đặt lịch');
+                                }
+                            })
+                            .catch(err => {
+                                alert('Có lỗi xảy ra khi từ chối đặt lịch');
+                            });
+                        }
+                    });
+                });
+            }
+            // Xoá booking (chỉ gắn nếu có nút)
+            var deleteBtns = document.querySelectorAll('.btn-delete-booking');
+            if (deleteBtns && deleteBtns.length > 0) {
+                deleteBtns.forEach(function(btn) {
+                    btn.addEventListener('click', function() {
+                        const bookingId = this.dataset.id;
+                        if (confirm('Bạn có chắc muốn xóa đặt lịch này?')) {
+                            fetch('/admin/bookings/' + bookingId, {
+                                method: 'DELETE',
+                                headers: { 'Accept': 'application/json' }
+                            })
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.success) {
+                                    // Xoá dòng khỏi bảng
+                                    const row = this.closest('tr');
+                                    if (row) row.remove();
+                                } else {
+                                    alert(data.message || 'Có lỗi xảy ra khi xóa!');
+                                }
+                            })
+                            .catch(err => {
+                                alert('Có lỗi xảy ra khi xóa!');
+                            });
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+
+<!-- Modal chi tiết dịch vụ -->
+<div id="service-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-40">
+  <div class="bg-white rounded-xl shadow-xl w-full max-w-md mx-auto p-6 relative">
+    <button id="close-service-modal" class="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
+    <h3 class="text-xl font-bold text-orange-700 mb-4 flex items-center gap-2"><i class="ri-eye-line"></i> Chi tiết dịch vụ</h3>
+    <div id="service-modal-content" class="space-y-2 text-sm">
+      <!-- Nội dung chi tiết dịch vụ sẽ được render ở đây bằng JS -->
+    </div>
+  </div>
+</div>
+
+<script>
+document.querySelectorAll('.btn-view-service').forEach(btn => {
+  btn.addEventListener('click', function() {
+    const service = JSON.parse(this.dataset.service);
+    const modal = document.getElementById('service-modal');
+    const content = document.getElementById('service-modal-content');
+    content.innerHTML = `
+      <div><span class='font-semibold'>Tên dịch vụ:</span> ${service.name}</div>
+      <div><span class='font-semibold'>Danh mục:</span> ${service.category}</div>
+      <div><span class='font-semibold'>Giá:</span> ${service.price.toLocaleString('vi-VN')}₫</div>
+      <div><span class='font-semibold'>Thời gian:</span> ${service.duration} phút</div>
+      <div><span class='font-semibold'>Trạng thái:</span> ${service.status === 'active' ? 'Hoạt động' : 'Không hoạt động'}</div>
+      <div><span class='font-semibold'>Mô tả:</span> ${service.description || '—'}</div>
+      <div><img src="${service.imageUrl}" alt="${service.name}" class="w-32 h-32 object-cover rounded-xl mt-2"></div>
+    `;
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  });
+});
+document.getElementById('close-service-modal').onclick = function() {
+  const modal = document.getElementById('service-modal');
+  modal.classList.add('hidden');
+  modal.classList.remove('flex');
+};
+// Đóng modal khi click nền đen
+document.getElementById('service-modal').addEventListener('click', function(e) {
+  if (e.target === this) {
+    this.classList.add('hidden');
+    this.classList.remove('flex');
+  }
+});
+</script>
+
+<%- include('../includes/end.ejs') %> 
+
+

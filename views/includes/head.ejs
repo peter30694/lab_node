@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title><%= typeof pageTitle !== 'undefined' ? pageTitle : 'Pet Store - Cửa hàng thú cưng' %></title>
+    <meta name="description" content="Pet Store - Cửa hàng thú cưng, phụ kiện, dịch vụ và tin tức mới nhất cho thú cưng tại Việt Nam.">
+    <link rel="icon" type="image/png" href="/images/favicon.png">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Remix Icon -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: 'rgba(87, 181, 231, 1)',
+                        'primary-dark': 'rgba(67, 161, 211, 1)'
+                    },
+                    fontFamily: {
+                        'pacifico': ['Pacifico', 'cursive'],
+                        'roboto': ['Roboto', 'sans-serif']
+                    },
+                    borderRadius: {
+                        'button': '12px'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Flash Messages Data -->
+    <script>
+        window.flashMessages = {
+            success: <%= JSON.stringify(successMessage || []) %>,
+            error: <%= JSON.stringify(errorMessage || []) %>,
+            warning: <%= JSON.stringify(warningMessage || []) %>,
+            info: <%= JSON.stringify(infoMessage || []) %>
+        };
+    </script>
+    <!-- Custom CSS - Minimal -->
+    <link rel="stylesheet" href="/css/main.css">
+    <!-- Form Utils -->
+    <script src="/js/form-utils.js"></script>
+</head>

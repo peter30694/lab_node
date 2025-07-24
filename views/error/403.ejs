@@ -1,0 +1,129 @@
+<%- include('../includes/head') %>
+<body class="bg-gray-50 min-h-screen">
+  <%- include('../includes/navigation') %>
+
+  <!-- Hero Section -->
+  <section class="bg-gradient-to-r from-red-600 to-pink-600 text-white py-16">
+    <div class="container mx-auto px-4 text-center">
+      <h1 class="text-6xl font-bold mb-6">
+        <i class="ri-shield-forbid-line text-8xl mb-4"></i><br>
+        403
+      </h1>
+      <p class="text-2xl mb-8 max-w-2xl mx-auto">
+        Bạn không có quyền truy cập trang này
+      </p>
+      <div class="flex justify-center space-x-4">
+        <a href="/" class="bg-white text-red-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
+          <i class="ri-home-line mr-2"></i>
+          Về trang chủ
+        </a>
+        <a href="/contact" class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-red-600 transition">
+          <i class="ri-customer-service-line mr-2"></i>
+          Liên hệ hỗ trợ
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Error Details -->
+  <section class="py-12">
+    <div class="container mx-auto px-4">
+      <div class="max-w-4xl mx-auto">
+        
+        <!-- Error Message -->
+        <div class="bg-white rounded-2xl shadow-lg p-8 mb-8 text-center">
+          <h2 class="text-2xl font-bold text-gray-800 mb-4">Truy cập bị từ chối</h2>
+          <p class="text-gray-600 mb-6">
+            <%= message || 'Bạn không có quyền truy cập trang này. Vui lòng liên hệ quản trị viên nếu bạn nghĩ đây là lỗi.' %>
+          </p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+          <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Bạn có thể:</h3>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <a href="/" class="bg-blue-50 rounded-xl p-6 hover:bg-blue-100 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 text-center">
+              <div class="bg-blue-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="ri-home-line text-2xl text-blue-600"></i>
+              </div>
+              <h4 class="font-semibold text-gray-800 mb-2">Trang chủ</h4>
+              <p class="text-sm text-gray-600">Về trang chủ</p>
+            </a>
+            
+            <a href="/products" class="bg-green-50 rounded-xl p-6 hover:bg-green-100 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 text-center">
+              <div class="bg-green-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="ri-store-line text-2xl text-green-600"></i>
+              </div>
+              <h4 class="font-semibold text-gray-800 mb-2">Sản phẩm</h4>
+              <p class="text-sm text-gray-600">Xem sản phẩm</p>
+            </a>
+            
+            <a href="/services" class="bg-purple-50 rounded-xl p-6 hover:bg-purple-100 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 text-center">
+              <div class="bg-purple-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="ri-customer-service-line text-2xl text-purple-600"></i>
+              </div>
+              <h4 class="font-semibold text-gray-800 mb-2">Dịch vụ</h4>
+              <p class="text-sm text-gray-600">Xem dịch vụ</p>
+            </a>
+            
+            <a href="/contact" class="bg-yellow-50 rounded-xl p-6 hover:bg-yellow-100 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 text-center">
+              <div class="bg-yellow-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="ri-mail-line text-2xl text-yellow-600"></i>
+              </div>
+              <h4 class="font-semibold text-gray-800 mb-2">Liên hệ</h4>
+              <p class="text-sm text-gray-600">Liên hệ hỗ trợ</p>
+            </a>
+            
+            <a href="/news" class="bg-red-50 rounded-xl p-6 hover:bg-red-100 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 text-center">
+              <div class="bg-red-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="ri-newspaper-line text-2xl text-red-600"></i>
+              </div>
+              <h4 class="font-semibold text-gray-800 mb-2">Tin tức</h4>
+              <p class="text-sm text-gray-600">Đọc tin tức</p>
+            </a>
+            
+            <button onclick="history.back()" class="bg-gray-50 rounded-xl p-6 hover:bg-gray-100 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 text-center">
+              <div class="bg-gray-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="ri-arrow-left-line text-2xl text-gray-600"></i>
+              </div>
+              <h4 class="font-semibold text-gray-800 mb-2">Quay lại</h4>
+              <p class="text-sm text-gray-600">Trang trước đó</p>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="bg-gray-900 text-white py-16">
+    <div class="container mx-auto px-4 text-center">
+      <h2 class="text-3xl font-bold mb-4">Cần hỗ trợ?</h2>
+      <p class="text-xl mb-8 max-w-2xl mx-auto">
+        Liên hệ với chúng tôi để được hỗ trợ nhanh chóng
+      </p>
+      <div class="flex justify-center space-x-4">
+        <a href="/contact" class="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-lg font-semibold transition">
+          <i class="ri-customer-service-line mr-2"></i>
+          Liên hệ ngay
+        </a>
+        <a href="/" class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-gray-900 transition">
+          Về trang chủ
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <%- include('../includes/end') %>
+  
+  <script>
+    // Auto redirect sau 30 giây
+    setTimeout(() => {
+      if (confirm('Bạn có muốn được chuyển về trang chủ không?')) {
+        window.location.href = '/';
+      }
+    }, 30000);
+  </script>
+</body>
+</html> 

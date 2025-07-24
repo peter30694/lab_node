@@ -1,0 +1,13 @@
+<% if (path && path.startsWith('/admin')) { %>  
+  <%- include('../includes/footer-admin.ejs') %>
+  <!-- Admin Notification System -->
+  <script src="/js/admin-notifications.js"></script>
+<% } else { %>
+  <%- include('../partials/footer') %>
+<% } %>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+</body>
+
+</html>

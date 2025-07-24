@@ -1,0 +1,278 @@
+<%
+// Build query string function for pagination
+function buildQueryString(params, page) {
+    const queryParams = [];
+    
+    // Add existing parameters
+    if (params.search) queryParams.push('search=' + encodeURIComponent(params.search));
+    if (params.category) queryParams.push('category=' + encodeURIComponent(params.category));
+    if (params.sort) queryParams.push('sort=' + encodeURIComponent(params.sort));
+    if (params.limit) queryParams.push('limit=' + encodeURIComponent(params.limit));
+    
+    // Add page parameter
+    if (page) queryParams.push('page=' + page);
+    
+    return queryParams.join('&');
+}
+
+// Define variables with default values to prevent undefined errors
+const searchParam = typeof search !== 'undefined' ? search : '';
+const categoryParam = typeof category !== 'undefined' ? category : '';
+const sortParam = typeof sort !== 'undefined' ? sort : '';
+const limitParam = typeof limit !== 'undefined' ? limit : (pagination && pagination.limit ? pagination.limit : 10);
+%>
+
+<%- include('../includes/head.ejs') %>
+
+<body class="bg-gray-50 min-h-screen">
+    <%- include('../includes/navigation-admin.ejs') %>
+
+    <main class="ml-64 min-h-screen bg-gray-50 py-8 px-4 pb-24">
+        <div class="max-w-7xl mx-auto">
+            <!-- Header Section -->
+            <div class="flex items-center justify-between mb-8">
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                        <i class="ri-list-check text-2xl text-blue-600"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-800">Quản lý sản phẩm</h1>
+                        <p class="text-gray-600">Thêm, sửa, xóa và quản lý sản phẩm</p>
+                    </div>
+                </div>
+                <a href="/admin/add-product" 
+                   class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 flex items-center space-x-2">
+                    <i class="ri-add-line"></i>
+                    <span>Thêm sản phẩm</span>
+                </a>
+            </div>
+
+            <!-- Filters Section -->
+            <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 mb-8">
+                <form method="GET" action="/admin/products" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                        <label for="search" class="block text-sm font-medium text-gray-700 mb-2">Tìm kiếm</label>
+                        <input type="text" id="search" name="search" value="<%= searchParam %>" 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" 
+                               placeholder="Nhập tên hoặc mô tả sản phẩm...">
+                    </div>
+                    <div>
+                        <label for="category" class="block text-sm font-medium text-gray-700 mb-2">Danh mục</label>
+                        <select id="category" name="category" 
+                                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+                            <option value="">Tất cả danh mục</option>
+                            <% if (categories && categories.length > 0) { %>
+                                <% categories.forEach(cat => { %>
+                                    <option value="<%= cat.slug %>" <%= categoryParam === cat.slug ? 'selected' : '' %>>
+                                        <%= cat.icon %> <%= cat.name %>
+                                    </option>
+                                <% }) %>
+                            <% } %>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="stock" class="block text-sm font-medium text-gray-700 mb-2">Trạng thái tồn kho</label>
+                        <select id="stock" name="stock" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+                            <option value="" <%= typeof stock === 'undefined' || stock === '' ? 'selected' : '' %>>Tất cả</option>
+                            <option value="low_stock" <%= stock === 'low_stock' ? 'selected' : '' %>>Sắp hết (1 - 10)</option>
+                            <option value="out_of_stock" <%= stock === 'out_of_stock' ? 'selected' : '' %>>Hết hàng (0)</option>
+                        </select>
+                    </div>
+                    <div class="flex items-end">
+                        <button type="submit" 
+                                class="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2">
+                            <i class="ri-search-line"></i>
+                            <span>Lọc</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Results Summary -->
+            <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                    <div class="text-sm text-blue-700">
+                        <span class="font-medium">Kết quả:</span>
+                        <% if (searchParam) { %>
+                            <span class="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded-lg text-xs ml-2">
+                                Tìm kiếm: "<%= searchParam %>"
+                            </span>
+                        <% } %>
+                        <% if (categoryParam) { %>
+                            <span class="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded-lg text-xs ml-2">
+                                Danh mục: <%= categories.find(c => c.slug === categoryParam)?.name || categoryParam %>
+                            </span>
+                        <% } %>
+                    </div>
+                    <div class="text-sm text-blue-600 mt-2 sm:mt-0">
+                        Hiển thị <span class="font-bold"><%= prods.length %></span> / <span class="font-bold"><%= pagination.totalProducts %></span> sản phẩm
+                        <% if (pagination.totalPages > 1) { %>
+                            (Trang <%= pagination.currentPage %> / <%= pagination.totalPages %>)
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+
+            <% if (prods && prods.length > 0) { %>
+                <!-- Products Table -->
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Ảnh</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Tên sản phẩm</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Danh mục</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Xuất xứ</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Giá</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Mô tả</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Tồn kho</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                <% for (let i = 0; i < prods.length; i++) { const product = prods[i]; %>
+                                <tr class="hover:bg-gray-50 transition-colors duration-200">
+                                    <td class="px-6 py-4">
+                                        <img src="<%= product.imageUrl %>" alt="<%= product.title %>" 
+                                             class="w-16 h-16 object-cover rounded-xl shadow-sm" 
+                                             onerror="this.src='/images/default-product.png'">
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="font-semibold text-gray-800 max-w-[180px] truncate">
+                                            <%= product.title %>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <% if (product.category) { %>
+                                            <% const categoryInfo = categories.find(c => c.slug === product.category); %>
+                                            <% if (categoryInfo) { %>
+                                                <span class="inline-flex items-center gap-1 bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-medium">
+                                                    <%= categoryInfo.icon %> <%= categoryInfo.name %>
+                                                </span>
+                                            <% } else { %>
+                                                <span class="inline-block bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-xs font-medium">
+                                                    <%= product.category %>
+                                                </span>
+                                            <% } %>
+                                        <% } else { %>
+                                            <span class="inline-block bg-gray-100 text-gray-500 px-3 py-1 rounded-full text-xs font-medium">
+                                                Chưa phân loại
+                                            </span>
+                                        <% } %>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span class="text-gray-700 text-sm"><%= product.origin || '-' %></span>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span class="text-green-600 font-bold">
+                                            <%= (product.price || 0).toLocaleString('vi-VN') %>₫
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="text-gray-600 max-w-[250px] truncate">
+                                            <%= product.description %>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <% if (product.stockQuantity > 0) { %>
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                                                <i class="ri-check-circle-line mr-1"></i>
+                                                Còn: <%= product.stockQuantity %>
+                                            </span>
+                                        <% } else { %>
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800">
+                                                <i class="ri-close-circle-line mr-1"></i>
+                                                Hết hàng
+                                            </span>
+                                        <% } %>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center space-x-2">
+                                            <a href="/admin/edit-product/<%= product._id %>?edit=true" 
+                                               class="bg-blue-100 hover:bg-blue-200 text-blue-600 p-2 rounded-lg transition-all duration-200 transform hover:scale-105" 
+                                               title="Sửa sản phẩm">
+                                                <i class="ri-edit-line"></i>
+                                            </a>
+                                            <form action="/admin/delete-product" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')" class="inline">
+                                                <input type="hidden" name="productId" value="<%= product._id %>">
+                                                <button type="submit" 
+                                                        class="bg-red-100 hover:bg-red-200 text-red-600 p-2 rounded-lg transition-all duration-200 transform hover:scale-105" 
+                                                        title="Xóa sản phẩm">
+                                                    <i class="ri-delete-bin-line"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <% if (pagination.totalPages > 1) { %>
+                        <div class="px-6 py-4 border-t border-gray-100">
+                            <div class="flex items-center justify-between">
+                                <div class="text-sm text-gray-600">
+                                    Hiển thị 
+                                    <span class="font-medium"><%= (pagination.currentPage - 1) * pagination.limit + 1 %></span>
+                                    đến 
+                                    <span class="font-medium"><%= Math.min(pagination.currentPage * pagination.limit, pagination.totalProducts) %></span>
+                                    trong tổng số 
+                                    <span class="font-medium"><%= pagination.totalProducts %></span>
+                                    sản phẩm
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <% if (pagination.hasPrevPage) { %>
+                                        <a href="/admin/products?<%= buildQueryString({ search: searchParam, category: categoryParam, sort: sortParam, limit: limitParam }, pagination.prevPage) %>" 
+                                           class="px-3 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 transition-all duration-200">
+                                            <i class="ri-arrow-left-line"></i>
+                                        </a>
+                                    <% } %>
+                                    
+                                    <% pagination.pageNumbers.forEach(pageNum => { %>
+                                        <% if (pageNum === pagination.currentPage) { %>
+                                            <span class="px-3 py-2 bg-blue-600 text-white rounded-lg"><%= pageNum %></span>
+                                        <% } else { %>
+                                            <a href="/admin/products?<%= buildQueryString({ search: searchParam, category: categoryParam, sort: sortParam, limit: limitParam }, pageNum) %>" 
+                                               class="px-3 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 transition-all duration-200">
+                                                <%= pageNum %>
+                                            </a>
+                                        <% } %>
+                                    <% }) %>
+                                    
+                                    <% if (pagination.hasNextPage) { %>
+                                        <a href="/admin/products?<%= buildQueryString({ search: searchParam, category: categoryParam, sort: sortParam, limit: limitParam }, pagination.nextPage) %>" 
+                                           class="px-3 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 transition-all duration-200">
+                                            <i class="ri-arrow-right-line"></i>
+                                        </a>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+                    <% } %>
+                </div>
+            <% } else { %>
+                <!-- Empty State -->
+                <div class="bg-white rounded-2xl shadow-lg p-12 text-center">
+                    <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="ri-box-line text-3xl text-gray-400"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Chưa có sản phẩm nào</h3>
+                    <p class="text-gray-600 mb-6">Bắt đầu bằng cách thêm sản phẩm đầu tiên vào hệ thống.</p>
+                    <a href="/admin/add-product" 
+                       class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 inline-flex items-center space-x-2">
+                        <i class="ri-add-line"></i>
+                        <span>Thêm sản phẩm đầu tiên</span>
+                    </a>
+                </div>
+            <% } %>
+        </div>
+    </main>
+
+    <script src="/js/admin-products.js"></script>
+
+<%- include('../includes/end.ejs') %>
+
+

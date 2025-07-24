@@ -1,0 +1,365 @@
+<%- include('../includes/head.ejs') %>
+<body class="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 font-roboto flex flex-col min-h-screen">
+  <%- include('../includes/navigation.ejs') %>
+  
+  <!-- Hero Section -->
+  <section class="relative bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 text-white py-20 overflow-hidden">
+    <!-- Background Pattern -->
+    <div class="absolute inset-0 bg-black/10"></div>
+    <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-blue-600/20 to-purple-600/20"></div>
+    
+    <div class="container mx-auto px-4 text-center relative z-10">
+      <div class="max-w-4xl mx-auto">
+        <div class="mb-8">
+          <i class="ri-service-line text-8xl mb-6 text-white/90 animate-pulse"></i>
+        </div>
+        <h1 class="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
+          Dịch vụ Pet Store
+        </h1>
+        <p class="text-xl md:text-2xl mb-10 max-w-3xl mx-auto text-white/90 leading-relaxed">
+          Khám phá các dịch vụ chăm sóc thú cưng chuyên nghiệp với đội ngũ bác sĩ thú y giàu kinh nghiệm
+        </p>
+        <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+          <a href="#services" 
+             class="group bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold hover:bg-blue-50 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center space-x-2">
+            <i class="ri-arrow-down-line text-lg group-hover:animate-bounce"></i>
+            <span>Xem dịch vụ</span>
+          </a>
+          <a href="/contact" 
+             class="group border-2 border-white text-white px-8 py-4 rounded-xl font-semibold hover:bg-white hover:text-blue-600 transition-all duration-300 hover:scale-105 flex items-center space-x-2">
+            <i class="ri-customer-service-line text-lg"></i>
+            <span>Liên hệ</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Compact Filter Section -->
+  <section class="py-6 bg-white border-b border-gray-100">
+    <div class="container mx-auto px-4">
+      <form method="GET" action="/services" class="max-w-6xl mx-auto">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <!-- Results Info -->
+          <div class="flex items-center gap-4">
+            <h2 class="text-2xl font-bold text-gray-800">Dịch vụ</h2>
+            <span class="text-gray-600">
+              (<%= total %> dịch vụ)
+            </span>
+          </div>
+          
+          <!-- Compact Filters -->
+          <div class="flex items-center gap-3">
+            <!-- Category Filter -->
+            <div class="relative">
+              <select name="category" onchange="this.form.submit()" 
+                      class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
+                <option value="">Tất cả danh mục</option>
+                <% if (typeof serviceCategories !== 'undefined' && serviceCategories.length > 0) { %>
+                  <% serviceCategories.forEach(cat => { %>
+                    <option value="<%= cat %>" <%= category === cat ? 'selected' : '' %>><%= cat %></option>
+                  <% }) %>
+                <% } else { %>
+                  <!-- Fallback options -->
+                  <option value="Chăm sóc" <%= category === 'Chăm sóc' ? 'selected' : '' %>>Chăm sóc</option>
+                  <option value="Huấn luyện" <%= category === 'Huấn luyện' ? 'selected' : '' %>>Huấn luyện</option>
+                  <option value="Sức khỏe" <%= category === 'Sức khỏe' ? 'selected' : '' %>>Sức khỏe</option>
+                  <option value="Trông giữ" <%= category === 'Trông giữ' ? 'selected' : '' %>>Trông giữ</option>
+                  <option value="Tư vấn" <%= category === 'Tư vấn' ? 'selected' : '' %>>Tư vấn</option>
+                  <option value="Vận chuyển" <%= category === 'Vận chuyển' ? 'selected' : '' %>>Vận chuyển</option>
+                <% } %>
+              </select>
+              <div class="absolute inset-y-0 right-0 pr-2 flex items-center pointer-events-none">
+                <i class="ri-arrow-down-s-line text-gray-400 text-sm"></i>
+              </div>
+            </div>
+            
+            <!-- Sort Filter -->
+            <div class="relative">
+              <select name="sort" onchange="this.form.submit()" 
+                      class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
+                <option value="">Sắp xếp</option>
+                <option value="name_asc" <%= sort === 'name_asc' ? 'selected' : '' %>>Tên A-Z</option>
+                <option value="name_desc" <%= sort === 'name_desc' ? 'selected' : '' %>>Tên Z-A</option>
+                <option value="price_asc" <%= sort === 'price_asc' ? 'selected' : '' %>>Giá thấp-cao</option>
+                <option value="price_desc" <%= sort === 'price_desc' ? 'selected' : '' %>>Giá cao-thấp</option>
+                <option value="rating_desc" <%= sort === 'rating_desc' ? 'selected' : '' %>>Đánh giá cao nhất</option>
+              </select>
+              <div class="absolute inset-y-0 right-0 pr-2 flex items-center pointer-events-none">
+                <i class="ri-arrow-down-s-line text-gray-400 text-sm"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Active Filters Display -->
+        <% if (category || sort) { %>
+          <div class="mt-4 pt-4 border-t border-gray-200">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="text-sm font-medium text-gray-600">Bộ lọc:</span>
+              <% if (category) { %>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  <%= category %>
+                  <button type="button" onclick="removeFilter('category')" class="ml-2 text-green-600 hover:text-green-800">
+                    <i class="ri-close-line"></i>
+                  </button>
+                </span>
+              <% } %>
+              <% if (sort) { %>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                  <% if (sort === 'name_asc') { %>Tên A-Z<% } %>
+                  <% if (sort === 'name_desc') { %>Tên Z-A<% } %>
+                  <% if (sort === 'price_asc') { %>Giá thấp-cao<% } %>
+                  <% if (sort === 'price_desc') { %>Giá cao-thấp<% } %>
+                  <% if (sort === 'rating_desc') { %>Đánh giá cao nhất<% } %>
+                  <% if (!['name_asc', 'name_desc', 'price_asc', 'price_desc', 'rating_desc'].includes(sort)) { %><%= sort %><% } %>
+                  <button type="button" onclick="removeFilter('sort')" class="ml-2 text-purple-600 hover:text-purple-800">
+                    <i class="ri-close-line"></i>
+                  </button>
+                </span>
+              <% } %>
+              <button type="button" onclick="clearAllFilters()" class="text-sm text-red-600 hover:text-red-800 font-medium">
+                Xóa tất cả
+              </button>
+            </div>
+          </div>
+        <% } %>
+      </form>
+    </div>
+  </section>
+
+  <!-- Services Grid -->
+  <section id="services" class="py-12">
+    <div class="container mx-auto px-4">
+            <!-- Services Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <% if (services && services.length > 0) { %>
+          <% services.forEach(service => { %>
+            <div class="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-4 hover:scale-105 border border-gray-100">
+              <!-- Service Image -->
+              <div class="relative h-64 overflow-hidden">
+                <% if (service.imageUrl) { %>
+                  <img src="<%= service.imageUrl %>" alt="<%= service.name %>" 
+                       class="w-full h-full object-cover transition-transform duration-300 hover:scale-110">
+                <% } else { %>
+                  <div class="w-full h-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center">
+                    <i class="ri-service-line text-6xl text-white"></i>
+                  </div>
+                <% } %>
+                
+                <!-- Category Badge -->
+                <div class="absolute top-4 left-4">
+                  <span class="bg-white/95 backdrop-blur-sm text-gray-800 px-4 py-2 rounded-full text-sm font-semibold shadow-lg border border-white/50 group-hover:bg-blue-500 group-hover:text-white transition-all duration-300">
+                    <i class="ri-price-tag-3-line mr-1"></i>
+                    <%= service.category %>
+                  </span>
+                </div>
+                
+                <!-- Rating Badge -->
+                <% if (service.rating && service.rating > 0) { %>
+                  <div class="absolute top-4 right-4">
+                    <span class="bg-gradient-to-r from-yellow-400 to-orange-400 text-yellow-900 px-4 py-2 rounded-full text-sm font-semibold flex items-center shadow-lg group-hover:scale-110 transition-all duration-300">
+                      <i class="ri-star-fill mr-1"></i>
+                      <%= service.rating.toFixed(1) %>
+                    </span>
+                  </div>
+                <% } %>
+              </div>
+              
+              <!-- Service Content -->
+              <div class="p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                  <a href="/services/<%= service._id %>" class="hover:text-blue-600 transition-colors">
+                    <%= service.name %>
+                  </a>
+                </h3>
+                
+                <p class="text-gray-600 text-sm mb-6 line-clamp-3 leading-relaxed">
+                  <%= service.description %>
+                </p>
+                
+                <!-- Service Details -->
+                <div class="flex items-center justify-between mb-6">
+                  <div class="flex items-center text-sm text-gray-500 bg-gray-50 px-3 py-2 rounded-lg">
+                    <i class="ri-time-line mr-2 text-blue-500"></i>
+                    <span class="font-medium"><%= service.duration %> phút</span>
+                  </div>
+                  <div class="flex items-center text-sm text-gray-500 bg-gray-50 px-3 py-2 rounded-lg">
+                    <i class="ri-user-line mr-2 text-purple-500"></i>
+                    <span class="font-medium"><%= service.bookings || 0 %> lượt đặt</span>
+                  </div>
+                </div>
+                
+                <!-- Price and Action -->
+                <div class="flex items-center justify-between">
+                  <div class="text-2xl font-bold bg-gradient-to-r from-green-500 to-emerald-600 bg-clip-text text-transparent">
+                    <% if (service.price && service.price > 0) { %>
+                      <%= new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(service.price) %>
+                    <% } else { %>
+                      Liên hệ
+                    <% } %>
+                  </div>
+                  <div class="flex space-x-3">
+                    <a href="/services/<%= service._id %>" 
+                       class="group/btn bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-4 py-2 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center space-x-1">
+                      <i class="ri-eye-line text-sm"></i>
+                      <span>Chi tiết</span>
+                    </a>
+                    <a href="/services/book/<%= service._id %>" 
+                       class="group/btn bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-4 py-2 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center space-x-1">
+                      <i class="ri-calendar-check-line text-sm"></i>
+                      <span>Đặt lịch</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% }) %>
+        <% } else { %>
+          <div class="col-span-full text-center py-20">
+            <div class="max-w-lg mx-auto">
+              <div class="bg-white rounded-2xl shadow-xl p-12 border border-gray-100">
+                <div class="w-24 h-24 bg-gradient-to-r from-gray-200 to-gray-300 rounded-full flex items-center justify-center mx-auto mb-8">
+                  <i class="ri-service-line text-4xl text-gray-400"></i>
+                </div>
+                <h3 class="text-3xl font-bold text-gray-600 mb-4">Không tìm thấy dịch vụ</h3>
+                <p class="text-gray-500 mb-8 text-lg leading-relaxed">
+                  <% if (category) { %>
+                    Không có dịch vụ nào trong danh mục này.
+                    <br>Hãy thử danh mục khác hoặc bỏ bớt bộ lọc.
+                  <% } else { %>
+                    Hiện tại chưa có dịch vụ nào. Vui lòng quay lại sau!
+                  <% } %>
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                  <a href="/services" 
+                     class="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2">
+                    <i class="ri-refresh-line text-lg"></i>
+                    <span>Xem tất cả dịch vụ</span>
+                  </a>
+                  <a href="/contact" 
+                     class="border-2 border-gray-300 text-gray-600 hover:border-blue-500 hover:text-blue-600 px-8 py-4 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2">
+                    <i class="ri-customer-service-line text-lg"></i>
+                    <span>Liên hệ tư vấn</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% } %>
+      </div>
+
+      <!-- Pagination -->
+      <% if (totalPages > 1) { %>
+        <div class="flex justify-center mt-16">
+          <nav class="flex items-center space-x-3 bg-white rounded-2xl shadow-lg p-4 border border-gray-100">
+            <% if (hasPreviousPage) { %>
+              <a href="/services?page=<%= previousPage %>&category=<%= category %>&sort=<%= sort %>" 
+                 class="group px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl hover:bg-blue-50 hover:border-blue-300 transition-all duration-300 transform hover:scale-105 flex items-center space-x-2">
+                <i class="ri-arrow-left-line text-lg group-hover:text-blue-600"></i>
+                <span class="font-medium group-hover:text-blue-600">Trước</span>
+              </a>
+            <% } %>
+            
+            <% for (let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) { %>
+              <% if (i === currentPage) { %>
+                <span class="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-bold shadow-lg"><%= i %></span>
+              <% } else { %>
+                <a href="/services?page=<%= i %>&category=<%= category %>&sort=<%= sort %>" 
+                   class="group px-6 py-3 bg-gray-50 border border-gray-200 rounded-xl hover:bg-blue-50 hover:border-blue-300 transition-all duration-300 transform hover:scale-105 font-medium">
+                  <%= i %>
+                </a>
+              <% } %>
+            <% } %>
+            
+            <% if (hasNextPage) { %>
+              <a href="/services?page=<%= nextPage %>&category=<%= category %>&sort=<%= sort %>" 
+                 class="group px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl hover:bg-blue-50 hover:border-blue-300 transition-all duration-300 transform hover:scale-105 flex items-center space-x-2">
+                <span class="font-medium group-hover:text-blue-600">Sau</span>
+                <i class="ri-arrow-right-line text-lg group-hover:text-blue-600"></i>
+              </a>
+            <% } %>
+          </nav>
+        </div>
+      <% } %>
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="relative bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 text-white py-20 overflow-hidden">
+    <!-- Background Pattern -->
+    <div class="absolute inset-0 bg-black/20"></div>
+    <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-blue-600/10 to-purple-600/10"></div>
+    
+    <div class="container mx-auto px-4 text-center relative z-10">
+      <div class="max-w-4xl mx-auto">
+        <div class="mb-8">
+          <i class="ri-customer-service-line text-6xl mb-6 text-white/90 animate-pulse"></i>
+        </div>
+        <h2 class="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
+          Cần tư vấn thêm?
+        </h2>
+        <p class="text-xl md:text-2xl mb-10 max-w-3xl mx-auto text-white/90 leading-relaxed">
+          Đội ngũ chuyên gia của chúng tôi luôn sẵn sàng hỗ trợ bạn 24/7
+        </p>
+        <div class="flex flex-col sm:flex-row justify-center items-center gap-6">
+          <a href="/contact" 
+             class="group bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-10 py-4 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center space-x-3">
+            <i class="ri-message-3-line text-xl group-hover:animate-pulse"></i>
+            <span>Liên hệ ngay</span>
+          </a>
+          <a href="tel:+84123456789" 
+             class="group border-2 border-white text-white px-10 py-4 rounded-xl font-semibold hover:bg-white hover:text-gray-900 transition-all duration-300 transform hover:scale-105 flex items-center space-x-3">
+            <i class="ri-phone-line text-xl group-hover:animate-bounce"></i>
+            <span>Gọi điện</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <%- include('../includes/end.ejs') %>
+  
+  <script>
+    // Debug service categories
+    console.log('Service categories from server:', typeof serviceCategories !== 'undefined' ? serviceCategories : 'undefined');
+    console.log('Current category:', '<%= category %>');
+    console.log('Current sort:', '<%= sort %>');
+    
+    // Filter management functions
+    function removeFilter(filterType) {
+      const url = new URL(window.location);
+      url.searchParams.delete(filterType);
+      window.location.href = url.toString();
+    }
+    
+    function clearAllFilters() {
+      window.location.href = '/services';
+    }
+    
+    // Auto-submit form when filters change
+    document.addEventListener('DOMContentLoaded', function() {
+      const filterSelects = document.querySelectorAll('select[name="category"], select[name="sort"]');
+      console.log('Found filter selects:', filterSelects.length);
+      
+      filterSelects.forEach(select => {
+        console.log('Select name:', select.name, 'Value:', select.value);
+        select.addEventListener('change', function() {
+          console.log('Select changed:', this.name, 'New value:', this.value);
+          this.form.submit();
+        });
+      });
+      
+      // Check if category select has options
+      const categorySelect = document.querySelector('select[name="category"]');
+      if (categorySelect) {
+        const options = categorySelect.querySelectorAll('option');
+        console.log('Category select has', options.length, 'options');
+        options.forEach((option, index) => {
+          console.log(`Option ${index}:`, option.value, option.textContent);
+        });
+      }
+    });
+  </script>
+</body>
+</html>

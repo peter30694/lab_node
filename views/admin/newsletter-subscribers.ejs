@@ -1,0 +1,392 @@
+<%- include('../includes/head') %>
+
+<body class="bg-gray-50 min-h-screen">
+    <%- include('../includes/navigation-admin') %>
+
+    <main class="ml-64 min-h-screen bg-gray-50 py-8 px-4 pb-24">
+        <div class="max-w-7xl mx-auto">
+            <!-- Header Section -->
+            <div class="flex items-center justify-between mb-8">
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                        <i class="ri-mail-line text-2xl text-purple-600"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-800">Quản lý Newsletter</h1>
+                        <p class="text-gray-600">Quản lý danh sách đăng ký và gửi tin tức</p>
+                    </div>
+                </div>
+                <button onclick="openSendNewsletterModal()" 
+                        class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 flex items-center space-x-2">
+                    <i class="ri-send-plane-line"></i>
+                    <span>Gửi Newsletter</span>
+                </button>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                            <i class="ri-mail-line text-xl text-blue-600"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">Tổng đăng ký</p>
+                            <p class="text-2xl font-bold text-gray-800"><%= totalCount %></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                            <i class="ri-user-line text-xl text-green-600"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">Đang hoạt động</p>
+                            <p class="text-2xl font-bold text-gray-800"><%= totalCount %></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
+                            <i class="ri-calendar-line text-xl text-yellow-600"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">Tháng này</p>
+                            <p class="text-2xl font-bold text-gray-800"><%= totalCount %></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                            <i class="ri-send-plane-line text-xl text-purple-600"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">Đã gửi</p>
+                            <p class="text-2xl font-bold text-gray-800">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subscribers Table -->
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
+                <div class="px-6 py-4 border-b border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-xl font-bold text-gray-800">Danh sách người đăng ký</h2>
+                        <div class="flex items-center space-x-4">
+                            <div class="relative">
+                                <input type="text" placeholder="Tìm kiếm email..." 
+                                       class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200">
+                                <i class="ri-search-line absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            </div>
+                            <button class="bg-gray-100 hover:bg-gray-200 text-gray-600 px-4 py-2 rounded-lg transition-all duration-200">
+                                <i class="ri-download-line mr-2"></i>Xuất Excel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <% if (subscribers && subscribers.length > 0) { %>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Email</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Ngày đăng ký</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Trạng thái</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                <% subscribers.forEach((subscriber, index) => { %>
+                                    <tr class="hover:bg-gray-50 transition-colors duration-200">
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center space-x-3">
+                                                <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                                                    <i class="ri-mail-line text-purple-600"></i>
+                                                </div>
+                                                <div>
+                                                    <div class="font-medium text-gray-800"><%= subscriber.email %></div>
+                                                    <div class="text-sm text-gray-500">ID: <%= subscriber._id.toString().slice(-8) %></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="text-sm text-gray-800">
+                                                <%= new Date(subscriber.subscribedAt).toLocaleDateString('vi-VN') %>
+                                            </div>
+                                            <div class="text-xs text-gray-500">
+                                                <%= new Date(subscriber.subscribedAt).toLocaleTimeString('vi-VN') %>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                                                <i class="ri-check-circle-line mr-1"></i>
+                                                Đang hoạt động
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center space-x-2">
+                                                <button class="bg-blue-100 hover:bg-blue-200 text-blue-600 p-2 rounded-lg transition-all duration-200 transform hover:scale-105" 
+                                                        title="Gửi email riêng">
+                                                    <i class="ri-mail-send-line"></i>
+                                                </button>
+                                                <button class="bg-red-100 hover:bg-red-200 text-red-600 p-2 rounded-lg transition-all duration-200 transform hover:scale-105" 
+                                                        title="Xóa đăng ký"
+                                                        onclick="removeSubscriber('<%= subscriber._id %>', '<%= subscriber.email %>')">
+                                                    <i class="ri-delete-bin-line"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <div class="px-6 py-4 border-t border-gray-100">
+                        <div class="flex items-center justify-between">
+                            <div class="text-sm text-gray-600">
+                                Hiển thị <%= subscribers.length %> trong tổng số <%= totalCount %> đăng ký
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button class="px-3 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 transition-all duration-200">
+                                    <i class="ri-arrow-left-line"></i>
+                                </button>
+                                <span class="px-3 py-2 bg-purple-600 text-white rounded-lg">1</span>
+                                <button class="px-3 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 transition-all duration-200">
+                                    <i class="ri-arrow-right-line"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                <% } else { %>
+                    <div class="text-center py-12">
+                        <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="ri-mail-line text-3xl text-gray-400"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Chưa có đăng ký nào</h3>
+                        <p class="text-gray-600 mb-6">Chưa có người đăng ký newsletter nào.</p>
+                        <div class="flex items-center justify-center space-x-4">
+                            <button onclick="openSendNewsletterModal()" 
+                                    class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105">
+                                <i class="ri-send-plane-line mr-2"></i>Gửi Newsletter đầu tiên
+                            </button>
+                            <a href="/admin" 
+                               class="bg-gray-100 hover:bg-gray-200 text-gray-600 px-6 py-3 rounded-lg font-semibold transition-all duration-300">
+                                <i class="ri-arrow-left-line mr-2"></i>Quay lại
+                            </a>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </main>
+
+    <!-- Newsletter Modal -->
+    <div id="sendNewsletterModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center p-6 border-b border-gray-100">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
+                        <i class="ri-send-plane-line text-xl text-purple-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800">Gửi Newsletter</h3>
+                        <p class="text-sm text-gray-600">Gửi tin tức đến <%= totalCount %> người đăng ký</p>
+                    </div>
+                </div>
+                <button onclick="closeSendNewsletterModal()" 
+                        class="text-gray-400 hover:text-gray-600 transition-colors duration-200">
+                    <i class="ri-close-line text-2xl"></i>
+                </button>
+            </div>
+            
+            <form id="sendNewsletterForm" class="p-6 space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tiêu đề email <span class="text-red-500">*</span></label>
+                        <input type="text" id="newsletterSubject" name="subject" required 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+                               placeholder="Nhập tiêu đề newsletter">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Loại newsletter</label>
+                        <select class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200">
+                            <option value="general">Tin tức chung</option>
+                            <option value="promotion">Khuyến mãi</option>
+                            <option value="product">Sản phẩm mới</option>
+                            <option value="service">Dịch vụ</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Nội dung <span class="text-red-500">*</span></label>
+                    <textarea id="newsletterContent" name="content" rows="12" required
+                              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 resize-none"
+                              placeholder="Nhập nội dung newsletter..."></textarea>
+                    <div class="flex items-center justify-between mt-2">
+                        <div class="text-sm text-gray-500">
+                            <span id="charCount">0</span> ký tự
+                        </div>
+                        <div class="text-sm text-gray-500">
+                            Hỗ trợ HTML
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-purple-50 border border-purple-200 rounded-xl p-4">
+                    <div class="flex items-start space-x-3">
+                        <i class="ri-information-line text-purple-600 mt-1"></i>
+                        <div>
+                            <h4 class="font-semibold text-purple-800 mb-1">Thông tin gửi</h4>
+                            <ul class="text-sm text-purple-700 space-y-1">
+                                <li>• Newsletter sẽ được gửi đến <strong><%= totalCount %></strong> người đăng ký</li>
+                                <li>• Email sẽ được gửi từ hệ thống tự động</li>
+                                <li>• Người nhận có thể hủy đăng ký bất cứ lúc nào</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end space-x-4 pt-4 border-t border-gray-100">
+                    <button type="button" onclick="closeSendNewsletterModal()" 
+                            class="px-6 py-3 text-gray-600 border border-gray-300 rounded-xl hover:bg-gray-50 transition-all duration-200 font-medium">
+                        Hủy
+                    </button>
+                    <button type="submit" id="sendNewsletterBtn"
+                            class="px-6 py-3 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-all duration-200 font-medium flex items-center space-x-2">
+                        <i class="ri-send-plane-line"></i>
+                        <span>Gửi Newsletter</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Character counter
+        const contentTextarea = document.getElementById('newsletterContent');
+        const charCount = document.getElementById('charCount');
+        
+        contentTextarea.addEventListener('input', function() {
+            charCount.textContent = this.value.length;
+        });
+
+        // Modal functions
+        function openSendNewsletterModal() {
+            document.getElementById('sendNewsletterModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSendNewsletterModal() {
+            document.getElementById('sendNewsletterModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+            document.getElementById('sendNewsletterForm').reset();
+            charCount.textContent = '0';
+        }
+
+        // Remove subscriber function
+        function removeSubscriber(id, email) {
+            if (confirm(`Bạn có chắc muốn xóa đăng ký của ${email}?`)) {
+                fetch(`/admin/newsletter/remove/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert(data.message || 'Có lỗi xảy ra');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Có lỗi xảy ra khi xóa đăng ký');
+                });
+            }
+        }
+
+        // Newsletter form submission
+        document.getElementById('sendNewsletterForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const subject = document.getElementById('newsletterSubject').value.trim();
+            const content = document.getElementById('newsletterContent').value.trim();
+            const submitBtn = document.getElementById('sendNewsletterBtn');
+            
+            if (!subject || !content) {
+                alert('Vui lòng nhập đầy đủ tiêu đề và nội dung');
+                return;
+            }
+            
+            if (content.length < 10) {
+                alert('Nội dung phải có ít nhất 10 ký tự');
+                return;
+            }
+            
+            // Disable button và hiển thị loading
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="ri-loader-4-line animate-spin"></i><span>Đang gửi...</span>';
+            
+            try {
+                const response = await fetch('/admin/newsletter/send', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ subject, content })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Show success notification
+                    showToast(data.message, 'success');
+                    closeSendNewsletterModal();
+                } else {
+                    showToast(data.message || 'Có lỗi xảy ra', 'error');
+                }
+            } catch (error) {
+                console.error('Lỗi khi gửi newsletter:', error);
+                showToast('Có lỗi xảy ra khi gửi newsletter', 'error');
+            } finally {
+                // Enable button và khôi phục text
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="ri-send-plane-line"></i><span>Gửi Newsletter</span>';
+            }
+        });
+
+
+
+        // Close modal when clicking outside
+        document.getElementById('sendNewsletterModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeSendNewsletterModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeSendNewsletterModal();
+            }
+        });
+    </script>
+
+<%- include('../includes/end.ejs') %> 
+
+
+

@@ -1,0 +1,177 @@
+<%- include('../includes/head.ejs') %>
+
+<body class="bg-gray-50 min-h-screen">
+    <%- include('../includes/navigation-admin.ejs') %>
+    <main class="ml-64 min-h-screen bg-gray-50 py-8 px-4 pb-24">
+  <div class="max-w-6xl mx-auto">
+    <div class="mb-8">
+        <h1 class="text-2xl md:text-3xl font-bold text-blue-700 flex items-center gap-2">
+            <i class="ri-coupon-line"></i> Sửa mã giảm giá
+        </h1>
+        <p class="text-gray-600 mt-2">Chỉnh sửa thông tin mã giảm giá</p>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+        <form action="/admin/coupons/<%= coupon._id %>/edit" method="POST" class="space-y-6">
+            <% if (error) { %>
+                <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                    <i class="ri-error-warning-line mr-2"></i>
+                    <%= error %>
+                </div>
+            <% } %>
+
+            <% if (success) { %>
+                <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
+                    <i class="ri-check-line mr-2"></i>
+                    <%= success %>
+                </div>
+            <% } %>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Mã giảm giá -->
+                <div>
+                    <label for="code" class="block text-sm font-medium text-gray-700 mb-2">
+                        Mã giảm giá <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" id="code" name="code" required
+                           value="<%= coupon.code %>"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                           placeholder="VD: SALE10, GIAM50K">
+                </div>
+
+                <!-- Loại giảm giá -->
+                <div>
+                    <label for="discountType" class="block text-sm font-medium text-gray-700 mb-2">
+                        Loại giảm giá <span class="text-red-500">*</span>
+                    </label>
+                    <select id="discountType" name="discountType" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">Chọn loại giảm giá</option>
+                        <option value="percentage" <%= coupon.discountType === 'percentage' ? 'selected' : '' %>>Giảm theo phần trăm (%)</option>
+                        <option value="fixed" <%= coupon.discountType === 'fixed' ? 'selected' : '' %>>Giảm theo số tiền (VNĐ)</option>
+                    </select>
+                </div>
+
+                <!-- Giá trị giảm -->
+                <div>
+                    <label for="discountValue" class="block text-sm font-medium text-gray-700 mb-2">
+                        Giá trị giảm <span class="text-red-500">*</span>
+                    </label>
+                    <input type="number" id="discountValue" name="discountValue" required min="0" step="0.01"
+                           value="<%= coupon.discountValue %>"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                           placeholder="VD: 10 (10%) hoặc 50000 (50,000đ)">
+                </div>
+
+                <!-- Giá trị đơn hàng tối thiểu -->
+                <div>
+                    <label for="minOrderValue" class="block text-sm font-medium text-gray-700 mb-2">
+                        Giá trị đơn hàng tối thiểu
+                    </label>
+                    <input type="number" id="minOrderValue" name="minOrderValue" min="0"
+                           value="<%= coupon.minOrderValue %>"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                           placeholder="VD: 200000 (200,000đ)">
+                </div>
+
+                <!-- Giảm giá tối đa (chỉ cho %) -->
+                <div id="maxDiscountContainer" style="display: <%= coupon.discountType === 'percentage' ? 'block' : 'none' %>;">
+                    <label for="maxDiscount" class="block text-sm font-medium text-gray-700 mb-2">
+                        Giảm giá tối đa (VNĐ)
+                    </label>
+                    <input type="number" id="maxDiscount" name="maxDiscount" min="0"
+                           value="<%= coupon.maxDiscount %>"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                           placeholder="VD: 100000 (100,000đ)">
+                </div>
+
+                <!-- Số lần sử dụng tối đa -->
+                <div>
+                    <label for="usageLimit" class="block text-sm font-medium text-gray-700 mb-2">
+                        Số lần sử dụng tối đa
+                    </label>
+                    <input type="number" id="usageLimit" name="usageLimit" min="1"
+                           value="<%= coupon.usageLimit %>"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                           placeholder="VD: 100">
+                </div>
+
+                <!-- Ngày bắt đầu -->
+                <div>
+                    <label for="startDate" class="block text-sm font-medium text-gray-700 mb-2">
+                        Ngày bắt đầu
+                    </label>
+                    <input type="datetime-local" id="startDate" name="startDate"
+                           value="<%= new Date(coupon.startDate).toISOString().slice(0, 16) %>"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+
+                <!-- Ngày kết thúc -->
+                <div>
+                    <label for="endDate" class="block text-sm font-medium text-gray-700 mb-2">
+                        Ngày kết thúc <span class="text-red-500">*</span>
+                    </label>
+                    <input type="datetime-local" id="endDate" name="endDate" required
+                           value="<%= new Date(coupon.endDate).toISOString().slice(0, 16) %>"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+
+                <!-- Trạng thái -->
+                <div>
+                    <label for="isActive" class="block text-sm font-medium text-gray-700 mb-2">
+                        Trạng thái
+                    </label>
+                    <select id="isActive" name="isActive"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="true" <%= coupon.isActive ? 'selected' : '' %>>Hoạt động</option>
+                        <option value="false" <%= !coupon.isActive ? 'selected' : '' %>>Vô hiệu hóa</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Thông tin sử dụng -->
+            <div class="bg-gray-50 rounded-lg p-4">
+                <h3 class="text-sm font-medium text-gray-700 mb-2">Thông tin sử dụng</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div>
+                        <span class="text-gray-500">Đã sử dụng:</span>
+                        <span class="font-medium text-gray-900"><%= coupon.usedCount %> lần</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">Còn lại:</span>
+                        <span class="font-medium text-gray-900"><%= coupon.usageLimit - coupon.usedCount %> lần</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-4 pt-6 border-t">
+                <a href="/admin/coupons" 
+                   class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition">
+                    Hủy
+                </a>
+                <button type="submit" 
+                        class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                    <i class="ri-save-line mr-2"></i>
+                    Cập nhật mã giảm giá
+                </button>
+            </div>
+        </form>
+    </div>
+  </div>
+</main>`n    </div>`n`n    <script>
+// Hiển thị/ẩn trường giảm giá tối đa dựa trên loại giảm giá
+document.getElementById('discountType').addEventListener('change', function() {
+    const maxDiscountContainer = document.getElementById('maxDiscountContainer');
+    if (this.value === 'percentage') {
+        maxDiscountContainer.style.display = 'block';
+    } else {
+        maxDiscountContainer.style.display = 'none';
+        document.getElementById('maxDiscount').value = '';
+    }
+});
+</script>
+
+<%- include('../includes/end.ejs') %> 
+
+
+

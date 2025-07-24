@@ -1,0 +1,294 @@
+<%- include('../includes/head.ejs') %>
+
+<body class="bg-gray-50 min-h-screen">
+    <%- include('../includes/navigation-admin.ejs') %>
+
+    <main class="ml-64 min-h-screen bg-gray-50 py-8 px-4 pb-24">
+  <div class="max-w-6xl mx-auto">
+    <div class="mb-8">
+        <h1 class="text-2xl md:text-3xl font-bold text-blue-700 flex items-center gap-2">
+            <i class="ri-coupon-line"></i> Thêm mã giảm giá
+        </h1>
+        <p class="text-gray-600 mt-2">Tạo mã giảm giá mới để khuyến mãi cho khách hàng</p>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+        <form action="/admin/coupons/add" method="POST" class="space-y-6">
+            <% if (error) { %>
+                <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                    <i class="ri-error-warning-line mr-2"></i>
+                    <%= error %>
+                </div>
+            <% } %>
+
+            <% if (success) { %>
+                <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
+                    <i class="ri-check-line mr-2"></i>
+                    <%= success %>
+                </div>
+            <% } %>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Mã giảm giá -->
+                <div>
+                    <label for="code" class="block text-sm font-medium text-gray-700 mb-2">
+                        Mã giảm giá <span class="text-red-500">*</span>
+                    </label>
+                    <div class="flex gap-2">
+                        <input type="text" id="code" name="code" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                               placeholder="VD: SALE10, GIAM50K">
+                    </div>
+                </div>
+
+                <!-- Loại giảm giá -->
+                <div>
+                    <label for="discountType" class="block text-sm font-medium text-gray-700 mb-2">
+                        Loại giảm giá <span class="text-red-500">*</span>
+                    </label>
+                    <select id="discountType" name="discountType" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">Chọn loại giảm giá</option>
+                        <option value="percentage">Giảm theo phần trăm (%)</option>
+                        <option value="fixed">Giảm theo số tiền (VNĐ)</option>
+                    </select>
+                </div>
+
+                <!-- Giá trị giảm -->
+                <div>
+                    <label for="discountValue" class="block text-sm font-medium text-gray-700 mb-2">
+                        Giá trị giảm <span class="text-red-500">*</span>
+                    </label>
+                    <input type="number" id="discountValue" name="discountValue" required min="0" step="0.01"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                           placeholder="VD: 10 (10%) hoặc 50000 (50,000đ)" max="100">
+                </div>
+
+                <!-- Giá trị đơn hàng tối thiểu -->
+                <div>
+                    <label for="minOrderValue" class="block text-sm font-medium text-gray-700 mb-2">
+                        Giá trị đơn hàng tối thiểu
+                    </label>
+                    <input type="number" id="minOrderValue" name="minOrderValue" min="0"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                           placeholder="VD: 200000 (200,000đ)">
+                </div>
+
+                <!-- Giảm giá tối đa (chỉ cho %) -->
+                <div id="maxDiscountContainer" style="display: none;">
+                    <label for="maxDiscount" class="block text-sm font-medium text-gray-700 mb-2">
+                        Giảm giá tối đa (VNĐ)
+                    </label>
+                    <input type="number" id="maxDiscount" name="maxDiscount" min="0"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                           placeholder="VD: 100000 (100,000đ)">
+                </div>
+
+                <!-- Số lần sử dụng tối đa -->
+                <div>
+                    <label for="usageLimit" class="block text-sm font-medium text-gray-700 mb-2">
+                        Số lần sử dụng tối đa
+                    </label>
+                    <input type="number" id="usageLimit" name="usageLimit" min="1" value="1"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                           placeholder="VD: 100">
+                </div>
+
+                <!-- Ngày bắt đầu -->
+                <div>
+                    <label for="startDate" class="block text-sm font-medium text-gray-700 mb-2">
+                        Ngày bắt đầu
+                    </label>
+                    <input type="datetime-local" id="startDate" name="startDate"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+
+                <!-- Ngày kết thúc -->
+                <div>
+                    <label for="endDate" class="block text-sm font-medium text-gray-700 mb-2">
+                        Ngày kết thúc <span class="text-red-500">*</span>
+                    </label>
+                    <input type="datetime-local" id="endDate" name="endDate" required
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+
+                <!-- Trạng thái -->
+                <div>
+                    <label for="isActive" class="block text-sm font-medium text-gray-700 mb-2">
+                        Trạng thái
+                    </label>
+                    <select id="isActive" name="isActive"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="true">Hoạt động</option>
+                        <option value="false">Vô hiệu hóa</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-4 pt-6 border-t">
+                <a href="/admin/coupons" 
+                   class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition">
+                    Hủy
+                </a>
+                <button type="submit" 
+                        class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                    <i class="ri-save-line mr-2"></i>
+                    Lưu mã giảm giá
+                </button>
+            </div>
+        </form>
+    </div>
+  </div>
+    </main>
+
+    <script>
+        // Hiển thị/ẩn trường giảm giá tối đa dựa trên loại giảm giá
+        document.getElementById('discountType').addEventListener('change', function() {
+            const maxDiscountContainer = document.getElementById('maxDiscountContainer');
+            if (this.value === 'percentage') {
+                maxDiscountContainer.style.display = 'block';
+            } else {
+                maxDiscountContainer.style.display = 'none';
+                document.getElementById('maxDiscount').value = '';
+            }
+        });
+
+        // Đặt ngày bắt đầu mặc định là hiện tại
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            // Định dạng datetime-local: YYYY-MM-DDTHH:mm
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const currentDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
+            
+            document.getElementById('startDate').value = currentDateTime;
+            
+            // Đặt ngày kết thúc mặc định là 30 ngày sau
+            const endDate = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+            const endYear = endDate.getFullYear();
+            const endMonth = String(endDate.getMonth() + 1).padStart(2, '0');
+            const endDay = String(endDate.getDate()).padStart(2, '0');
+            const endHours = String(endDate.getHours()).padStart(2, '0');
+            const endMinutes = String(endDate.getMinutes()).padStart(2, '0');
+            const endDateTime = `${endYear}-${endMonth}-${endDay}T${endHours}:${endMinutes}`;
+            
+            document.getElementById('endDate').value = endDateTime;
+        });
+
+        // ===== VALIDATION FORM =====
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const code = document.getElementById('code').value.trim();
+            const discountType = document.getElementById('discountType').value;
+            const discountValue = parseFloat(document.getElementById('discountValue').value);
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            
+            // Clear previous errors
+            clearErrors();
+            
+            let hasError = false;
+            
+            // Validate code
+            if (!code) {
+                showError('code', 'Mã giảm giá không được để trống');
+                hasError = true;
+            } else if (code.length < 3 || code.length > 20) {
+                showError('code', 'Mã giảm giá phải từ 3-20 ký tự');
+                hasError = true;
+            } else if (!/^[A-Z0-9-]+$/.test(code.toUpperCase())) {
+                showError('code', 'Mã giảm giá chỉ được chứa chữ cái, số và dấu gạch ngang');
+                hasError = true;
+            }
+            
+            // Validate discount type
+            if (!discountType) {
+                showError('discountType', 'Vui lòng chọn loại giảm giá');
+                hasError = true;
+            }
+            
+            // Validate discount value
+            if (!discountValue || discountValue <= 0) {
+                showError('discountValue', 'Giá trị giảm phải lớn hơn 0');
+                hasError = true;
+            } else if (discountType === 'percentage' && discountValue > 100) {
+                showError('discountValue', 'Phần trăm giảm giá không được vượt quá 100%');
+                hasError = true;
+            } else if (discountType === 'fixed' && discountValue > 10000000) {
+                showError('discountValue', 'Giá trị giảm cố định không được vượt quá 10,000,000đ');
+                hasError = true;
+            }
+            
+            // Validate dates
+            if (!startDate) {
+                showError('startDate', 'Ngày bắt đầu là bắt buộc');
+                hasError = true;
+            }
+            
+            if (!endDate) {
+                showError('endDate', 'Ngày kết thúc là bắt buộc');
+                hasError = true;
+            } else if (new Date(endDate) <= new Date(startDate)) {
+                showError('endDate', 'Ngày kết thúc phải sau ngày bắt đầu');
+                hasError = true;
+            }
+            
+            if (hasError) {
+                e.preventDefault();
+                return;
+            }
+            
+            // Show loading state
+            const submitBtn = document.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="ri-loader-4-line animate-spin"></i> Đang tạo...';
+            
+            // Re-enable button after 5 seconds if form doesn't submit
+            setTimeout(() => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }, 5000);
+        });
+
+        // ===== HELPER FUNCTIONS =====
+        function showError(fieldId, message) {
+            const field = document.getElementById(fieldId);
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'text-red-500 text-sm mt-1';
+            errorDiv.textContent = message;
+            errorDiv.id = `${fieldId}-error`;
+            
+            field.classList.add('border-red-500');
+            field.parentNode.appendChild(errorDiv);
+        }
+
+        function clearErrors() {
+            document.querySelectorAll('.text-red-500[id$="-error"]').forEach(el => el.remove());
+            document.querySelectorAll('.border-red-500').forEach(el => {
+                el.classList.remove('border-red-500');
+                el.classList.add('border-gray-300');
+            });
+        }
+
+        function showToast(message, type) {
+            // Tạo toast notification
+            const toast = document.createElement('div');
+            toast.className = `fixed top-4 right-4 px-6 py-3 rounded-lg text-white z-50 ${
+                type === 'success' ? 'bg-green-500' : 'bg-red-500'
+            }`;
+            toast.textContent = message;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+    </script>
+
+<%- include('../includes/end.ejs') %> 
+
+

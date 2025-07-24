@@ -1,0 +1,261 @@
+<%- include('../includes/head.ejs') %>
+
+<body class="bg-gray-50 min-h-screen">
+    <%- include('../includes/navigation-admin.ejs') %>
+
+    <main class="ml-64 min-h-screen bg-gray-50 py-8 px-4 pb-24">
+        <div class="max-w-6xl mx-auto">
+            <!-- Header Section -->
+            <div class="flex items-center justify-between mb-8">
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                        <i class="ri-add-line text-2xl text-blue-600"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-800">Thêm sản phẩm mới</h1>
+                        <p class="text-gray-600">Tạo sản phẩm mới cho cửa hàng</p>
+                    </div>
+                </div>
+                <a href="/admin/products" 
+                   class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 flex items-center space-x-2">
+                    <i class="ri-arrow-left-line"></i>
+                    <span>Quay lại</span>
+                </a>
+            </div>
+
+            <!-- Form Card -->
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+                <form action="/admin/add-product" method="POST" enctype="multipart/form-data" class="p-8">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <!-- Left Column - Basic Information -->
+                        <div class="space-y-6">
+                            <div class="flex items-center space-x-3 mb-6">
+                                <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <i class="ri-information-line text-blue-600"></i>
+                                </div>
+                                <h2 class="text-xl font-semibold text-gray-800">Thông tin cơ bản</h2>
+                            </div>
+
+                            <!-- Product Name -->
+                            <div>
+                                <label for="title" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Tên sản phẩm <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" id="title" name="title" required
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                                       placeholder="Nhập tên sản phẩm...">
+                            </div>
+
+                            <!-- Product Image -->
+                            <div>
+                                <label for="image" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Hình ảnh sản phẩm <span class="text-red-500">*</span>
+                                </label>
+                                <div class="relative">
+                                    <input type="file" id="image" name="image" accept="image/*" required
+                                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                                           onchange="previewImage(this)">
+                                </div>
+                                <p class="text-xs text-gray-500 mt-2">Chỉ chấp nhận file ảnh (JPEG, PNG, JPG) tối đa 5MB</p>
+                                
+                                <!-- Image Preview -->
+                                <div id="imagePreviewContainer" class="mt-4 hidden">
+                                    <div class="border-2 border-dashed border-gray-300 rounded-xl p-4 bg-gray-50">
+                                        <img id="imagePreview" class="max-w-full max-h-48 mx-auto rounded-lg object-contain" alt="Preview" src="<%= product.imageUrl %>">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Price -->
+                            <div>
+                                <label for="price" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Giá <span class="text-red-500">*</span>
+                                </label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <span class="text-gray-500 text-lg">₫</span>
+                                    </div>
+                                    <input type="number" id="price" name="price" step="0.01" required
+                                           class="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                                           placeholder="0">
+                                </div>
+                            </div>
+
+                            <!-- Stock Quantity -->
+                            <div>
+                                <label for="stockQuantity" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Số lượng tồn kho <span class="text-red-500">*</span>
+                                </label>
+                                <input type="number" id="stockQuantity" name="stockQuantity" min="0" required
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                                       placeholder="0">
+                            </div>
+
+                            <!-- Category -->
+                            <div>
+                                <label for="category" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Danh mục sản phẩm <span class="text-red-500">*</span>
+                                </label>
+                                <select id="category" name="category" required
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+                                    <option value="">Chọn danh mục</option>
+                                    <% if (categories && categories.length > 0) { %>
+                                        <% categories.forEach(cat => { %>
+                                            <option value="<%= cat.slug %>"><%= cat.icon %> <%= cat.name %></option>
+                                        <% }) %>
+                                    <% } else { %>
+                                        <option value="" disabled>Không có danh mục</option>
+                                    <% } %>
+                                </select>
+                                <p class="text-xs text-gray-500 mt-2">Phân loại sản phẩm vào danh mục phù hợp</p>
+                            </div>
+                            <!-- Origin -->
+                            <div>
+                                <label for="origin" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Xuất xứ sản phẩm
+                                </label>
+                                <input type="text" id="origin" name="origin"
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                                       placeholder="Nhập xuất xứ, ví dụ: Việt Nam, Thái Lan, Mỹ...">
+                                <p class="text-xs text-gray-500 mt-2">Ghi rõ quốc gia hoặc nơi sản xuất sản phẩm (nếu có)</p>
+                            </div>
+                        </div>
+
+                        <!-- Right Column - Description -->
+                        <div class="space-y-6">
+                            <div class="flex items-center space-x-3 mb-6">
+                                <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                                    <i class="ri-file-text-line text-green-600"></i>
+                                </div>
+                                <h2 class="text-xl font-semibold text-gray-800">Mô tả chi tiết</h2>
+                            </div>
+
+                            <!-- Description -->
+                            <div>
+                                <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Mô tả sản phẩm <span class="text-red-500">*</span>
+                                </label>
+                                <textarea id="description" name="description" rows="8" required
+                                          class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none"
+                                          placeholder="Mô tả chi tiết về sản phẩm, tính năng, chất liệu..."></textarea>
+                                <p class="text-xs text-gray-500 mt-2">Mô tả chi tiết giúp khách hàng hiểu rõ hơn về sản phẩm</p>
+                            </div>
+
+                            <!-- Additional Features Section -->
+                            <div class="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                                <div class="flex items-center space-x-2 mb-3">
+                                    <i class="ri-lightbulb-line text-blue-600"></i>
+                                    <h3 class="font-medium text-blue-800">Gợi ý</h3>
+                                </div>
+                                <ul class="text-sm text-blue-700 space-y-1">
+                                    <li class="flex items-start space-x-2">
+                                        <i class="ri-check-line text-blue-600 mt-0.5"></i>
+                                        <span>Thêm hình ảnh chất lượng cao để thu hút khách hàng</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2">
+                                        <i class="ri-check-line text-blue-600 mt-0.5"></i>
+                                        <span>Mô tả chi tiết giúp tăng tỷ lệ chuyển đổi</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2">
+                                        <i class="ri-check-line text-blue-600 mt-0.5"></i>
+                                        <span>Đặt giá hợp lý để cạnh tranh trên thị trường</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="flex items-center justify-between pt-8 mt-8 border-t border-gray-200">
+                        <div class="text-sm text-gray-500">
+                            <span class="text-red-500">*</span> Thông tin bắt buộc
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <a href="/admin/products" 
+                               class="px-6 py-3 border border-gray-300 text-gray-700 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 flex items-center space-x-2">
+                                <i class="ri-close-line"></i>
+                                <span>Hủy bỏ</span>
+                            </a>
+                            <button type="submit" 
+                                    class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 flex items-center space-x-2">
+                                <i class="ri-save-line"></i>
+                                <span>Lưu sản phẩm</span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+    </div>
+    <script>
+        // Image preview functionality
+        function previewImage(input) {
+            const file = input.files[0];
+            const previewContainer = document.getElementById('imagePreviewContainer');
+            const preview = document.getElementById('imagePreview');
+            
+            if (file) {
+                // Check file size (5MB limit)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('File quá lớn! Vui lòng chọn file nhỏ hơn 5MB.');
+                    input.value = '';
+                    previewContainer.classList.add('hidden');
+                    return;
+                }
+                
+                // Check file type
+                if (!file.type.startsWith('image/')) {
+                    alert('Vui lòng chọn file ảnh!');
+                    input.value = '';
+                    previewContainer.classList.add('hidden');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    previewContainer.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                previewContainer.classList.add('hidden');
+            }
+        }
+
+        // Form validation and enhancement
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+            const submitBtn = form.querySelector('button[type="submit"]');
+            
+            // Add loading state to submit button
+            form.addEventListener('submit', function() {
+                submitBtn.innerHTML = '<i class="ri-loader-4-line animate-spin"></i><span>Đang lưu...</span>';
+                submitBtn.disabled = true;
+            });
+            
+            // Auto-format price input
+            const priceInput = document.getElementById('price');
+            priceInput.addEventListener('input', function() {
+                let value = this.value.replace(/[^\d.]/g, '');
+                if (value.includes('.')) {
+                    const parts = value.split('.');
+                    if (parts.length > 2) {
+                        value = parts[0] + '.' + parts.slice(1).join('');
+                    }
+                }
+                this.value = value;
+            });
+            
+            // Auto-format stock quantity
+            const stockInput = document.getElementById('stockQuantity');
+            stockInput.addEventListener('input', function() {
+                this.value = this.value.replace(/[^\d]/g, '');
+            });
+        });
+    </script>
+
+<%- include('../includes/end.ejs') %>
+
+
+

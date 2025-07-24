@@ -1,0 +1,794 @@
+<%- include('../includes/head.ejs') %>
+
+<body class="bg-gray-50 min-h-screen">
+    <%- include('../includes/navigation-admin.ejs') %>
+
+    <main class="ml-64 min-h-screen bg-gray-50 py-8 px-4 pb-24">
+        <div class="max-w-7xl mx-auto">
+            <!-- Header Section -->
+            <div class="flex items-center justify-between mb-8">
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                        <i class="ri-dashboard-line text-2xl text-blue-600"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-800">Dashboard & Reports</h1>
+                        <p class="text-gray-600">Tổng quan và báo cáo hệ thống quản trị</p>
+                    </div>
+                </div>
+                                <div class="flex items-center space-x-2">
+                    <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+                        <i class="ri-user-line mr-1"></i>Admin
+                    </span>
+                    <span class="text-sm text-gray-500">
+                        <%= new Date().toLocaleDateString('vi-VN') %>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="flex space-x-1 mb-8 bg-white rounded-xl p-1 shadow-sm border border-gray-200">
+                <button id="dashboardTab" 
+                        class="flex-1 py-3 px-6 rounded-lg font-semibold text-sm transition-all duration-200 bg-blue-600 text-white">
+                    <i class="ri-dashboard-line mr-2"></i>
+                    Dashboard
+                </button>
+                <button id="reportsTab" 
+                        class="flex-1 py-3 px-6 rounded-lg font-semibold text-sm transition-all duration-200 text-gray-600 hover:text-gray-800 hover:bg-gray-100">
+                    <i class="ri-bar-chart-line mr-2"></i>
+                    Thống kê & Báo cáo
+                </button>
+            </div>
+
+            <!-- Dashboard Section -->
+            <div id="dashboardSection">
+                <!-- Statistics Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4 mb-8">
+                <div class="bg-white rounded-2xl shadow-lg p-4 border border-gray-100">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                            <i class="ri-store-line text-lg text-blue-600"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-xs font-medium text-gray-600">Sản phẩm</p>
+                            <p class="text-lg font-bold text-gray-800"><%= stats.totalProducts %></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-lg p-4 border border-gray-100">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
+                            <i class="ri-shopping-bag-line text-lg text-green-600"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-xs font-medium text-gray-600">Đơn hàng</p>
+                            <p class="text-lg font-bold text-gray-800"><%= stats.totalOrders %></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-lg p-4 border border-gray-100">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center">
+                            <i class="ri-service-line text-lg text-orange-600"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-xs font-medium text-gray-600">Dịch vụ</p>
+                            <p class="text-lg font-bold text-gray-800"><%= stats.totalServices || 0 %></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-lg p-4 border border-gray-100">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center">
+                            <i class="ri-user-line text-lg text-yellow-600"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-xs font-medium text-gray-600">Khách hàng</p>
+                            <p class="text-lg font-bold text-gray-800"><%= stats.totalUsers %></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-lg p-4 border border-gray-100">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
+                            <i class="ri-money-dollar-circle-line text-lg text-purple-600"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-xs font-medium text-gray-600">Doanh thu</p>
+                            <p class="text-lg font-bold text-gray-800"><%= (stats.totalRevenue || 0).toLocaleString('vi-VN') %>₫</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-lg p-4 border border-gray-100">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
+                            <i class="ri-star-line text-lg text-red-600"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-xs font-medium text-gray-600">Đánh giá</p>
+                            <p class="text-lg font-bold text-gray-800"><%= stats.totalReviews %></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Statistics -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <!-- Payment Statistics -->
+                <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                    <div class="flex items-center mb-4">
+                        <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                            <i class="ri-bank-card-line text-green-600"></i>
+                        </div>
+                        <h3 class="text-sm font-semibold text-gray-800">Thanh toán</h3>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Đã thanh toán:</span>
+                            <span class="font-semibold text-green-600"><%= stats.paidOrders %></span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Chờ thanh toán:</span>
+                            <span class="font-semibold text-yellow-600"><%= stats.pendingPaymentOrders %></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review Statistics -->
+                <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                    <div class="flex items-center mb-4">
+                        <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                            <i class="ri-star-line text-blue-600"></i>
+                        </div>
+                        <h3 class="text-sm font-semibold text-gray-800">Đánh giá</h3>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Đã duyệt:</span>
+                            <span class="font-semibold text-green-600"><%= stats.approvedReviews %></span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Chờ duyệt:</span>
+                            <span class="font-semibold text-yellow-600"><%= stats.pendingReviews %></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coupon Statistics -->
+                <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                    <div class="flex items-center mb-4">
+                        <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                            <i class="ri-coupon-line text-purple-600"></i>
+                        </div>
+                        <h3 class="text-sm font-semibold text-gray-800">Mã giảm giá</h3>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Đang hoạt động:</span>
+                            <span class="font-semibold text-green-600"><%= stats.activeCoupons %></span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Sắp hết hạn:</span>
+                            <span class="font-semibold text-orange-600"><%= stats.expiringCoupons %></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Inventory Statistics -->
+                <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                    <div class="flex items-center mb-4">
+                        <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center mr-3">
+                            <i class="ri-store-2-line text-red-600"></i>
+                        </div>
+                        <h3 class="text-sm font-semibold text-gray-800">Tồn kho</h3>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Hết hàng:</span>
+                            <span class="font-semibold text-red-600"><%= stats.outOfStockProducts %></span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Sắp hết:</span>
+                            <span class="font-semibold text-orange-600"><%= stats.lowStockProducts %></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Statistics -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- Order Statistics -->
+                <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                    <div class="flex items-center mb-6">
+                        <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mr-3">
+                            <i class="ri-pie-chart-line text-xl text-blue-600"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800">Thống kê đơn hàng</h3>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                                <span class="text-gray-700">Chờ xử lý</span>
+                            </div>
+                            <span class="font-semibold text-yellow-600"><%= stats.pendingOrders %></span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+                                <span class="text-gray-700">Đang xử lý</span>
+                            </div>
+                            <span class="font-semibold text-blue-600"><%= stats.processingOrders %></span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                <span class="text-gray-700">Đã giao</span>
+                            </div>
+                            <span class="font-semibold text-green-600"><%= stats.deliveredOrders %></span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                                <span class="text-gray-700">Đã hủy</span>
+                            </div>
+                            <span class="font-semibold text-red-600"><%= stats.cancelledOrders %></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Revenue Statistics -->
+                <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                    <div class="flex items-center mb-6">
+                        <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center mr-3">
+                            <i class="ri-line-chart-line text-xl text-green-600"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800">Doanh thu</h3>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-green-600 mb-2">
+                            <%= stats.monthlyRevenue.toLocaleString('vi-VN') %>₫
+                        </div>
+                        <p class="text-gray-600 mb-4">Tháng này</p>
+                        <div class="bg-gray-50 rounded-xl p-4">
+                            <p class="text-sm text-gray-600">Tổng doanh thu</p>
+                            <p class="text-xl font-bold text-gray-800">
+                                <%= stats.totalRevenue.toLocaleString('vi-VN') %>₫
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Data -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- Recent Orders -->
+                <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                                <i class="ri-time-line text-xl text-blue-600"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800">Đơn hàng gần đây</h3>
+                        </div>
+                        <a href="/admin/orders" class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                            Xem tất cả
+                        </a>
+                    </div>
+                    
+                    <% if (recentOrders && recentOrders.length > 0) { %>
+                        <div class="space-y-3">
+                            <% recentOrders.forEach(order => { %>
+                                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors duration-200">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                            <i class="ri-shopping-bag-line text-blue-600"></i>
+                                        </div>
+                                        <div>
+                                            <div class="font-semibold text-gray-800">
+                                                #<%= order._id ? order._id.toString().slice(-8) : 'N/A' %>
+                                            </div>
+                                            <div class="text-sm text-gray-600">
+                                                <%= order.createdAt ? new Date(order.createdAt).toLocaleDateString('vi-VN') : 'N/A' %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="font-semibold text-gray-800">
+                                            <%= (order.totalPrice || 0).toLocaleString('vi-VN') %>₫
+                                        </div>
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
+                                            <%= order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : '' %>
+                                            <%= order.status === 'processing' ? 'bg-blue-100 text-blue-800' : '' %>
+                                            <%= order.status === 'delivered' ? 'bg-green-100 text-green-800' : '' %>
+                                            <%= order.status === 'cancelled' ? 'bg-red-100 text-red-800' : '' %>">
+                                            <%= order.status === 'pending' ? 'Chờ xử lý' : '' %>
+                                            <%= order.status === 'processing' ? 'Đang xử lý' : '' %>
+                                            <%= order.status === 'delivered' ? 'Đã giao' : '' %>
+                                            <%= order.status === 'cancelled' ? 'Đã hủy' : '' %>
+                                        </span>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        </div>
+                    <% } else { %>
+                        <div class="text-center py-8">
+                            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="ri-inbox-line text-2xl text-gray-400"></i>
+                            </div>
+                            <p class="text-gray-500">Chưa có đơn hàng nào</p>
+                        </div>
+                    <% } %>
+                </div>
+
+                <!-- Top Products -->
+                <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center">
+                                <i class="ri-fire-line text-xl text-orange-600"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800">Sản phẩm bán chạy</h3>
+                        </div>
+                        <a href="/admin/products" class="text-orange-600 hover:text-orange-700 text-sm font-medium">
+                            Xem tất cả
+                        </a>
+                    </div>
+                    
+                    <% if (topProducts && topProducts.length > 0) { %>
+                        <div class="space-y-3">
+                            <% topProducts.forEach((product, index) => { %>
+                                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors duration-200">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center font-bold">
+                                            <%= index + 1 %>
+                                        </div>
+                                        <div>
+                                            <div class="font-semibold text-gray-800 line-clamp-1">
+                                                <%= product.title %>
+                                            </div>
+                                            <div class="text-sm text-gray-600">
+                                                Đã bán: <%= product.quantity %> sản phẩm
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        </div>
+                    <% } else { %>
+                        <div class="text-center py-8">
+                            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="ri-fire-line text-2xl text-gray-400"></i>
+                            </div>
+                            <p class="text-gray-500">Chưa có dữ liệu bán hàng</p>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <a href="/admin/products" class="group bg-white rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center group-hover:bg-blue-200 transition-colors duration-200">
+                            <i class="ri-list-check text-2xl text-blue-600"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-800 group-hover:text-blue-600 transition-colors duration-200">Quản lý sản phẩm</h4>
+                            <p class="text-sm text-gray-600">Thêm, sửa, xóa sản phẩm</p>
+                        </div>
+                    </div>
+                </a>
+                
+                <a href="/admin/orders" class="group bg-white rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center group-hover:bg-green-200 transition-colors duration-200">
+                            <i class="ri-shopping-bag-line text-2xl text-green-600"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-800 group-hover:text-green-600 transition-colors duration-200">Quản lý đơn hàng</h4>
+                            <p class="text-sm text-gray-600">Xem và xử lý đơn hàng</p>
+                        </div>
+                    </div>
+                </a>
+                
+                <a href="/admin/services" class="group bg-white rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center group-hover:bg-orange-200 transition-colors duration-200">
+                            <i class="ri-service-line text-2xl text-orange-600"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-800 group-hover:text-orange-600 transition-colors duration-200">Quản lý dịch vụ</h4>
+                            <p class="text-sm text-gray-600">Quản lý các dịch vụ</p>
+                        </div>
+                    </div>
+                </a>
+                
+                <a href="/admin/accounts" class="group bg-white rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center group-hover:bg-yellow-200 transition-colors duration-200">
+                            <i class="ri-user-settings-line text-2xl text-yellow-600"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-800 group-hover:text-yellow-600 transition-colors duration-200">Quản lý tài khoản</h4>
+                            <p class="text-sm text-gray-600">Quản lý người dùng</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            </div>
+
+            <!-- Reports Section (Hidden by default) -->
+            <div id="reportsSection" class="hidden">
+                <!-- Header Section for Reports -->
+                <div class="mb-8">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-800 mb-2">Thống kê & Báo cáo</h2>
+                            <p class="text-gray-600">Phân tích chi tiết hoạt động kinh doanh</p>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <button id="exportReportBtn" 
+                                    class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 flex items-center space-x-2">
+                                <i class="ri-download-line"></i>
+                                <span>Xuất PDF</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Revenue Chart Section -->
+                <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 mb-8">
+                    <div class="flex items-center mb-6">
+                        <div class="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center">
+                            <i class="ri-line-chart-line text-indigo-600"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800 ml-3">Doanh thu theo tháng (6 tháng gần nhất)</h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Tháng</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Số đơn hàng</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Doanh thu</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Trung bình/đơn</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                <% monthlyStats.forEach(stat => { %>
+                                    <tr class="hover:bg-gray-50 transition-colors duration-200">
+                                        <td class="px-6 py-4 font-semibold text-gray-800"><%= stat.month %></td>
+                                        <td class="px-6 py-4 text-gray-600"><%= stat.orders %></td>
+                                        <td class="px-6 py-4 font-semibold text-green-600">
+                                            <%= stat.revenue.toLocaleString('vi-VN') %>₫
+                                        </td>
+                                        <td class="px-6 py-4 text-gray-600">
+                                            <%= stat.orders > 0 ? (stat.revenue / stat.orders).toLocaleString('vi-VN') : '0' %>₫
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Top Products Section -->
+                <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 mb-8">
+                    <div class="flex items-center mb-6">
+                        <div class="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center">
+                            <i class="ri-fire-line text-orange-600"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800 ml-3">Top 10 sản phẩm bán chạy</h3>
+                    </div>
+                    
+                    <% if (topProducts && topProducts.length > 0) { %>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">#</th>
+                                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Sản phẩm</th>
+                                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Số lượng bán</th>
+                                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Doanh thu</th>
+                                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">% Tổng doanh thu</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-100">
+                                    <% 
+                                    const topProductsRevenue = topProducts.reduce((sum, p) => sum + (p.revenue || 0), 0);
+                                    topProducts.forEach((product, index) => { 
+                                        const revenuePercent = topProductsRevenue > 0 ? ((product.revenue || 0) / topProductsRevenue * 100).toFixed(1) : 0;
+                                    %>
+                                        <tr class="hover:bg-gray-50 transition-colors duration-200">
+                                            <td class="px-6 py-4">
+                                                <div class="w-8 h-8 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center font-bold text-sm">
+                                                    <%= index + 1 %>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="font-semibold text-gray-800"><%= product.title %></div>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="text-sm text-gray-600"><%= product.quantity %> sản phẩm</div>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="font-semibold text-green-600">
+                                                    <%= product.revenue ? product.revenue.toLocaleString('vi-VN') : '0' %>₫
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="text-sm text-gray-600"><%= revenuePercent %>%</div>
+                                            </td>
+                                        </tr>
+                                    <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                    <% } else { %>
+                        <div class="text-center py-12">
+                            <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <i class="ri-fire-line text-3xl text-gray-400"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2">Chưa có dữ liệu bán hàng</h3>
+                            <p class="text-gray-600">Hiện tại chưa có thống kê sản phẩm bán chạy.</p>
+                        </div>
+                    <% } %>
+                </div>
+
+                <!-- Detailed Inventory Statistics -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                        <div class="flex items-center mb-4">
+                            <div class="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
+                                <i class="ri-error-warning-line text-red-600"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-800 ml-3">Hết hàng</h3>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-red-600 mb-2">
+                                <%= stats.outOfStockProducts %>
+                            </div>
+                            <p class="text-sm text-gray-600">Sản phẩm cần bổ sung</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                        <div class="flex items-center mb-4">
+                            <div class="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center">
+                                <i class="ri-alert-line text-yellow-600"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-800 ml-3">Sắp hết</h3>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-yellow-600 mb-2">
+                                <%= stats.lowStockProducts %>
+                            </div>
+                            <p class="text-sm text-gray-600">Sản phẩm cần theo dõi</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                        <div class="flex items-center mb-4">
+                            <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
+                                <i class="ri-store-2-line text-green-600"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-800 ml-3">Giá trị kho</h3>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-green-600 mb-2">
+                                <%= stats.totalStockValue ? stats.totalStockValue.toLocaleString('vi-VN') : '0' %>₫
+                            </div>
+                            <p class="text-sm text-gray-600">Tổng giá trị tồn kho</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Reports Statistics -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                        <div class="flex items-center mb-4">
+                            <div class="w-10 h-10 bg-teal-100 rounded-xl flex items-center justify-center">
+                                <i class="ri-customer-service-line text-teal-600"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-800 ml-3">Thống kê Newsletter</h3>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-600">Tổng người đăng ký:</span>
+                                <span class="font-semibold text-gray-800"><%= stats.totalNewsletterSubscribers %></span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-600">Tỷ lệ tăng trưởng:</span>
+                                <span class="font-semibold text-green-600">+12.5%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                        <div class="flex items-center mb-4">
+                            <div class="w-10 h-10 bg-pink-100 rounded-xl flex items-center justify-center">
+                                <i class="ri-service-line text-pink-600"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-800 ml-3">Thống kê Dịch vụ</h3>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-600">Tổng dịch vụ:</span>
+                                <span class="font-semibold text-gray-800"><%= stats.totalServices || 0 %></span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-600">Đang hoạt động:</span>
+                                <span class="font-semibold text-green-600"><%= stats.activeServices || 0 %></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance Metrics -->
+                <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 mb-8">
+                    <div class="flex items-center mb-6">
+                        <div class="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center">
+                            <i class="ri-speed-line text-indigo-600"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800 ml-3">Chỉ số hiệu suất</h3>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-blue-600 mb-2">
+                                <%= stats.totalOrders > 0 ? ((stats.paidOrders / stats.totalOrders) * 100).toFixed(1) : 0 %>%
+                            </div>
+                            <p class="text-sm text-gray-600">Tỷ lệ thanh toán thành công</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-green-600 mb-2">
+                                <%= stats.totalOrders > 0 ? ((stats.deliveredOrders / stats.totalOrders) * 100).toFixed(1) : 0 %>%
+                            </div>
+                            <p class="text-sm text-gray-600">Tỷ lệ giao hàng thành công</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-purple-600 mb-2">
+                                <%= stats.totalProducts > 0 ? ((stats.totalProducts - stats.outOfStockProducts) / stats.totalProducts * 100).toFixed(1) : 0 %>%
+                            </div>
+                            <p class="text-sm text-gray-600">Tỷ lệ sản phẩm có sẵn</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Tab switching functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const dashboardTab = document.getElementById('dashboardTab');
+            const reportsTab = document.getElementById('reportsTab');
+            const dashboardSection = document.getElementById('dashboardSection');
+            const reportsSection = document.getElementById('reportsSection');
+            const exportBtn = document.querySelector('#reportsSection #exportReportBtn');
+
+            // Show dashboard by default
+            showDashboard();
+
+            // Dashboard tab click
+            dashboardTab.addEventListener('click', function() {
+                showDashboard();
+            });
+
+            // Reports tab click
+            reportsTab.addEventListener('click', function() {
+                showReports();
+            });
+
+            // Export button click
+            if (exportBtn) {
+                exportBtn.addEventListener('click', function() {
+                    exportReport();
+                });
+            }
+
+            function showDashboard() {
+                // Update tab styles
+                dashboardTab.className = 'flex-1 py-3 px-6 rounded-lg font-semibold text-sm transition-all duration-200 bg-blue-600 text-white';
+                reportsTab.className = 'flex-1 py-3 px-6 rounded-lg font-semibold text-sm transition-all duration-200 text-gray-600 hover:text-gray-800 hover:bg-gray-100';
+                
+                // Show dashboard section
+                dashboardSection.style.display = 'block';
+                reportsSection.style.display = 'none';
+                
+                // Hide export button
+                if (exportBtn) {
+                    exportBtn.style.display = 'none';
+                }
+            }
+
+            function showReports() {
+                // Update tab styles
+                dashboardTab.className = 'flex-1 py-3 px-6 rounded-lg font-semibold text-sm transition-all duration-200 text-gray-600 hover:text-gray-800 hover:bg-gray-100';
+                reportsTab.className = 'flex-1 py-3 px-6 rounded-lg font-semibold text-sm transition-all duration-200 bg-blue-600 text-white';
+                
+                // Show reports section
+                dashboardSection.style.display = 'none';
+                reportsSection.style.display = 'block';
+                
+                // Show export button
+                if (exportBtn) {
+                    exportBtn.style.display = 'flex';
+                }
+            }
+
+            function exportReport() {
+                // Hiển thị loading
+                const originalText = exportBtn.innerHTML;
+                exportBtn.innerHTML = '<i class="ri-loader-4-line animate-spin mr-2"></i>Đang tạo PDF...';
+                exportBtn.disabled = true;
+                
+                // Gọi API xuất PDF
+                fetch('/admin/dashboard/export-pdf', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.blob();
+                    } else {
+                        throw new Error('Có lỗi xảy ra khi tạo PDF');
+                    }
+                })
+                .then(blob => {
+                    // Tạo link download
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = `dashboard-report-${new Date().toISOString().slice(0, 10)}.pdf`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                    
+                    // Hiển thị thông báo thành công
+                    showToast('Xuất PDF thành công!', 'success');
+                })
+                .catch(error => {
+                    console.error('Lỗi khi xuất PDF:', error);
+                    showToast('Có lỗi xảy ra khi xuất PDF', 'error');
+                })
+                .finally(() => {
+                    // Khôi phục button
+                    exportBtn.innerHTML = originalText;
+                    exportBtn.disabled = false;
+                });
+            }
+
+
+
+            // Add hover effects for quick action cards
+            const quickActionCards = document.querySelectorAll('.group');
+            
+            quickActionCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-4px)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+
+            // Auto-refresh dashboard data every 30 seconds
+            setInterval(() => {
+                // You can add AJAX call here to refresh data
+                console.log('Dashboard data refreshed');
+            }, 30000);
+        });
+    </script>
+
+<%- include('../includes/end.ejs') %>

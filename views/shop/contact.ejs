@@ -1,0 +1,386 @@
+<%- include('../includes/head') %>
+<body class="bg-gray-50 min-h-screen">
+  <%- include('../includes/navigation', { 
+    user, 
+    isAdmin, 
+    isAuthenticated, 
+    cartCount,
+    favorites: typeof favorites !== 'undefined' ? favorites : []
+  }) %>
+
+  <!-- Hero Section -->
+  <section class="bg-gradient-to-r from-green-600 to-blue-600 text-white py-16">
+    <div class="container mx-auto px-4 text-center">
+      <h1 class="text-5xl font-bold mb-6">
+        <i class="ri-customer-service-line text-6xl mb-4"></i><br>
+        Liên Hệ Với Chúng Tôi
+      </h1>
+      <p class="text-xl mb-8 max-w-3xl mx-auto">
+        Bạn có câu hỏi, góp ý hoặc cần hỗ trợ? Hãy liên hệ với chúng tôi qua form dưới đây hoặc thông tin bên cạnh.
+      </p>
+      <div class="flex justify-center space-x-4">
+        <a href="#contact" class="bg-white text-green-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
+          Liên hệ ngay
+        </a>
+        <a href="/services" class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-green-600 transition">
+          Dịch vụ
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="py-12">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        
+        <!-- Contact Form -->
+        <div class="bg-white rounded-2xl shadow-lg p-8">
+          <h2 class="text-3xl font-bold text-gray-800 mb-6">Gửi tin nhắn</h2>
+          <form action="/contact/submit" method="POST" class="space-y-6" id="contact-form">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Họ tên *</label>
+                <input required name="name" type="text" 
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
+                       placeholder="Nhập họ tên của bạn">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                <input required name="email" type="email" 
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
+                       placeholder="example@email.com">
+              </div>
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Số điện thoại</label>
+              <input name="phone" type="tel" 
+                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
+                     placeholder="0123 456 789">
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Chủ đề *</label>
+              <select required name="subject" 
+                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition">
+                <option value="">Chọn chủ đề</option>
+                <option value="Hỗ trợ khách hàng">Hỗ trợ khách hàng</option>
+                <option value="Đặt hàng">Đặt hàng</option>
+                <option value="Dịch vụ">Dịch vụ</option>
+                <option value="Sản phẩm">Sản phẩm</option>
+                <option value="Góp ý">Góp ý</option>
+                <option value="Khác">Khác</option>
+              </select>
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Nội dung *</label>
+              <textarea required name="message" rows="5" 
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition resize-none"
+                        placeholder="Nhập nội dung tin nhắn của bạn..."></textarea>
+            </div>
+            
+            <button type="submit" 
+                    class="w-full bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition duration-300 transform hover:scale-105">
+              <i class="ri-send-plane-line mr-2"></i>
+              Gửi tin nhắn
+            </button>
+          </form>
+        </div>
+
+        <!-- Contact Information -->
+        <div class="space-y-8">
+          <div class="bg-white rounded-2xl shadow-lg p-8">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">Thông tin liên hệ</h2>
+            
+            <div class="space-y-6">
+              <div class="flex items-start space-x-4">
+                <div class="bg-green-100 p-3 rounded-full">
+                  <i class="ri-map-pin-line text-2xl text-green-600"></i>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-gray-800 mb-1">Địa chỉ</h3>
+                  <p class="text-gray-600">123 Đường ABC, Quận 1, TP.HCM</p>
+                </div>
+              </div>
+              
+              <div class="flex items-start space-x-4">
+                <div class="bg-blue-100 p-3 rounded-full">
+                  <i class="ri-phone-line text-2xl text-blue-600"></i>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-gray-800 mb-1">Điện thoại</h3>
+                  <a href="tel:0123456789" class="text-gray-600 hover:text-blue-600 transition">0123 456 789</a>
+                </div>
+              </div>
+              
+              <div class="flex items-start space-x-4">
+                <div class="bg-purple-100 p-3 rounded-full">
+                  <i class="ri-mail-line text-2xl text-purple-600"></i>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-gray-800 mb-1">Email</h3>
+                  <a href="mailto:info@petstore.vn" class="text-gray-600 hover:text-purple-600 transition">info@petstore.vn</a>
+                </div>
+              </div>
+              
+              <div class="flex items-start space-x-4">
+                <div class="bg-yellow-100 p-3 rounded-full">
+                  <i class="ri-time-line text-2xl text-yellow-600"></i>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-gray-800 mb-1">Giờ làm việc</h3>
+                  <p class="text-gray-600">Thứ 2 - Chủ nhật: 8:00 - 21:00</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Map -->
+          <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <div class="p-6 border-b border-gray-200">
+              <h3 class="text-xl font-semibold text-gray-800">Vị trí của chúng tôi</h3>
+            </div>
+            <div class="relative h-80">
+              <iframe src="https://www.google.com/maps?q=10.7769,106.7009&z=15&output=embed" 
+                      width="100%" height="100%" style="border:0;" 
+                      allowfullscreen="" loading="lazy" 
+                      referrerpolicy="no-referrer-when-downgrade">
+              </iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="bg-gray-100 py-16">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold text-gray-800 mb-4">Tại sao chọn chúng tôi?</h2>
+        <p class="text-gray-600 max-w-2xl mx-auto">
+          Chúng tôi cam kết mang đến dịch vụ tốt nhất cho thú cưng của bạn
+        </p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="bg-white rounded-2xl p-8 text-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+          <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+            <i class="ri-customer-service-2-line text-3xl text-green-600"></i>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-800 mb-4">Hỗ trợ 24/7</h3>
+          <p class="text-gray-600">Đội ngũ chuyên viên sẵn sàng hỗ trợ bạn mọi lúc</p>
+        </div>
+        
+        <div class="bg-white rounded-2xl p-8 text-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+          <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+            <i class="ri-truck-line text-3xl text-blue-600"></i>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-800 mb-4">Giao hàng nhanh</h3>
+          <p class="text-gray-600">Giao hàng trong ngày tại TP.HCM và các tỉnh lân cận</p>
+        </div>
+        
+        <div class="bg-white rounded-2xl p-8 text-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+          <div class="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+            <i class="ri-shield-check-line text-3xl text-purple-600"></i>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-800 mb-4">Chất lượng đảm bảo</h3>
+          <p class="text-gray-600">Sản phẩm chính hãng với chế độ bảo hành tốt nhất</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="bg-gray-900 text-white py-16">
+    <div class="container mx-auto px-4 text-center">
+      <h2 class="text-3xl font-bold mb-4">Cần hỗ trợ khẩn cấp?</h2>
+      <p class="text-xl mb-8 max-w-2xl mx-auto">
+        Liên hệ ngay với chúng tôi để được tư vấn và hỗ trợ tốt nhất
+      </p>
+      <div class="flex justify-center space-x-4">
+        <a href="tel:0123456789" class="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-semibold transition">
+          <i class="ri-phone-line mr-2"></i>
+          Gọi ngay
+        </a>
+        <a href="/services" class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-gray-900 transition">
+          Xem dịch vụ
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <%- include('../includes/end') %>
+  
+  <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const contactForm = document.getElementById('contact-form');
+            
+            if (contactForm) {
+                contactForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    // ===== VALIDATION =====
+                    const name = document.querySelector('input[name="name"]').value.trim();
+                    const email = document.querySelector('input[name="email"]').value.trim();
+                    const phone = document.querySelector('input[name="phone"]').value.trim();
+                    const subject = document.querySelector('select[name="subject"]').value;
+                    const message = document.querySelector('textarea[name="message"]').value.trim();
+                    
+                    // Clear previous errors
+                    clearErrors();
+                    
+                    let hasError = false;
+                    
+                    // Validate name
+                    if (!name) {
+                        showError('name', 'Vui lòng nhập họ tên');
+                        hasError = true;
+                    } else if (name.length < 2 || name.length > 50) {
+                        showError('name', 'Họ tên phải từ 2-50 ký tự');
+                        hasError = true;
+                    } else if (!/^[a-zA-ZÀ-ỹ\s]+$/.test(name)) {
+                        showError('name', 'Họ tên chỉ được chứa chữ cái và khoảng trắng');
+                        hasError = true;
+                    }
+                    
+                    // Validate email
+                    if (!email) {
+                        showError('email', 'Vui lòng nhập email');
+                        hasError = true;
+                    } else if (!isValidEmail(email)) {
+                        showError('email', 'Email không hợp lệ');
+                        hasError = true;
+                    }
+                    
+                    // Validate phone (optional)
+                    if (phone && !isValidPhone(phone)) {
+                        showError('phone', 'Số điện thoại phải có 10-11 chữ số');
+                        hasError = true;
+                    }
+                    
+                    // Validate subject
+                    if (!subject) {
+                        showError('subject', 'Vui lòng chọn chủ đề');
+                        hasError = true;
+                    }
+                    
+                    // Validate message
+                    if (!message) {
+                        showError('message', 'Vui lòng nhập nội dung tin nhắn');
+                        hasError = true;
+                    } else if (message.length < 10 || message.length > 2000) {
+                        showError('message', 'Nội dung tin nhắn phải từ 10-2000 ký tự');
+                        hasError = true;
+                    }
+                    
+                    // Check for spam keywords
+                    const spamKeywords = ['casino', 'viagra', 'loan', 'credit', 'debt', 'make money fast'];
+                    const lowerMessage = message.toLowerCase();
+                    for (const keyword of spamKeywords) {
+                        if (lowerMessage.includes(keyword)) {
+                            showError('message', 'Nội dung tin nhắn chứa từ khóa không hợp lệ');
+                            hasError = true;
+                            break;
+                        }
+                    }
+                    
+                    if (hasError) {
+                        showToast('Vui lòng kiểm tra lại thông tin', 'error');
+                        return;
+                    }
+                    
+                    // ===== SUBMIT FORM =====
+                    const submitBtn = contactForm.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.innerHTML;
+                    
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="ri-loader-4-line animate-spin"></i> Đang gửi...';
+                    
+                    const formData = new FormData(contactForm);
+                    
+                    fetch('/contact/submit', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            name: name,
+                            email: email,
+                            phone: phone,
+                            subject: subject,
+                            message: message
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showToast(data.message, 'success');
+                            contactForm.reset();
+                        } else {
+                            showToast(data.message, 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Lỗi khi gửi contact form:', error);
+                        showToast('Có lỗi xảy ra khi gửi tin nhắn', 'error');
+                    })
+                    .finally(() => {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalText;
+                    });
+                });
+            }
+            
+            // ===== HELPER FUNCTIONS =====
+            function isValidEmail(email) {
+                const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                return emailRegex.test(email);
+            }
+            
+            function isValidPhone(phone) {
+                const cleanPhone = phone.replace(/\s/g, '');
+                const phoneRegex = /^[0-9]{10,11}$/;
+                return phoneRegex.test(cleanPhone);
+            }
+            
+            function showError(fieldName, message) {
+                const field = document.querySelector(`[name="${fieldName}"]`);
+                if (field) {
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'text-red-500 text-sm mt-1';
+                    errorDiv.textContent = message;
+                    errorDiv.id = `${fieldName}-error`;
+                    
+                    field.classList.add('border-red-500');
+                    field.parentNode.appendChild(errorDiv);
+                }
+            }
+            
+            function clearErrors() {
+                document.querySelectorAll('.text-red-500[id$="-error"]').forEach(el => el.remove());
+                document.querySelectorAll('.border-red-500').forEach(el => {
+                    el.classList.remove('border-red-500');
+                    el.classList.add('border-gray-300');
+                });
+            }
+            
+            function showToast(message, type) {
+                const toast = document.createElement('div');
+                toast.className = `fixed top-4 right-4 px-6 py-3 rounded-lg text-white z-50 ${
+                    type === 'success' ? 'bg-green-500' : 'bg-red-500'
+                }`;
+                toast.textContent = message;
+                
+                document.body.appendChild(toast);
+                
+                setTimeout(() => {
+                    toast.remove();
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+</html> 

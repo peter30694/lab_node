@@ -1,0 +1,370 @@
+<%- include('../includes/head') %>
+<body class="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 font-roboto flex flex-col min-h-screen">
+  <%- include('../includes/navigation') %>
+
+  <!-- Hero Section -->
+  <section class="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-16">
+    <div class="container mx-auto px-4 text-center">
+      <h1 class="text-5xl font-bold mb-6">
+        <i class="ri-store-line text-6xl mb-4"></i><br>
+        Sản phẩm Pet Store
+      </h1>
+      <p class="text-xl mb-8 max-w-3xl mx-auto">
+        Khám phá các sản phẩm chất lượng cao dành cho thú cưng của bạn
+      </p>
+      <div class="flex justify-center space-x-4">
+        <a href="#products" class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-all duration-300 transform hover:scale-105">
+          Xem sản phẩm
+        </a>
+        <a href="/services" class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-all duration-300 transform hover:scale-105">
+          Dịch vụ
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Compact Filter Section -->
+  <section class="py-6 bg-white border-b border-gray-100">
+    <div class="container mx-auto px-4">
+      <form method="GET" action="/products" class="max-w-6xl mx-auto">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <!-- Results Info -->
+          <div class="flex items-center gap-4">
+            <h2 class="text-2xl font-bold text-gray-800">Sản phẩm</h2>
+            <span class="text-gray-600">
+              (<%= totalProducts || 0 %> sản phẩm)
+            </span>
+          </div>
+          
+          <!-- Compact Filters -->
+          <div class="flex items-center gap-3">
+            <!-- Category Filter -->
+            <div class="relative">
+              <select name="category" onchange="this.form.submit()" 
+                      class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
+                <option value="">Tất cả danh mục</option>
+                <option value="dog" <%= category === 'dog' ? 'selected' : '' %>>🐶 Chó cưng</option>
+                <option value="cat" <%= category === 'cat' ? 'selected' : '' %>>🐱 Mèo cưng</option>
+                <option value="fish" <%= category === 'fish' ? 'selected' : '' %>>🐟 Cá cảnh</option>
+                <option value="small-pets" <%= category === 'small-pets' ? 'selected' : '' %>>🐹 Thú nhỏ</option>
+              </select>
+              <div class="absolute inset-y-0 right-0 pr-2 flex items-center pointer-events-none">
+                <i class="ri-arrow-down-s-line text-gray-400 text-sm"></i>
+              </div>
+            </div>
+            
+            <!-- Sort Filter -->
+            <div class="relative">
+              <select name="sort" onchange="this.form.submit()" 
+                      class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
+                <option value="">Sắp xếp</option>
+                <option value="name_asc" <%= sort === 'name_asc' ? 'selected' : '' %>>Tên A-Z</option>
+                <option value="name_desc" <%= sort === 'name_desc' ? 'selected' : '' %>>Tên Z-A</option>
+                <option value="price_asc" <%= sort === 'price_asc' ? 'selected' : '' %>>Giá thấp-cao</option>
+                <option value="price_desc" <%= sort === 'price_desc' ? 'selected' : '' %>>Giá cao-thấp</option>
+                <option value="rating_desc" <%= sort === 'rating_desc' ? 'selected' : '' %>>Đánh giá cao nhất</option>
+              </select>
+              <div class="absolute inset-y-0 right-0 pr-2 flex items-center pointer-events-none">
+                <i class="ri-arrow-down-s-line text-gray-400 text-sm"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Active Filters Display -->
+        <% if (category || sort) { %>
+          <div class="mt-4 pt-4 border-t border-gray-200">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="text-sm font-medium text-gray-600">Bộ lọc:</span>
+              <% if (category) { %>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  <% if (category === 'dog') { %>🐶 Chó cưng<% } %>
+                  <% if (category === 'cat') { %>🐱 Mèo cưng<% } %>
+                  <% if (category === 'fish') { %>🐟 Cá cảnh<% } %>
+                  <% if (category === 'small-pets') { %>🐹 Thú nhỏ<% } %>
+                  <% if (!['dog', 'cat', 'fish', 'small-pets'].includes(category)) { %><%= category %><% } %>
+                  <button type="button" onclick="removeFilter('category')" class="ml-2 text-green-600 hover:text-green-800">
+                    <i class="ri-close-line"></i>
+                  </button>
+                </span>
+              <% } %>
+              <% if (sort) { %>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                  <% if (sort === 'name_asc') { %>Tên A-Z<% } %>
+                  <% if (sort === 'name_desc') { %>Tên Z-A<% } %>
+                  <% if (sort === 'price_asc') { %>Giá thấp-cao<% } %>
+                  <% if (sort === 'price_desc') { %>Giá cao-thấp<% } %>
+                  <% if (sort === 'rating_desc') { %>Đánh giá cao nhất<% } %>
+                  <% if (!['name_asc', 'name_desc', 'price_asc', 'price_desc', 'rating_desc'].includes(sort)) { %><%= sort %><% } %>
+                  <button type="button" onclick="removeFilter('sort')" class="ml-2 text-purple-600 hover:text-purple-800">
+                    <i class="ri-close-line"></i>
+                  </button>
+                </span>
+              <% } %>
+              <button type="button" onclick="clearAllFilters()" class="text-sm text-red-600 hover:text-red-800 font-medium">
+                Xóa tất cả
+              </button>
+            </div>
+          </div>
+        <% } %>
+      </form>
+    </div>
+  </section>
+
+  <!-- Products Grid -->
+  <section id="products" class="py-12">
+    <div class="container mx-auto px-4">
+      <!-- Products Grid - Tối đa 4 thẻ mỗi hàng, 2 hàng -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+        <% if (products && products.length > 0) { %>
+          <% products.forEach(function(product) { %>
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 group border border-gray-100 flex flex-col h-96">
+              <!-- Product Image Container -->
+              <div class="relative h-48 overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 flex-shrink-0">
+                <img src="<%= product.imageUrl %>" alt="<%= product.title %>" 
+                     class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                     onerror="this.src='/images/default-product.png'">
+                
+                <!-- Overlay on hover -->
+                <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300"></div>
+                
+                <!-- Badges Container -->
+                <div class="absolute top-2 left-2 flex flex-col gap-1">
+                  <!-- Category Badge -->
+                  <span class="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-2 py-1 rounded-full text-xs font-semibold shadow-lg backdrop-blur-sm">
+                    <%= product.category %>
+                  </span>
+                  
+                  <!-- New Badge -->
+                  <% if (product.isNew) { %>
+                    <span class="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold shadow-lg flex items-center">
+                      <i class="ri-star-line mr-1"></i>Mới
+                    </span>
+                  <% } %>
+                </div>
+                
+                <!-- Right Badges -->
+                <div class="absolute top-2 right-2 flex flex-col gap-1">
+                  <!-- Rating Badge -->
+                  <% if (product.rating && product.rating > 0) { %>
+                    <span class="bg-yellow-400 text-yellow-900 px-2 py-1 rounded-full text-xs font-semibold flex items-center shadow-lg">
+                      <i class="ri-star-fill mr-1"></i>
+                      <%= product.rating.toFixed(1) %>
+                    </span>
+                  <% } %>
+                  
+                  <!-- Discount Badge -->
+                  <% if (product.discount && product.discount > 0) { %>
+                    <span class="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center shadow-lg">
+                      <i class="ri-percent-line mr-1"></i>-<%= product.discount %>%
+                    </span>
+                  <% } %>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="absolute bottom-3 right-3 flex gap-2">
+                  <!-- Wishlist Button -->
+                  <button onclick="toggleFavorite('<%= product._id %>', this)"
+                          class="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white hover:scale-110 transition-all duration-300"
+                          data-product-id="<%= product._id %>"
+                          data-favorited="<%= favorites && favorites.includes(product._id.toString()) ? 'true' : 'false' %>"
+                          title="<%= favorites && favorites.includes(product._id.toString()) ? 'Xóa khỏi yêu thích' : 'Thêm vào yêu thích' %>">
+                    <% if (favorites && favorites.includes(product._id.toString())) { %>
+                      <i class="ri-heart-fill text-red-500 text-sm"></i>
+                    <% } else { %>
+                      <i class="ri-heart-line text-gray-600 group-hover:text-red-500 text-sm transition-colors duration-200"></i>
+                    <% } %>
+                  </button>
+                  
+                  <!-- Quick Add to Cart -->
+                  <button onclick="addToCart('<%= product._id %>')" 
+                          class="w-8 h-8 bg-green-500 hover:bg-green-600 text-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-all duration-300"
+                          title="Thêm vào giỏ hàng">
+                    <i class="ri-add-line text-sm"></i>
+                  </button>
+                </div>
+              </div>
+              
+              <!-- Product Content -->
+              <div class="p-4 flex flex-col flex-1">
+                <!-- Title -->
+                <h3 class="text-base font-bold text-gray-800 mb-2 line-clamp-2 leading-tight">
+                  <a href="/products/<%= product._id %>" class="hover:text-blue-600 transition-colors duration-200">
+                    <%= product.title %>
+                  </a>
+                </h3>
+                
+                <!-- Description -->
+                <p class="text-gray-600 text-sm mb-2 line-clamp-2 leading-relaxed flex-1">
+                  <%= product.description %>
+                </p>
+                
+                <!-- Rating and Reviews -->
+                <div class="flex items-center gap-2 mb-2">
+                  <div class="flex text-yellow-400">
+                    <% for(let i = 0; i < 5; i++) { %>
+                      <i class="ri-star-<%= i < (product.rating || 0) ? 'fill' : 'line' %> text-xs"></i>
+                    <% } %>
+                  </div>
+                  <span class="text-xs text-gray-500">(<%= product.reviewCount ? product.reviewCount : 0 %>)</span>
+                </div>
+                
+                <!-- Stock Status -->
+                <div class="flex items-center text-xs text-gray-500 mb-2">
+                  <i class="ri-shopping-cart-line mr-1"></i>
+                  <span class="<%= product.stockQuantity > 10 ? 'text-green-600' : product.stockQuantity > 0 ? 'text-yellow-600' : 'text-red-600' %> font-medium">
+                    <%= product.stockQuantity ? product.stockQuantity : 0 %> có sẵn
+                  </span>
+                </div>
+                
+                <!-- Price and Action -->
+                <div class="flex items-center justify-between mt-auto">
+                  <div class="flex flex-col">
+                    <% if (product.originalPrice && product.originalPrice > product.price) { %>
+                      <span class="text-xs text-gray-400 line-through">
+                        <%= product.originalPrice.toLocaleString('vi-VN') %> ₫
+                      </span>
+                    <% } %>
+                    <span class="text-lg font-bold text-blue-600">
+                      <%= product.price.toLocaleString('vi-VN') %> ₫
+                    </span>
+                  </div>
+                  
+                  <!-- View Details Button -->
+                  <a href="/products/<%= product._id %>" 
+                     class="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-3 py-2 rounded-lg font-semibold transition-all duration-300 text-sm transform hover:scale-105 shadow-lg">
+                    <i class="ri-eye-line mr-1"></i>Chi tiết
+                  </a>
+                </div>
+              </div>
+            </div>
+          <% }); %>
+        <% } else { %>
+          <div class="col-span-full text-center py-16">
+            <div class="max-w-md mx-auto">
+              <div class="bg-gradient-to-r from-gray-100 to-gray-200 rounded-full w-24 h-24 mx-auto mb-6 flex items-center justify-center">
+                <i class="ri-search-line text-4xl text-gray-400"></i>
+              </div>
+              <h3 class="text-2xl font-semibold text-gray-500 mb-4">Không tìm thấy sản phẩm</h3>
+              <p class="text-gray-400 mb-6">
+                <% if (category) { %>
+                  Không có sản phẩm nào trong danh mục này.
+                <% } else { %>
+                  Hiện tại chưa có sản phẩm nào. Vui lòng quay lại sau!
+                <% } %>
+              </p>
+              <a href="/products" class="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105">
+                Xem tất cả sản phẩm
+              </a>
+            </div>
+          </div>
+        <% } %>
+      </div>
+
+      <!-- Pagination -->
+      <% if (totalPages > 1) { %>
+        <div class="flex justify-center mt-12">
+          <nav class="flex items-center space-x-2">
+            <% if (currentPage > 1) { %>
+              <a href="?page=<%= currentPage - 1 %><%= category ? '&category=' + category : '' %><%= sort ? '&sort=' + sort : '' %>" 
+                 class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200 transform hover:scale-105">
+                <i class="ri-arrow-left-line"></i>
+              </a>
+            <% } %>
+            
+            <% for(let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) { %>
+              <% if (i === currentPage) { %>
+                <span class="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium"><%= i %></span>
+              <% } else { %>
+                <a href="?page=<%= i %><%= category ? '&category=' + category : '' %><%= sort ? '&sort=' + sort : '' %>" 
+                   class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200 transform hover:scale-105">
+                  <%= i %>
+                </a>
+              <% } %>
+            <% } %>
+            
+            <% if (currentPage < totalPages) { %>
+              <a href="?page=<%= currentPage + 1 %><%= category ? '&category=' + category : '' %><%= sort ? '&sort=' + sort : '' %>" 
+                 class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200 transform hover:scale-105">
+                <i class="ri-arrow-right-line"></i>
+              </a>
+            <% } %>
+          </nav>
+        </div>
+      <% } %>
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="bg-gray-900 text-white py-16">
+    <div class="container mx-auto px-4 text-center">
+      <h2 class="text-3xl font-bold mb-4">Cần tư vấn mua sắm?</h2>
+      <p class="text-xl mb-8 max-w-2xl mx-auto">
+        Đội ngũ chuyên gia của chúng tôi luôn sẵn sàng hỗ trợ bạn chọn sản phẩm phù hợp
+      </p>
+      <div class="flex justify-center space-x-4">
+        <a href="/contact" class="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105">
+          Liên hệ ngay
+        </a>
+        <a href="tel:+84123456789" class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-gray-900 transition-all duration-300 transform hover:scale-105">
+          <i class="ri-phone-line mr-2"></i>
+          Gọi điện
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Kiểm tra authentication an toàn
+    var isAuthenticated = <%- (typeof isAuthenticated !== 'undefined' && isAuthenticated) ? 'true' : 'false' %>;
+    
+    // Filter removal functions
+    function removeFilter(filterName) {
+        const url = new URL(window.location);
+        url.searchParams.delete(filterName);
+        window.location.href = url.toString();
+    }
+
+    function clearAllFilters() {
+        window.location.href = '/products';
+    }
+
+    // Wishlist functionality - sử dụng function từ main.js
+    function toggleWishlist(productId) {
+      const btn = document.querySelector(`[data-product-id="${productId}"]`);
+      if (btn) {
+        toggleFavorite(productId, btn);
+      }
+    }
+
+    // Add to cart functionality
+    function addToCart(productId) {
+      fetch('/cart', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          productId: productId,
+          quantity: 1
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          showToast('Đã thêm sản phẩm vào giỏ hàng!', 'success');
+          updateCartCount(data.cartCount);
+        } else {
+          showToast(data.message || 'Có lỗi xảy ra', 'error');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        showToast('Có lỗi xảy ra khi thêm vào giỏ hàng', 'error');
+      });
+    }
+  </script>
+
+  <%- include('../includes/end') %>
+</body>
+</html>

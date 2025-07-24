@@ -1,0 +1,357 @@
+<%- include('../includes/head.ejs') %>
+
+<body class="bg-gray-50 min-h-screen">
+    <%- include('../includes/navigation-admin.ejs') %>
+    
+    <main class="max-w-4xl mx-auto px-4 py-8">
+        <!-- Header Section -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+                        <i class="ri-edit-line text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Chỉnh sửa sản phẩm</h1>
+                        <p class="text-gray-600 mt-1">Cập nhật thông tin sản phẩm</p>
+                    </div>
+                </div>
+                <a href="/admin/products" class="inline-flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-3 rounded-xl font-medium hover:bg-gray-200 transition-all duration-200 hover:shadow-md">
+                    <i class="ri-arrow-left-line"></i>
+                    <span class="hidden sm:inline">Quay lại</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Form Section -->
+        <form action="/admin/edit-product" method="POST" enctype="multipart/form-data" class="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <!-- Form Header -->
+            <div class="bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-4">
+                <h2 class="text-white font-semibold text-lg">Thông tin sản phẩm</h2>
+                <p class="text-blue-100 text-sm mt-1">Điền đầy đủ thông tin để cập nhật sản phẩm</p>
+            </div>
+
+            <div class="p-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Left Column -->
+                    <div class="space-y-6">
+                        <!-- Product Name -->
+                        <div class="space-y-2">
+                            <label for="title" class="block text-sm font-semibold text-gray-700">
+                                <i class="ri-product-hunt-line mr-2 text-blue-500"></i>
+                                Tên sản phẩm
+                            </label>
+                            <input 
+                                type="text" 
+                                class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white" 
+                                id="title" 
+                                name="title" 
+                                value="<%= product.title %>" 
+                                placeholder="Nhập tên sản phẩm..."
+                                required
+                            >
+                        </div>
+
+                        <!-- Product Image -->
+                        <div class="space-y-3">
+                            <label for="image" class="block text-sm font-semibold text-gray-700">
+                                <i class="ri-image-line mr-2 text-blue-500"></i>
+                                Hình ảnh sản phẩm
+                            </label>
+                            <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-blue-400 transition-colors duration-200">
+                                <div class="space-y-4">
+                                    <div class="flex justify-center">
+                                        <img src="<%= product.imageUrl %>" alt="<%= product.title %>" class="w-32 h-32 object-cover rounded-xl shadow-lg" id="productImagePreview">
+                                    </div>
+                                    <div>
+                                        <input 
+                                            type="file" 
+                                            class="hidden" 
+                                            id="image" 
+                                            name="image" 
+                                            accept="image/*"
+                                            onchange="previewImage(this)"
+                                        >
+                                        <label for="image" class="cursor-pointer inline-flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-200">
+                                            <i class="ri-upload-line"></i>
+                                            Chọn ảnh mới
+                                        </label>
+                                    </div>
+                                    <p class="text-xs text-gray-500">
+                                        Chỉ chấp nhận file ảnh (JPEG, PNG, JPG) tối đa 5MB
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Price -->
+                        <div class="space-y-2">
+                            <label for="price" class="block text-sm font-semibold text-gray-700">
+                                <i class="ri-money-dollar-circle-line mr-2 text-green-500"></i>
+                                Giá sản phẩm
+                            </label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">₫</span>
+                                <input 
+                                    type="number" 
+                                    class="w-full border border-gray-300 rounded-xl pl-8 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white" 
+                                    id="price" 
+                                    name="price" 
+                                    value="<%= product.price %>" 
+                                    step="1000" 
+                                    min="0"
+                                    placeholder="0"
+                                    required
+                                >
+                            </div>
+                        </div>
+
+                        <!-- Stock Quantity -->
+                        <div class="space-y-2">
+                            <label for="stockQuantity" class="block text-sm font-semibold text-gray-700">
+                                <i class="ri-store-line mr-2 text-orange-500"></i>
+                                Số lượng tồn kho
+                            </label>
+                            <div class="relative">
+                                <input 
+                                    type="number" 
+                                    class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white" 
+                                    id="stockQuantity" 
+                                    name="stockQuantity" 
+                                    value="<%= product.stockQuantity || 0 %>" 
+                                    min="0"
+                                    placeholder="0"
+                                    required
+                                >
+                                <span class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                                    <i class="ri-box-line"></i>
+                                </span>
+                            </div>
+                            
+                            <!-- Stock Status -->
+                            <% if (typeof product.stockQuantity !== 'undefined') { %>
+                                <div class="flex items-center gap-2 mt-2">
+                                    <% if (product.stockQuantity > 10) { %>
+                                        <span class="inline-flex items-center gap-1 bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">
+                                            <i class="ri-check-line"></i>
+                                            Còn hàng (<%= product.stockQuantity %>)
+                                        </span>
+                                    <% } else if (product.stockQuantity > 0) { %>
+                                        <span class="inline-flex items-center gap-1 bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-semibold">
+                                            <i class="ri-alert-line"></i>
+                                            Sắp hết hàng (<%= product.stockQuantity %>)
+                                        </span>
+                                    <% } else { %>
+                                        <span class="inline-flex items-center gap-1 bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-semibold">
+                                            <i class="ri-close-line"></i>
+                                            Hết hàng
+                                        </span>
+                                    <% } %>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="space-y-6">
+                        <!-- Description -->
+                        <div class="space-y-2">
+                            <label for="description" class="block text-sm font-semibold text-gray-700">
+                                <i class="ri-file-text-line mr-2 text-purple-500"></i>
+                                Mô tả sản phẩm
+                            </label>
+                            <textarea 
+                                class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white resize-none" 
+                                id="description" 
+                                name="description" 
+                                rows="6" 
+                                placeholder="Nhập mô tả chi tiết về sản phẩm..."
+                                required
+                            ><%= product.description %></textarea>
+                            <div class="flex justify-between items-center text-xs text-gray-500">
+                                <span>Mô tả chi tiết giúp khách hàng hiểu rõ sản phẩm</span>
+                                <span id="charCount">0</span>
+                            </div>
+                        </div>
+
+                        <!-- Category -->
+                        <div class="space-y-2">
+                            <label for="category" class="block text-sm font-semibold text-gray-700">
+                                <i class="ri-price-tag-3-line mr-2 text-indigo-500"></i>
+                                Danh mục sản phẩm
+                            </label>
+                            <select 
+                                class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white" 
+                                id="category" 
+                                name="category" 
+                                required
+                            >
+                                <option value="">-- Chọn danh mục --</option>
+                                <option value="dog" <%= product.category === 'dog' ? 'selected' : '' %>>🐶 Chó cưng</option>
+                                <option value="cat" <%= product.category === 'cat' ? 'selected' : '' %>>🐱 Mèo cưng</option>
+                                <option value="fish" <%= product.category === 'fish' ? 'selected' : '' %>>🐟 Cá cảnh</option>
+                                <option value="small-pets" <%= product.category === 'small-pets' ? 'selected' : '' %>>🐹 Thú nhỏ</option>
+                            </select>
+                        </div>
+                        <!-- Origin -->
+                        <div class="space-y-2">
+                            <label for="origin" class="block text-sm font-semibold text-gray-700">
+                                <i class="ri-earth-line mr-2 text-blue-500"></i>
+                                Xuất xứ sản phẩm
+                            </label>
+                            <input 
+                                type="text" 
+                                class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white" 
+                                id="origin" 
+                                name="origin" 
+                                value="<%= product.origin || '' %>"
+                                placeholder="Nhập xuất xứ, ví dụ: Việt Nam, Thái Lan, Mỹ..."
+                            >
+                            <p class="text-xs text-gray-500 mt-2">Ghi rõ quốc gia hoặc nơi sản xuất sản phẩm (nếu có)</p>
+                        </div>
+
+                        <!-- Product Status -->
+                        <div class="space-y-2">
+                            <label class="block text-sm font-semibold text-gray-700">
+                                <i class="ri-information-line mr-2 text-blue-500"></i>
+                                Trạng thái sản phẩm
+                            </label>
+                            <div class="bg-gray-50 rounded-xl p-4 space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-gray-600">Ngày tạo:</span>
+                                    <span class="text-sm font-medium text-gray-800">
+                                        <%= new Date(product.createdAt).toLocaleDateString('vi-VN') %>
+                                    </span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-gray-600">Cập nhật lần cuối:</span>
+                                    <span class="text-sm font-medium text-gray-800">
+                                        <%= new Date(product.updatedAt).toLocaleDateString('vi-VN') %>
+                                    </span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-gray-600">ID sản phẩm:</span>
+                                    <span class="text-sm font-mono text-gray-800 bg-gray-200 px-2 py-1 rounded">
+                                        <%= product._id %>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 pt-6 border-t border-gray-200">
+                    <div class="flex items-center gap-2 text-sm text-gray-500">
+                        <i class="ri-information-line"></i>
+                        <span>Lưu ý: Thay đổi sẽ được cập nhật ngay lập tức</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <a href="/admin/products" class="px-6 py-3 rounded-xl bg-gray-100 text-gray-700 font-medium hover:bg-gray-200 transition-all duration-200 hover:shadow-md">
+                            <i class="ri-close-line mr-2"></i>
+                            Huỷ
+                        </a>
+                        <input type="hidden" name="productId" value="<%= product._id %>">
+                        <button 
+                            type="submit" 
+                            class="px-6 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold hover:from-blue-600 hover:to-purple-700 transition-all duration-200 hover:shadow-lg transform hover:scale-105 flex items-center gap-2"
+                        >
+                            <i class="ri-save-line"></i>
+                            Lưu thay đổi
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <script>
+        // Character counter for description
+        const descriptionTextarea = document.getElementById('description');
+        const charCount = document.getElementById('charCount');
+        
+        descriptionTextarea.addEventListener('input', function() {
+            charCount.textContent = this.value.length;
+        });
+        
+        // Initialize character count
+        charCount.textContent = descriptionTextarea.value.length;
+
+        // Image preview functionality (không còn popup, chỉ đổi ảnh trực tiếp)
+        function previewImage(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('productImagePreview').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Form validation
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const title = document.getElementById('title').value.trim();
+            const price = document.getElementById('price').value;
+            const stockQuantity = document.getElementById('stockQuantity').value;
+            const description = document.getElementById('description').value.trim();
+            const category = document.getElementById('category').value;
+
+            if (!title || !price || !stockQuantity || !description || !category) {
+                e.preventDefault();
+                showToast('Vui lòng điền đầy đủ thông tin bắt buộc', 'error');
+                return;
+            }
+
+            if (parseFloat(price) < 0) {
+                e.preventDefault();
+                showToast('Giá sản phẩm không được âm', 'error');
+                return;
+            }
+
+            if (parseInt(stockQuantity) < 0) {
+                e.preventDefault();
+                showToast('Số lượng tồn kho không được âm', 'error');
+                return;
+            }
+        });
+
+        // Auto-save draft functionality
+        let autoSaveTimer;
+        const form = document.querySelector('form');
+        const formData = new FormData(form);
+
+        function autoSave() {
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+            
+            // Save to localStorage
+            localStorage.setItem('productEditDraft', JSON.stringify(data));
+            console.log('Draft saved automatically');
+        }
+
+        // Auto-save every 30 seconds
+        setInterval(autoSave, 30000);
+
+        // Load draft on page load
+        window.addEventListener('load', function() {
+            const draft = localStorage.getItem('productEditDraft');
+            if (draft) {
+                const data = JSON.parse(draft);
+                // Only load if it's the same product
+                if (data.productId === '<%= product._id %>') {
+                    if (confirm('Có bản nháp chưa lưu. Bạn có muốn khôi phục?')) {
+                        Object.keys(data).forEach(key => {
+                            const element = document.getElementById(key);
+                            if (element) {
+                                element.value = data[key];
+                            }
+                        });
+                    }
+                }
+            }
+        });
+    </script>
+
+    <%- include('../includes/end.ejs') %>
+

@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <%- include('../includes/head') %>
+        <title>Quản lý Liên hệ & Newsletter - Admin</title>
+        <style>
+            .tab-content {
+                display: none;
+            }
+
+            .tab-content.active {
+                display: block;
+            }
+
+            .status-badge {
+                padding: 0.25rem 0.75rem;
+                border-radius: 9999px;
+                font-size: 0.75rem;
+                font-weight: 600;
+            }
+
+            .status-pending {
+                background-color: #fef3c7;
+                color: #92400e;
+            }
+
+            .status-approved {
+                background-color: #d1fae5;
+                color: #065f46;
+            }
+
+            .status-rejected {
+                background-color: #fee2e2;
+                color: #991b1b;
+            }
+
+            .status-replied {
+                background-color: #dbeafe;
+                color: #1e40af;
+            }
+
+            .status-unsubscribed {
+                background-color: #f3f4f6;
+                color: #374151;
+            }
+
+            .type-badge {
+                padding: 0.25rem 0.5rem;
+                border-radius: 0.375rem;
+                font-size: 0.75rem;
+                font-weight: 500;
+            }
+
+            .type-contact {
+                background-color: #e0e7ff;
+                color: #3730a3;
+            }
+
+            .type-newsletter {
+                background-color: #f0fdf4;
+                color: #166534;
+            }
+        </style>
+</head>
+
+<body class="bg-gray-50 lg:pl-64">
+    <%- include('../includes/navigation-admin') %>
+
+        <!-- Main Content -->
+        <div class="p-8 pb-20">
+            <!-- Header -->
+            <div class="mb-8">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900">Quản lý Liên hệ & Newsletter</h1>
+                        <p class="text-gray-600 mt-2">Quản lý tất cả thông tin liên hệ và đăng ký newsletter</p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <!-- Đã xóa nút xuất dữ liệu -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Liên hệ</p>
+                            <p class="text-2xl font-bold text-gray-900" id="totalContacts">0</p>
+                        </div>
+                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <i class="ri-contacts-line text-xl text-blue-600"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Newsletter</p>
+                            <p class="text-2xl font-bold text-gray-900" id="totalNewsletter">0</p>
+                        </div>
+                        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                            <i class="ri-mail-line text-xl text-green-600"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Chờ duyệt</p>
+                            <p class="text-2xl font-bold text-gray-900" id="pendingCount">0</p>
+                        </div>
+                        <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                            <i class="ri-time-line text-xl text-yellow-600"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Đã trả lời</p>
+                            <p class="text-2xl font-bold text-gray-900" id="repliedCount">0</p>
+                        </div>
+                        <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                            <i class="ri-reply-line text-xl text-purple-600"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-6">
+                <div class="border-b border-gray-200">
+                    <nav class="flex space-x-8 px-6" aria-label="Tabs">
+                        <button
+                            class="tab-btn active py-4 px-1 border-b-2 border-blue-500 text-blue-600 font-medium text-sm"
+                            data-tab="all">
+                            Tất cả
+                        </button>
+                        <button
+                            class="tab-btn py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium text-sm"
+                            data-tab="contact">
+                            Liên hệ
+                        </button>
+                        <button
+                            class="tab-btn py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium text-sm"
+                            data-tab="newsletter">
+                            Newsletter
+                        </button>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200 mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tìm kiếm</label>
+                        <input type="text" id="searchInput" placeholder="Email, tên, nội dung..."
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Trạng thái</label>
+                        <select id="statusFilter"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">Tất cả trạng thái</option>
+                            <option value="pending">Chờ duyệt</option>
+                            <option value="approved">Đã duyệt</option>
+                            <option value="rejected">Đã từ chối</option>
+                            <option value="replied">Đã trả lời</option>
+                            <option value="unsubscribed">Đã hủy đăng ký</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Sắp xếp</label>
+                        <select id="sortFilter"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="newest">Mới nhất</option>
+                            <option value="oldest">Cũ nhất</option>
+                            <option value="email">Email A-Z</option>
+                            <option value="name">Tên A-Z</option>
+                        </select>
+                    </div>
+
+                    <div class="flex items-end">
+                        <button id="clearFilters"
+                            class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg transition-colors">
+                            Xóa bộ lọc
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Table -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-semibold text-gray-900">Danh sách liên hệ</h3>
+                        <div class="flex items-center gap-2 text-sm text-gray-500">
+                            <span id="totalItems">0</span> kết quả
+                        </div>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Thông tin</th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Loại</th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Trạng thái</th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Ngày tạo</th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="contactsTableBody" class="bg-white divide-y divide-gray-200">
+                            <!-- Data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="px-6 py-4 border-t border-gray-200">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2 text-sm text-gray-500">
+                            <span>Hiển thị</span>
+                            <select id="pageSize" class="border border-gray-300 rounded px-2 py-1">
+                                <option value="10">10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                            </select>
+                            <span>mục mỗi trang</span>
+                        </div>
+                        <div class="flex items-center gap-2" id="pagination">
+                            <!-- Pagination controls -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Detail Modal -->
+        <div id="contactModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+            <div class="flex items-center justify-center min-h-screen p-4">
+                <div class="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                    <div class="p-6 border-b border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-xl font-semibold text-gray-900">Chi tiết liên hệ</h3>
+                            <button id="closeModal" class="text-gray-400 hover:text-gray-600">
+                                <i class="ri-close-line text-2xl"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="p-6" id="modalContent">
+                        <!-- Content will be loaded here -->
+                    </div>
+
+                    <div class="p-6 border-t border-gray-200 bg-gray-50">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <select id="statusSelect" class="px-3 py-2 border border-gray-300 rounded-lg">
+                                    <option value="pending">Chờ duyệt</option>
+                                    <option value="approved">Đã duyệt</option>
+                                    <option value="rejected">Đã từ chối</option>
+                                    <option value="replied">Đã trả lời</option>
+                                </select>
+                                <button id="updateStatus"
+                                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
+                                    Cập nhật trạng thái
+                                </button>
+                                <button id="replyContact"
+                                    class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg"
+                                    style="display: none;">
+                                    Phản hồi
+                                </button>
+                                <button id="approveNewsletter"
+                                    class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg"
+                                    style="display: none;">
+                                    Duyệt
+                                </button>
+                                <button id="rejectNewsletter"
+                                    class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg"
+                                    style="display: none;">
+                                    Từ chối
+                                </button>
+                            </div>
+                            <button id="deleteContact"
+                                class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg">
+                                Xóa
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reply Modal -->
+        <div id="replyModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+            <div class="flex items-center justify-center min-h-screen p-4">
+                <div class="bg-white rounded-xl shadow-xl max-w-2xl w-full">
+                    <div class="p-6 border-b border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-xl font-semibold text-gray-900">Phản hồi khách hàng</h3>
+                            <button id="closeReplyModal" class="text-gray-400 hover:text-gray-600">
+                                <i class="ri-close-line text-2xl"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="p-6">
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Nội dung phản hồi</label>
+                            <textarea id="replyMessage" rows="8"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Nhập nội dung phản hồi..."></textarea>
+                        </div>
+
+                        <div class="flex items-center gap-4">
+                            <button id="sendReply"
+                                class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg">
+                                Gửi phản hồi
+                            </button>
+                            <span class="text-sm text-gray-500">Email sẽ được gửi tự động</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Newsletter Modal -->
+        <div id="newsletterModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+            <div class="flex items-center justify-center min-h-screen p-4">
+                <div class="bg-white rounded-xl shadow-xl max-w-2xl w-full">
+                    <div class="p-6 border-b border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-xl font-semibold text-gray-900">Gửi Newsletter</h3>
+                            <button id="closeNewsletterModal" class="text-gray-400 hover:text-gray-600">
+                                <i class="ri-close-line text-2xl"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="p-6">
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tiêu đề</label>
+                            <input type="text" id="newsletterSubject"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Nội dung</label>
+                            <textarea id="newsletterContent" rows="8"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+                        </div>
+
+                        <div class="flex items-center gap-4">
+                            <button id="sendNewsletter"
+                                class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg flex items-center justify-center transition-opacity">
+                                Gửi Newsletter
+                            </button>
+                            <span class="text-sm text-gray-500" id="subscriberCount">0 người đăng ký</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            class ContactManager {
+                constructor() {
+                    this.currentTab = 'all';
+                    this.currentPage = 1;
+                    this.pageSize = 10;
+                    this.filters = {
+                        search: '',
+                        status: '',
+                        sort: 'newest'
+                    };
+                    this.contacts = [];
+                    this.currentContactId = null;
+
+                    this.init();
+                }
+
+                init() {
+                    this.bindEvents();
+                    this.loadContacts();
+                    this.loadStats();
+                }
+
+                bindEvents() {
+                    // Tab switching
+                    document.querySelectorAll('.tab-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            this.switchTab(e.target.dataset.tab);
+                        });
+                    });
+
+                    // Filters
+                    document.getElementById('searchInput').addEventListener('input', (e) => {
+                        this.filters.search = e.target.value;
+                        this.currentPage = 1;
+                        this.loadContacts();
+                    });
+
+                    document.getElementById('statusFilter').addEventListener('change', (e) => {
+                        this.filters.status = e.target.value;
+                        this.currentPage = 1;
+                        this.loadContacts();
+                    });
+
+                    document.getElementById('sortFilter').addEventListener('change', (e) => {
+                        this.filters.sort = e.target.value;
+                        this.currentPage = 1;
+                        this.loadContacts();
+                    });
+
+                    document.getElementById('clearFilters').addEventListener('click', () => {
+                        this.clearFilters();
+                    });
+
+                    // Pagination
+                    document.getElementById('pageSize').addEventListener('change', (e) => {
+                        this.pageSize = parseInt(e.target.value);
+                        this.currentPage = 1;
+                        this.loadContacts();
+                    });
+
+                    // Modal events
+                    document.getElementById('closeModal').addEventListener('click', () => {
+                        this.closeModal();
+                    });
+
+                    document.getElementById('closeNewsletterModal').addEventListener('click', () => {
+                        this.closeNewsletterModal();
+                    });
+
+                    // Status update
+                    document.getElementById('updateStatus').addEventListener('click', () => {
+                        this.updateContactStatus();
+                    });
+
+                    // Reply contact
+                    document.getElementById('replyContact').addEventListener('click', () => {
+                        this.showReplyModal();
+                    });
+
+                    // Approve newsletter
+                    document.getElementById('approveNewsletter').addEventListener('click', () => {
+                        this.approveNewsletter();
+                    });
+
+                    // Reject newsletter
+                    document.getElementById('rejectNewsletter').addEventListener('click', () => {
+                        this.rejectNewsletter();
+                    });
+
+                    // Delete contact
+                    document.getElementById('deleteContact').addEventListener('click', () => {
+                        this.deleteContact();
+                    });
+
+                    // Reply modal events
+                    document.getElementById('closeReplyModal').addEventListener('click', () => {
+                        this.closeReplyModal();
+                    });
+
+                    document.getElementById('sendReply').addEventListener('click', () => {
+                        this.sendReply();
+                    });
+
+                    // Newsletter
+                    document.getElementById('sendNewsletter').addEventListener('click', () => {
+                        this.sendNewsletter();
+                    });
+                }
+
+                switchTab(tab) {
+                    this.currentTab = tab;
+                    this.currentPage = 1;
+
+                    // Update tab buttons
+                    document.querySelectorAll('.tab-btn').forEach(btn => {
+                        btn.classList.remove('active', 'border-blue-500', 'text-blue-600');
+                        btn.classList.add('border-transparent', 'text-gray-500');
+                    });
+
+                    document.querySelector(`[data-tab="${tab}"]`).classList.add('active', 'border-blue-500', 'text-blue-600');
+                    document.querySelector(`[data-tab="${tab}"]`).classList.remove('border-transparent', 'text-gray-500');
+
+                    this.loadContacts();
+                }
+
+                async loadContacts() {
+                    try {
+                        const params = new URLSearchParams({
+                            page: this.currentPage,
+                            limit: this.pageSize,
+                            tab: this.currentTab,
+                            ...this.filters
+                        });
+
+                        const response = await fetch(`/admin/contacts/data?${params}`);
+                        const data = await response.json();
+
+                        if (data.success) {
+                            this.contacts = data.contacts;
+                            this.renderContacts();
+                            this.updatePagination(data.pagination);
+                        }
+                    } catch (error) {
+                        console.error('Error loading contacts:', error);
+                        this.showToast('Lỗi khi tải dữ liệu', 'error');
+                    }
+                }
+
+                async loadStats() {
+                    try {
+                        const response = await fetch('/admin/contacts/stats');
+                        const data = await response.json();
+
+                        if (data.success) {
+                            document.getElementById('totalContacts').textContent = data.stats.totalContacts;
+                            document.getElementById('totalNewsletter').textContent = data.stats.totalNewsletter;
+                            document.getElementById('pendingCount').textContent = data.stats.pendingContacts + data.stats.pendingNewsletters;
+                            document.getElementById('repliedCount').textContent = data.stats.repliedContacts;
+                        }
+                    } catch (error) {
+                        console.error('Error loading stats:', error);
+                    }
+                }
+
+                renderContacts() {
+                    const tbody = document.getElementById('contactsTableBody');
+                    tbody.innerHTML = '';
+
+                    if (this.contacts.length === 0) {
+                        tbody.innerHTML = emptyTableTemplate;
+                        return;
+                    }
+
+                    this.contacts.forEach(contact => {
+                        const row = this.createContactRow(contact);
+                        tbody.appendChild(row);
+                    });
+
+                    document.getElementById('totalItems').textContent = this.contacts.length;
+                }
+
+                createContactRow(contact) {
+                    const row = document.createElement('tr');
+                    row.className = 'hover:bg-gray-50';
+
+                    const typeClass = contact.type === 'newsletter' ? 'type-newsletter' : 'type-contact';
+                    const typeText = contact.type === 'newsletter' ? 'Newsletter' : 'Liên hệ';
+
+                    const statusClass = this.getStatusClass(contact.status);
+                    const statusText = this.getStatusText(contact.status);
+
+                    row.innerHTML = contactRowTemplate(contact, typeClass, typeText, statusClass, statusText);
+
+                    return row;
+                }
+
+                getStatusClass(status) {
+                    const classes = {
+                        'pending': 'status-pending',
+                        'approved': 'status-approved',
+                        'rejected': 'status-rejected',
+                        'replied': 'status-replied',
+                        'unsubscribed': 'status-unsubscribed'
+                    };
+                    return classes[status] || 'status-pending';
+                }
+
+                getStatusText(status) {
+                    const texts = {
+                        'pending': 'Chờ duyệt',
+                        'approved': 'Đã duyệt',
+                        'rejected': 'Đã từ chối',
+                        'replied': 'Đã trả lời',
+                        'unsubscribed': 'Đã hủy'
+                    };
+                    return texts[status] || 'Chờ duyệt';
+                }
+
+                updatePagination(pagination) {
+                    const paginationEl = document.getElementById('pagination');
+                    paginationEl.innerHTML = '';
+
+                    if (pagination.totalPages <= 1) return;
+
+                    // Previous button
+                    if (pagination.currentPage > 1) {
+                        const prevBtn = document.createElement('button');
+                        prevBtn.className = 'px-3 py-2 text-sm text-gray-500 hover:text-gray-700';
+                        prevBtn.innerHTML = '<i class="ri-arrow-left-s-line"></i>';
+                        prevBtn.onclick = () => {
+                            this.currentPage = pagination.currentPage - 1;
+                            this.loadContacts();
+                        };
+                        paginationEl.appendChild(prevBtn);
+                    }
+
+                    // Page numbers
+                    for (let i = 1; i <= pagination.totalPages; i++) {
+                        if (i === pagination.currentPage) {
+                            const currentBtn = document.createElement('button');
+                            currentBtn.className = 'px-3 py-2 text-sm bg-blue-600 text-white rounded';
+                            currentBtn.textContent = i;
+                            paginationEl.appendChild(currentBtn);
+                        } else {
+                            const pageBtn = document.createElement('button');
+                            pageBtn.className = 'px-3 py-2 text-sm text-gray-500 hover:text-gray-700';
+                            pageBtn.textContent = i;
+                            pageBtn.onclick = () => {
+                                this.currentPage = i;
+                                this.loadContacts();
+                            };
+                            paginationEl.appendChild(pageBtn);
+                        }
+                    }
+
+                    // Next button
+                    if (pagination.currentPage < pagination.totalPages) {
+                        const nextBtn = document.createElement('button');
+                        nextBtn.className = 'px-3 py-2 text-sm text-gray-500 hover:text-gray-700';
+                        nextBtn.innerHTML = '<i class="ri-arrow-right-s-line"></i>';
+                        nextBtn.onclick = () => {
+                            this.currentPage = pagination.currentPage + 1;
+                            this.loadContacts();
+                        };
+                        paginationEl.appendChild(nextBtn);
+                    }
+                }
+
+                clearFilters() {
+                    this.filters = {
+                        search: '',
+                        status: '',
+                        sort: 'newest'
+                    };
+
+                    document.getElementById('searchInput').value = '';
+                    document.getElementById('statusFilter').value = '';
+                    document.getElementById('sortFilter').value = 'newest';
+
+                    this.currentPage = 1;
+                    this.loadContacts();
+                }
+
+                async viewContact(id) {
+                    try {
+                        const response = await fetch(`/admin/contacts/${id}/data`);
+                        const data = await response.json();
+
+                        if (data.success) {
+                            this.currentContactId = id;
+                            this.showContactModal(data.contact);
+                        }
+                    } catch (error) {
+                        console.error('Error loading contact details:', error);
+                        this.showToast('Lỗi khi tải chi tiết liên hệ', 'error');
+                    }
+                }
+
+                showContactModal(contact) {
+                    const modal = document.getElementById('contactModal');
+                    const content = document.getElementById('modalContent');
+                    const statusSelect = document.getElementById('statusSelect');
+                    const replyBtn = document.getElementById('replyContact');
+                    const approveBtn = document.getElementById('approveNewsletter');
+                    const rejectBtn = document.getElementById('rejectNewsletter');
+
+                    content.innerHTML = contactDetailTemplate(contact);
+
+                    statusSelect.value = contact.status;
+
+                    // Hiển thị/ẩn các nút theo loại
+                    replyBtn.style.display = contact.type === 'contact' ? 'block' : 'none';
+                    approveBtn.style.display = contact.type === 'newsletter' && contact.status === 'pending' ? 'block' : 'none';
+                    rejectBtn.style.display = contact.type === 'newsletter' && contact.status === 'pending' ? 'block' : 'none';
+
+                    modal.classList.remove('hidden');
+                }
+
+                closeModal() {
+                    document.getElementById('contactModal').classList.add('hidden');
+                    this.currentContactId = null;
+                }
+
+                async updateContactStatus() {
+                    if (!this.currentContactId) return;
+
+                    const status = document.getElementById('statusSelect').value;
+                    const adminNotes = prompt('Ghi chú admin (tùy chọn):') || null;
+
+                    try {
+                        const response = await fetch(`/admin/contacts/${this.currentContactId}/status`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ status, adminNotes })
+                        });
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                            this.showToast('Cập nhật trạng thái thành công', 'success');
+                            this.closeModal();
+                            this.loadContacts();
+                            this.loadStats();
+                        } else {
+                            this.showToast(data.message || 'Lỗi khi cập nhật trạng thái', 'error');
+                        }
+                    } catch (error) {
+                        console.error('Error updating status:', error);
+                        this.showToast('Lỗi khi cập nhật trạng thái', 'error');
+                    }
+                }
+
+                async deleteContact(id) {
+                    if (!confirm('Bạn có chắc muốn xóa liên hệ này?')) return;
+
+                    const contactId = id || this.currentContactId;
+                    if (!contactId) return;
+
+                    try {
+                        const response = await fetch(`/admin/contacts/${contactId}`, {
+                            method: 'DELETE'
+                        });
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                            this.showToast('Xóa liên hệ thành công', 'success');
+                            if (id) {
+                                this.loadContacts();
+                            } else {
+                                this.closeModal();
+                                this.loadContacts();
+                            }
+                            this.loadStats();
+                        } else {
+                            this.showToast(data.message || 'Lỗi khi xóa liên hệ', 'error');
+                        }
+                    } catch (error) {
+                        console.error('Error deleting contact:', error);
+                        this.showToast('Lỗi khi xóa liên hệ', 'error');
+                    }
+                }
+
+                showReplyModal() {
+                    document.getElementById('replyModal').classList.remove('hidden');
+                    document.getElementById('replyMessage').focus();
+                }
+
+                closeReplyModal() {
+                    document.getElementById('replyModal').classList.add('hidden');
+                    document.getElementById('replyMessage').value = '';
+                }
+
+                async sendReply() {
+                    const replyMessage = document.getElementById('replyMessage').value.trim();
+
+                    if (!replyMessage) {
+                        this.showToast('Vui lòng nhập nội dung phản hồi', 'error');
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch(`/admin/contacts/${this.currentContactId}/reply`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ replyMessage })
+                        });
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                            this.showToast('Đã gửi phản hồi thành công', 'success');
+                            this.closeReplyModal();
+                            this.closeModal();
+                            this.loadContacts();
+                            this.loadStats();
+                        } else {
+                            this.showToast(data.message || 'Lỗi khi gửi phản hồi', 'error');
+                        }
+                    } catch (error) {
+                        console.error('Error sending reply:', error);
+                        this.showToast('Lỗi khi gửi phản hồi', 'error');
+                    }
+                }
+
+                async approveNewsletter() {
+                    const adminNotes = prompt('Ghi chú admin (tùy chọn):') || null;
+
+                    try {
+                        const response = await fetch(`/admin/contacts/${this.currentContactId}/approve-newsletter`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ adminNotes })
+                        });
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                            this.showToast('Đã duyệt newsletter thành công', 'success');
+                            this.closeModal();
+                            this.loadContacts();
+                            this.loadStats();
+                        } else {
+                            this.showToast(data.message || 'Lỗi khi duyệt newsletter', 'error');
+                        }
+                    } catch (error) {
+                        console.error('Error approving newsletter:', error);
+                        this.showToast('Lỗi khi duyệt newsletter', 'error');
+                    }
+                }
+
+                async rejectNewsletter() {
+                    const adminNotes = prompt('Lý do từ chối (tùy chọn):') || null;
+
+                    try {
+                        const response = await fetch(`/admin/contacts/${this.currentContactId}/reject-newsletter`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ adminNotes })
+                        });
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                            this.showToast('Đã từ chối newsletter', 'success');
+                            this.closeModal();
+                            this.loadContacts();
+                            this.loadStats();
+                        } else {
+                            this.showToast(data.message || 'Lỗi khi từ chối newsletter', 'error');
+                        }
+                    } catch (error) {
+                        console.error('Error rejecting newsletter:', error);
+                        this.showToast('Lỗi khi từ chối newsletter', 'error');
+                    }
+                }
+
+                showToast(message, type = 'info') {
+                    // Simple toast implementation
+                    const toast = document.createElement('div');
+                    toast.className = `fixed top-4 right-4 px-6 py-3 rounded-lg text-white z-50 ${type === 'success' ? 'bg-green-600' :
+                        type === 'error' ? 'bg-red-600' : 'bg-blue-600'
+                        }`;
+                    toast.textContent = message;
+
+                    document.body.appendChild(toast);
+
+                    setTimeout(() => {
+                        toast.remove();
+                    }, 3000);
+                }
+
+                closeNewsletterModal() {
+                    document.getElementById('newsletterModal').classList.add('hidden');
+                    document.getElementById('newsletterSubject').value = '';
+                    document.getElementById('newsletterContent').value = '';
+                }
+
+                async loadNewsletterStats() {
+                    try {
+                        const response = await fetch('/admin/contacts/stats');
+                        const data = await response.json();
+
+                        if (data.success) {
+                            document.getElementById('subscriberCount').textContent =
+                                `${data.stats.approvedNewsletters} người đăng ký`;
+                        }
+                    } catch (error) {
+                        console.error('Lỗi khi tải thống kê newsletter:', error);
+                        this.showToast('Không thể tải thông tin người đăng ký', 'error');
+                    }
+                }
+
+                async sendNewsletter() {
+                    const subject = document.getElementById('newsletterSubject').value.trim();
+                    const content = document.getElementById('newsletterContent').value.trim();
+
+                    if (!subject || !content) {
+                        this.showToast('Vui lòng nhập đầy đủ tiêu đề và nội dung', 'error');
+                        return;
+                    }
+
+                    // Đóng modal và hiển thị thông báo ngay lập tức
+                    this.closeNewsletterModal();
+                    this.showToast('Đang bắt đầu quá trình gửi newsletter...', 'info');
+
+                    // Gửi yêu cầu trong nền
+                    fetch('/admin/newsletter/send', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            subject,
+                            content
+                        })
+                    }).then(response => response.json())
+                      .then(data => {
+                          if (data.success) {
+                              // Có thể hiển thị một thông báo khác khi hoàn tất nếu cần
+                              console.log('Yêu cầu gửi newsletter đã được server chấp nhận.');
+                          } else {
+                              this.showToast(data.message || 'Server từ chối yêu cầu gửi newsletter', 'error');
+                          }
+                      }).catch(error => {
+                          console.error('Lỗi khi gửi yêu cầu newsletter:', error);
+                          this.showToast('Không thể kết nối đến server để gửi newsletter', 'error');
+                      });
+                }
+
+                showNewsletterModal() {
+                    document.getElementById('newsletterModal').classList.remove('hidden');
+                    this.loadNewsletterStats();
+                }
+            }
+
+            // Initialize contact manager
+            const contactManager = new ContactManager();
+
+            // Add newsletter button to header
+            document.addEventListener('DOMContentLoaded', function () {
+                const header = document.querySelector('.flex.items-center.justify-between');
+                const newsletterBtn = document.createElement('button');
+                newsletterBtn.className = 'bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors';
+                newsletterBtn.innerHTML = '<i class="ri-mail-send-line"></i> Gửi Newsletter';
+                newsletterBtn.onclick = () => contactManager.showNewsletterModal();
+
+                header.querySelector('.flex.items-center.gap-4').appendChild(newsletterBtn);
+            });
+            // Template strings for reuse
+            const emptyTableTemplate = `
+            <tr>
+                <td colspan="5" class="px-6 py-8 text-center text-gray-500">
+                    <i class="ri-inbox-line text-4xl mb-2"></i>
+                    <p>Không có dữ liệu</p>
+                </td>
+            </tr>
+            `;
+
+            const contactRowTemplate = (contact, typeClass, typeText, statusClass, statusText) => `
+            <td class="px-6 py-4">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 h-10 w-10">
+                        <div class="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
+                            <i class="ri-user-line text-gray-600"></i>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <div class="text-sm font-medium text-gray-900">${contact.name || 'Không có tên'}</div>
+                        <div class="text-sm text-gray-500">${contact.email}</div>
+                        ${contact.phone ? `<div class="text-sm text-gray-500">${contact.phone}</div>` : ''}
+                        ${contact.message ? `<div class="text-sm text-gray-400 mt-1">${contact.message.substring(0,50)}${contact.message.length > 50 ? '...' : ''}</div>` : ''}
+                    </div>
+                </div>
+            </td>
+            <td class="px-6 py-4">
+                <span class="type-badge ${typeClass}">${typeText}</span>
+            </td>
+            <td class="px-6 py-4">
+                <span class="status-badge ${statusClass}">${statusText}</span>
+            </td>
+            <td class="px-6 py-4 text-sm text-gray-500">
+                ${new Date(contact.createdAt).toLocaleDateString('vi-VN')}
+            </td>
+            <td class="px-6 py-4 text-sm font-medium">
+                <button class="text-blue-600 hover:text-blue-900 mr-3" onclick="contactManager.viewContact('${contact._id}')">
+                    <i class="ri-eye-line"></i> Xem
+                </button>
+                <button class="text-red-600 hover:text-red-900" onclick="contactManager.deleteContact('${contact._id}')">
+                    <i class="ri-delete-bin-line"></i>
+                </button>
+            </td>
+            `;
+
+            const contactDetailTemplate = (contact) => `
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Tên</label>
+                    <p class="text-gray-900">${contact.name || 'Không có tên'}</p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <p class="text-gray-900">${contact.email}</p>
+                </div>
+
+                ${contact.phone ? `
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Số điện thoại</label>
+                    <p class="text-gray-900">${contact.phone}</p>
+                </div>
+                ` : ''}
+
+                ${contact.subject ? `
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Chủ đề</label>
+                    <p class="text-gray-900">${contact.subject}</p>
+                </div>
+                ` : ''}
+
+                ${contact.message ? `
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nội dung</label>
+                    <p class="text-gray-900 whitespace-pre-wrap">${contact.message}</p>
+                </div>
+                ` : ''}
+
+                ${contact.replyMessage ? `
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Phản hồi đã gửi</label>
+                    <p class="text-gray-900 whitespace-pre-wrap bg-green-50 p-3 rounded">${contact.replyMessage}</p>
+                    <p class="text-xs text-gray-500 mt-1">Gửi lúc: ${new Date(contact.replyDate).toLocaleString('vi-VN')}</p>
+                </div>
+                ` : ''}
+
+                ${contact.adminNotes ? `
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Ghi chú admin</label>
+                    <p class="text-gray-900 whitespace-pre-wrap bg-yellow-50 p-3 rounded">${contact.adminNotes}</p>
+                </div>
+                ` : ''}
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Loại</label>
+                    <span class="type-badge ${contact.type === 'newsletter' ? 'type-newsletter' : 'type-contact'}">
+                        ${contact.type === 'newsletter' ? 'Newsletter' : 'Liên hệ'}
+                    </span>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Ngày tạo</label>
+                    <p class="text-gray-900">${new Date(contact.createdAt).toLocaleString('vi-VN')}</p>
+                </div>
+            </div>
+            `;
+        </script>
+        <%- include('../includes/end') %>

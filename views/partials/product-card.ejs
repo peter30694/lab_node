@@ -1,0 +1,126 @@
+<!-- Product Card Component -->
+<div
+  class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 group flex flex-col h-96">
+  <!-- Product Image Container -->
+  <div class="relative h-48 overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 flex-shrink-0">
+    <img src="<%= product.imageUrl %>" alt="<%= product.title %>"
+      class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+      onerror="this.src='/images/default-product.png'">
+
+    <!-- Overlay on hover -->
+    <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300"></div>
+
+    <!-- Badges Container -->
+    <div class="absolute top-2 left-2 flex flex-col gap-1">
+      <!-- Category Badge -->
+      <span
+        class="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-2 py-1 rounded-full text-xs font-semibold shadow-lg backdrop-blur-sm">
+        <%= product.category %>
+      </span>
+
+      <!-- New Badge -->
+      <% if (product.isNew) { %>
+        <span class="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold shadow-lg flex items-center">
+          <i class="ri-star-line mr-1"></i>Mới
+        </span>
+        <% } %>
+    </div>
+
+    <!-- Right Badges -->
+    <div class="absolute top-2 right-2 flex flex-col gap-1">
+      <!-- Rating Badge -->
+      <% if (product.rating && product.rating> 0) { %>
+        <span
+          class="bg-yellow-400 text-yellow-900 px-2 py-1 rounded-full text-xs font-semibold flex items-center shadow-lg">
+          <i class="ri-star-fill mr-1"></i>
+          <%= product.rating.toFixed(1) %>
+        </span>
+        <% } %>
+
+          <!-- Discount Badge -->
+          <% if (product.discount && product.discount> 0) { %>
+            <span
+              class="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center shadow-lg">
+              <i class="ri-percent-line mr-1"></i>-<%= product.discount %>%
+            </span>
+            <% } %>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="absolute bottom-3 right-3 flex gap-2">
+      <!-- Wishlist Button -->
+      <button onclick="toggleFavorite('<%= product._id %>', this)"
+        class="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white hover:scale-110 transition-all duration-300"
+        data-product-id="<%= product._id %>"
+        data-favorited="<%= favorites && favorites.includes(product._id.toString()) ? 'true' : 'false' %>"
+        title="<%= favorites && favorites.includes(product._id.toString()) ? 'Xóa khỏi yêu thích' : 'Thêm vào yêu thích' %>">
+        <% if (favorites && favorites.includes(product._id.toString())) { %>
+          <i class="ri-heart-fill text-red-500 text-sm"></i>
+          <% } else { %>
+            <i class="ri-heart-line text-gray-600 group-hover:text-red-500 text-sm transition-colors duration-200"></i>
+            <% } %>
+      </button>
+
+      <!-- Quick Add to Cart -->
+      <button onclick="addToCart('<%= product._id %>')"
+        class="w-8 h-8 bg-green-500 hover:bg-green-600 text-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-all duration-300"
+        title="Thêm vào giỏ hàng">
+        <i class="ri-add-line text-sm"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Product Content -->
+  <div class="p-4 flex flex-col flex-1">
+    <!-- Title -->
+    <h3 class="text-base font-bold text-gray-800 mb-2 line-clamp-2 leading-tight">
+      <a href="/products/<%= product._id %>" class="hover:text-blue-600 transition-colors duration-200">
+        <%= product.title %>
+      </a>
+    </h3>
+
+    <!-- Description -->
+    <p class="text-gray-600 text-sm mb-2 line-clamp-2 leading-relaxed flex-1">
+      <%= product.description %>
+    </p>
+
+    <!-- Rating and Reviews -->
+    <div class="flex items-center gap-2 mb-2">
+      <div class="flex text-yellow-400">
+        <% for(let i=0; i < 5; i++) { %>
+          <i class="ri-star-<%= i < (product.rating || 0) ? 'fill' : 'line' %> text-xs"></i>
+          <% } %>
+      </div>
+      <span class="text-xs text-gray-500">(<%= product.reviewCount ? product.reviewCount : 0 %>)</span>
+    </div>
+
+    <!-- Stock Status -->
+    <div class="flex items-center space-x-2 text-sm">
+      <i class="ri-store-line text-gray-400"></i>
+      <span
+        class="<%= (product.stockQuantity && product.stockQuantity > 10) ? 'text-green-600' : (product.stockQuantity && product.stockQuantity > 0) ? 'text-yellow-600' : 'text-red-600' %> font-medium">
+        <%= (product.stockQuantity !==null && product.stockQuantity !==undefined) ? product.stockQuantity : 0 %> có sẵn
+      </span>
+    </div>
+
+    <!-- Price and Action -->
+    <div class="flex items-center justify-between mt-auto">
+      <div class="flex flex-col">
+        <% if (product.originalPrice && product.originalPrice> product.price) { %>
+          <span class="text-xs text-gray-400 line-through">
+            <%= product.originalPrice.toLocaleString('vi-VN') %> ₫
+          </span>
+          <% } %>
+            <span class="text-lg font-bold text-blue-600">
+              <%= product.price.toLocaleString('vi-VN') %> ₫
+            </span>
+      </div>
+
+      <!-- View Details Button -->
+      <a href="/products/<%= product._id %>"
+        class="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-3 py-2 rounded-xl font-semibold transition-all duration-300 text-sm transform hover:scale-105 shadow-lg">
+        <i class="ri-eye-line mr-1"></i>Chi tiết
+      </a>
+    </div>
+  </div>
+</div>
